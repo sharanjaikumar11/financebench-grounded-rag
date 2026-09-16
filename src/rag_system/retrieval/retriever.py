@@ -16,8 +16,16 @@ class DenseRetriever:
         self.embedder = embedder
         self.vector_store = vector_store
 
-    def index(self, chunks: Sequence[DocumentChunk]) -> None:
-        self.vector_store.upsert(chunks, self.embedder.embed([chunk.text for chunk in chunks]))
+    def index(self, chunks: Sequence[DocumentChunk], batch_size: int = 32) -> None:
+        """Embed and persist chunks in bounded batches for API-safe indexing."""
+        if batch_size < 1:
+            raise ValueError("batch_size must be at least one")
+        for start in range(0, len(chunks), batch_size):
+            batch = chunks[start : start + batch_size]
+            self.vector_store.upsert(
+                batch,
+                self.embedder.embed([chunk.text for chunk in batch]),
+            )
 
     def retrieve(
         self,

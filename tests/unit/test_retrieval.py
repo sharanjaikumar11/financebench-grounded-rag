@@ -73,6 +73,22 @@ def test_vector_store_rejects_invalid_vectors_filters_and_top_k(tmp_path: Path) 
     store.close()
 
 
+def test_dense_retriever_indexes_in_bounded_batches(tmp_path: Path) -> None:
+    store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
+    retriever = DenseRetriever(TestEmbedder(), store)
+    with pytest.raises(ValueError):
+        retriever.index([chunk("revenue", "doc-a", "revenue increased")], batch_size=0)
+    retriever.index(
+        [
+            chunk("revenue", "doc-a", "revenue increased"),
+            chunk("risk", "doc-b", "operating risk"),
+        ],
+        batch_size=1,
+    )
+    assert len(retriever.retrieve("revenue query", 2)) == 2
+    store.close()
+
+
 def test_gemini_embedder_requires_a_key_and_handles_an_empty_batch() -> None:
     with pytest.raises(ValueError):
         GeminiEmbeddingProvider("")
