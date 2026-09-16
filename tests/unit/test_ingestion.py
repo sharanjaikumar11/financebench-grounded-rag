@@ -36,6 +36,19 @@ def test_marks_identical_content_as_duplicate(tmp_path: Path) -> None:
     assert ingestor.ingest(second).status == "duplicate"
 
 
+def test_can_reparse_a_duplicate_for_safe_vector_reindexing(tmp_path: Path) -> None:
+    source = tmp_path / "source.txt"
+    source.write_text("same content", encoding="utf-8")
+    ingestor = make_ingestor(tmp_path)
+    original = ingestor.ingest(source)
+    resumed = ingestor.ingest(source, parse_if_duplicate=True)
+
+    assert original.document is not None
+    assert resumed.status == "duplicate"
+    assert resumed.document is not None
+    assert resumed.document.document_id == original.document.document_id
+
+
 def test_preserves_markdown_section_metadata(tmp_path: Path) -> None:
     source = tmp_path / "report.md"
     source.write_text(

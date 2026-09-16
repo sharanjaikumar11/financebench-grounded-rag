@@ -62,6 +62,6 @@ def test_query_service_preserves_duplicate_protection_and_rejects_empty_question
     query_service = service(tmp_path, CitedAnswerProvider())
 
     assert query_service.index_document(source).status == "indexed"
-    assert query_service.index_document(source).status == "duplicate"
+    assert query_service.index_document(source).status == "reindexed"
     with pytest.raises(ValueError):
         query_service.answer("   ")

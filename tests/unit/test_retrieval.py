@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from rag_system.retrieval.retriever import DenseRetriever
-from rag_system.retrieval.embeddings import GeminiEmbeddingProvider
+from rag_system.retrieval.embeddings import GeminiEmbeddingProvider, SentenceTransformerEmbeddingProvider
 from rag_system.retrieval.vector_store import SQLiteVectorStore, VectorStoreError
 from rag_system.schemas import DocumentChunk
 
@@ -93,3 +93,9 @@ def test_gemini_embedder_requires_a_key_and_handles_an_empty_batch() -> None:
     with pytest.raises(ValueError):
         GeminiEmbeddingProvider("")
     assert GeminiEmbeddingProvider("test-key").embed([]) == ()
+
+
+def test_sentence_transformer_embedder_handles_an_empty_batch_without_loading_model() -> None:
+    provider = SentenceTransformerEmbeddingProvider()
+    assert provider.embed([]) == ()
+    assert provider._model is None

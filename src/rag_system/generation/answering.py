@@ -34,6 +34,13 @@ class GeminiAnswerProvider:
         return response.text.strip()
 
 
+class UnavailableAnswerProvider:
+    """Makes indexing usable without configuring an answer-generation key."""
+
+    def generate(self, prompt: str) -> str:
+        raise RuntimeError("Set GEMINI_API_KEY before asking questions")
+
+
 class GroundedAnswerGenerator:
     """Enforce evidence-only answering and return structured source citations."""
 

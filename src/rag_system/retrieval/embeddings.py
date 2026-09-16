@@ -30,3 +30,21 @@ class GeminiEmbeddingProvider:
         client = genai.Client(api_key=self.api_key)
         response = client.models.embed_content(model=self.model, contents=list(texts))
         return tuple(tuple(item.values) for item in response.embeddings)
+
+
+class SentenceTransformerEmbeddingProvider:
+    """Local Sentence Transformer embeddings with no external embedding API."""
+
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
+        self.model_name = model_name
+        self._model: object | None = None
+
+    def embed(self, texts: Sequence[str]) -> tuple[tuple[float, ...], ...]:
+        if not texts:
+            return ()
+        if self._model is None:
+            from sentence_transformers import SentenceTransformer
+
+            self._model = SentenceTransformer(self.model_name)
+        vectors = self._model.encode(list(texts), normalize_embeddings=True)
+        return tuple(tuple(float(value) for value in vector) for vector in vectors)

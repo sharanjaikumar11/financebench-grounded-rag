@@ -11,7 +11,7 @@ class FakeService:
     def index_document(self, path: Path) -> IndexingResult:
         self.paths.append(path)
         if path.name == "duplicate.txt":
-            return IndexingResult("duplicate", None, 0)
+            return IndexingResult("reindexed", "doc-id", 1)
         if path.name == "bad.md":
             raise RuntimeError("parse failure")
         return IndexingResult("indexed", "doc-id", 1)
@@ -34,5 +34,6 @@ def test_discovery_and_indexing_processes_only_supported_files_in_order(tmp_path
         "a.md", "b.txt", "bad.md", "duplicate.txt", "c.pdf"
     ]
     assert result.indexed == 3
-    assert result.duplicates == 1
+    assert result.reindexed == 1
+    assert result.duplicates == 0
     assert result.failed == ("bad.md: parse failure",)

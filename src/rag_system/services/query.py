@@ -57,9 +57,7 @@ class RAGQueryService:
 
     def index_document(self, source_path: Path) -> IndexingResult:
         """Ingest, chunk, and persist a new source document exactly once."""
-        ingestion = self.ingestor.ingest(source_path)
-        if ingestion.status == "duplicate":
-            return IndexingResult("duplicate", None, 0)
+        ingestion = self.ingestor.ingest(source_path, parse_if_duplicate=True)
         if ingestion.document is None:
             raise RuntimeError("Ingested document was unexpectedly absent")
 
@@ -67,7 +65,8 @@ class RAGQueryService:
         if not chunks:
             raise RuntimeError("Chunking produced no indexable content")
         self.retriever.index(chunks)
-        return IndexingResult("indexed", ingestion.document.document_id, len(chunks))
+        status = "indexed" if ingestion.status == "ingested" else "reindexed"
+        return IndexingResult(status, ingestion.document.document_id, len(chunks))
 
     def answer(
         self, question: str, metadata_filter: Mapping[str, object] | None = None

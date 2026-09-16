@@ -87,13 +87,19 @@ class DocumentIngestor:
         self.registry = registry
         self.parsers = parsers or ParserRegistry()
 
-    def ingest(self, source_path: Path) -> IngestionResult:
+    def ingest(
+        self, source_path: Path, parse_if_duplicate: bool = False
+    ) -> IngestionResult:
         source_path = source_path.resolve()
         if not source_path.is_file():
             raise FileNotFoundError(f"Source document does not exist: {source_path}")
 
         content_hash = file_hash(source_path)
         if self.registry.contains(content_hash):
+            if parse_if_duplicate:
+                document_id = f"doc_{content_hash[:16]}"
+                document = self.parsers.parse(source_path, document_id, content_hash)
+                return IngestionResult(status="duplicate", document=document)
             return IngestionResult(status="duplicate", document=None)
 
         document_id = f"doc_{content_hash[:16]}"

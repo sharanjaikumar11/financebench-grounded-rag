@@ -15,6 +15,7 @@ class IndexRun:
     """Summary of one repeatable directory-indexing run."""
 
     indexed: int
+    reindexed: int
     duplicates: int
     failed: tuple[str, ...]
 
@@ -38,6 +39,7 @@ def discover_supported_documents(source_directory: Path) -> tuple[Path, ...]:
 def index_directory(service: RAGQueryService, source_directory: Path) -> IndexRun:
     """Index all supported files and retain any individual failure for review."""
     indexed = 0
+    reindexed = 0
     duplicates = 0
     failed: list[str] = []
     for path in discover_supported_documents(source_directory):
@@ -48,6 +50,13 @@ def index_directory(service: RAGQueryService, source_directory: Path) -> IndexRu
             continue
         if result.status == "indexed":
             indexed += 1
+        elif result.status == "reindexed":
+            reindexed += 1
         else:
             duplicates += 1
-    return IndexRun(indexed=indexed, duplicates=duplicates, failed=tuple(failed))
+    return IndexRun(
+        indexed=indexed,
+        reindexed=reindexed,
+        duplicates=duplicates,
+        failed=tuple(failed),
+    )
