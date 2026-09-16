@@ -55,6 +55,7 @@ def _build_chunk(
     return DocumentChunk(
         chunk_id=f"{document.document_id}_c{chunk_index:04d}",
         document_id=document.document_id,
+        document_name=document.document_name,
         chunk_index=chunk_index,
         text=" ".join(token.value for token in tokens),
         token_count=len(tokens),

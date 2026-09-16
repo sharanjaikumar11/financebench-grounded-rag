@@ -43,6 +43,7 @@ class DocumentChunk:
 
     chunk_id: str
     document_id: str
+    document_name: str
     chunk_index: int
     text: str
     token_count: int
@@ -57,3 +58,23 @@ class RetrievedChunk:
 
     chunk: DocumentChunk
     score: float
+
+
+@dataclass(frozen=True, slots=True)
+class Citation:
+    """A source reference supporting a grounded answer."""
+
+    source_label: str
+    document_id: str
+    document_name: str
+    page_numbers: tuple[int, ...]
+    section_titles: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class GroundedAnswer:
+    """Answer output, including an explicit no-answer state when evidence is absent."""
+
+    text: str
+    citations: tuple[Citation, ...]
+    insufficient_context: bool

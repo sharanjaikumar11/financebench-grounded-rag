@@ -28,6 +28,7 @@ class SQLiteVectorStore:
             CREATE TABLE IF NOT EXISTS chunks (
                 chunk_id TEXT PRIMARY KEY,
                 document_id TEXT NOT NULL,
+                document_name TEXT NOT NULL,
                 chunk_index INTEGER NOT NULL,
                 text TEXT NOT NULL,
                 token_count INTEGER NOT NULL,
@@ -67,6 +68,7 @@ class SQLiteVectorStore:
                 (
                     chunk.chunk_id,
                     chunk.document_id,
+                    chunk.document_name,
                     chunk.chunk_index,
                     chunk.text,
                     chunk.token_count,
@@ -79,9 +81,10 @@ class SQLiteVectorStore:
             )
         self._connection.executemany(
             """
-            INSERT INTO chunks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO chunks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(chunk_id) DO UPDATE SET
                 document_id=excluded.document_id,
+                document_name=excluded.document_name,
                 chunk_index=excluded.chunk_index,
                 text=excluded.text,
                 token_count=excluded.token_count,
@@ -120,6 +123,7 @@ class SQLiteVectorStore:
             chunk = DocumentChunk(
                 chunk_id=row["chunk_id"],
                 document_id=row["document_id"],
+                document_name=row["document_name"],
                 chunk_index=row["chunk_index"],
                 text=row["text"],
                 token_count=row["token_count"],

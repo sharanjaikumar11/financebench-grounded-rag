@@ -22,6 +22,7 @@ def chunk(chunk_id: str, document_id: str, text: str, strategy: str = "fixed_tok
     return DocumentChunk(
         chunk_id=chunk_id,
         document_id=document_id,
+        document_name=f"{document_id}.pdf",
         chunk_index=0,
         text=text,
         token_count=2,
