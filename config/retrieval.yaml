@@ -1,2 +1,2 @@
 retrieval:
-  top_k_values: []
+  top_k_values: [3, 5, 10]

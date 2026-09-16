@@ -49,3 +49,11 @@ class DocumentChunk:
     chunking_strategy: str
     page_numbers: tuple[int, ...]
     section_titles: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class RetrievedChunk:
+    """A chunk returned by dense retrieval with its similarity score."""
+
+    chunk: DocumentChunk
+    score: float
