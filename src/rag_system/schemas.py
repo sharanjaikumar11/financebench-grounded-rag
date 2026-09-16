@@ -35,3 +35,17 @@ class ParsedDocument:
     source_format: SourceFormat
     content_hash: str
     segments: tuple[DocumentSegment, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class DocumentChunk:
+    """A retrieval-ready text chunk with source provenance."""
+
+    chunk_id: str
+    document_id: str
+    chunk_index: int
+    text: str
+    token_count: int
+    chunking_strategy: str
+    page_numbers: tuple[int, ...]
+    section_titles: tuple[str, ...]
