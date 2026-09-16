@@ -9,3 +9,5 @@ data/raw/*
 !data/raw/.gitkeep
 evaluation/results/*
 !evaluation/results/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
