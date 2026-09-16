@@ -1,0 +1,5 @@
+ingestion:
+  supported_formats:
+    - pdf
+    - txt
+    - markdown
