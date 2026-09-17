@@ -9,7 +9,7 @@ from pathlib import Path
 from rag_system.evaluation.datasets import load_evaluation_cases
 from rag_system.evaluation.runner import RetrievalExperimentRunner
 from rag_system.retrieval.embeddings import SentenceTransformerEmbeddingProvider
-from rag_system.retrieval.retriever import DenseRetriever
+from rag_system.retrieval.retriever import DenseRetriever, HybridRetriever
 from rag_system.retrieval.vector_store import SQLiteVectorStore
 
 
@@ -19,6 +19,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--vector-store", type=Path, required=True)
     parser.add_argument("--chunking-strategy", choices=("fixed_token", "section_aware"), required=True)
     parser.add_argument("--top-k", type=int, required=True)
+    parser.add_argument("--retrieval-mode", choices=("dense", "hybrid"), default="dense")
     parser.add_argument(
         "--apply-query-metadata-filter",
         action="store_true",
@@ -33,7 +34,8 @@ def main() -> None:
     cases = load_evaluation_cases(arguments.cases)
     store = SQLiteVectorStore(arguments.vector_store)
     try:
-        retriever = DenseRetriever(SentenceTransformerEmbeddingProvider(), store)
+        retriever_class = HybridRetriever if arguments.retrieval_mode == "hybrid" else DenseRetriever
+        retriever = retriever_class(SentenceTransformerEmbeddingProvider(), store)
         report = RetrievalExperimentRunner().run(
             retriever,
             cases,

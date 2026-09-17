@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import sqlite3
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -43,6 +44,10 @@ class SQLiteVectorStore:
         self._connection.execute(
             "CREATE INDEX IF NOT EXISTS idx_chunks_document_id ON chunks(document_id)"
         )
+        self._connection.execute(
+            "CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(text, content='chunks', content_rowid='rowid')"
+        )
+        self._connection.execute("INSERT INTO chunks_fts(chunks_fts) VALUES ('rebuild')")
         self._connection.commit()
 
     def close(self) -> None:
@@ -147,6 +152,44 @@ class SQLiteVectorStore:
             )
             results.append(RetrievedChunk(chunk=chunk, score=_cosine(query_embedding, vector)))
         return tuple(sorted(results, key=lambda item: item.score, reverse=True)[:top_k])
+
+    def hybrid_search(
+        self, query_embedding: Sequence[float], query: str, top_k: int,
+        metadata_filter: Mapping[str, object] | None = None,
+    ) -> tuple[RetrievedChunk, ...]:
+        """Fuse dense and exact-term ranking with reciprocal-rank fusion."""
+        dense = self.search(query_embedding, max(top_k * 5, 20), metadata_filter)
+        clauses, parameters = self._filter_query(metadata_filter or {})
+        terms = " ".join(re.findall(r"[A-Za-z0-9]+", query))
+        if not terms:
+            return dense[:top_k]
+        statement = "SELECT chunks.* FROM chunks_fts JOIN chunks ON chunks_fts.rowid = chunks.rowid WHERE chunks_fts MATCH ?"
+        if clauses:
+            statement += " AND " + " AND ".join(f"chunks.{clause}" for clause in clauses)
+        statement += " ORDER BY bm25(chunks_fts) LIMIT ?"
+        sparse_rows = self._connection.execute(statement, [terms, *parameters, max(top_k * 5, 20)]).fetchall()
+        sparse = [RetrievedChunk(self._row_to_chunk(row), 0.0) for row in sparse_rows]
+        fused: dict[str, tuple[DocumentChunk, float]] = {}
+        for rank, item in enumerate(dense, start=1):
+            fused[item.chunk.chunk_id] = (item.chunk, 1 / (60 + rank))
+        for rank, item in enumerate(sparse, start=1):
+            chunk, score = fused.get(item.chunk.chunk_id, (item.chunk, 0.0))
+            fused[item.chunk.chunk_id] = (chunk, score + 1 / (60 + rank))
+        return tuple(
+            RetrievedChunk(chunk, score)
+            for chunk, score in sorted(fused.values(), key=lambda value: value[1], reverse=True)[:top_k]
+        )
+
+    @staticmethod
+    def _row_to_chunk(row: sqlite3.Row) -> DocumentChunk:
+        return DocumentChunk(
+            chunk_id=row["chunk_id"], document_id=row["document_id"],
+            document_name=row["document_name"], chunk_index=row["chunk_index"],
+            text=row["text"], token_count=row["token_count"],
+            chunking_strategy=row["chunking_strategy"],
+            page_numbers=tuple(json.loads(row["page_numbers"])),
+            section_titles=tuple(json.loads(row["section_titles"])),
+        )
 
     @staticmethod
     def _filter_query(metadata_filter: Mapping[str, object]) -> tuple[list[str], list[object]]:

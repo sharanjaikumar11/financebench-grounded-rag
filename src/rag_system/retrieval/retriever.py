@@ -48,3 +48,15 @@ class DenseRetriever:
         if len(query_embedding) != 1:
             raise RuntimeError("Embedding provider must return one vector for a query")
         return self.vector_store.search(query_embedding[0], top_k, metadata_filter)
+
+
+class HybridRetriever(DenseRetriever):
+    """Combine dense similarity with local full-text matching."""
+
+    def retrieve(
+        self, query: str, top_k: int, metadata_filter: Mapping[str, object] | None = None,
+    ) -> tuple[RetrievedChunk, ...]:
+        query_embedding = self.embedder.embed([query])
+        if len(query_embedding) != 1:
+            raise RuntimeError("Embedding provider must return one vector for a query")
+        return self.vector_store.hybrid_search(query_embedding[0], query, top_k, metadata_filter)

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from rag_system.retrieval.retriever import DenseRetriever
+from rag_system.retrieval.retriever import DenseRetriever, HybridRetriever
 from rag_system.retrieval.embeddings import GeminiEmbeddingProvider, SentenceTransformerEmbeddingProvider
 from rag_system.retrieval.query_metadata import filing_metadata_filter
 from rag_system.retrieval.vector_store import SQLiteVectorStore, VectorStoreError
@@ -46,6 +46,15 @@ def test_dense_retriever_returns_ranked_chunks_and_source_metadata(tmp_path: Pat
     assert [item.chunk.chunk_id for item in results] == ["revenue", "risk"]
     assert results[0].score > results[1].score
     assert results[0].chunk.page_numbers == (1,)
+    store.close()
+
+
+def test_hybrid_retriever_combines_dense_and_keyword_candidates(tmp_path: Path) -> None:
+    store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
+    retriever = HybridRetriever(TestEmbedder(), store)
+    retriever.index([chunk("revenue", "doc-a", "revenue increased"), chunk("risk", "doc-b", "operating risk")])
+    results = retriever.retrieve("revenue query", 2)
+    assert results[0].chunk.chunk_id == "revenue"
     store.close()
 
 
