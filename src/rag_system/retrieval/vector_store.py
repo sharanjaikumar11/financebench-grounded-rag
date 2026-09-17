@@ -48,6 +48,20 @@ class SQLiteVectorStore:
     def close(self) -> None:
         self._connection.close()
 
+    def has_complete_document(
+        self, document_id: str, chunking_strategy: str, expected_chunk_count: int
+    ) -> bool:
+        """Return whether all chunks for one deterministic indexing configuration exist."""
+        row = self._connection.execute(
+            """
+            SELECT COUNT(*) AS chunk_count
+            FROM chunks
+            WHERE document_id = ? AND chunking_strategy = ?
+            """,
+            (document_id, chunking_strategy),
+        ).fetchone()
+        return row["chunk_count"] == expected_chunk_count
+
     def upsert(
         self,
         chunks: Sequence[DocumentChunk],

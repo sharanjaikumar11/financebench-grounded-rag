@@ -64,6 +64,8 @@ class RAGQueryService:
         chunks = self.chunker.chunk(ingestion.document)
         if not chunks:
             raise RuntimeError("Chunking produced no indexable content")
+        if ingestion.status == "duplicate" and self.retriever.has_complete_index(chunks):
+            return IndexingResult("duplicate", ingestion.document.document_id, len(chunks))
         self.retriever.index(chunks)
         status = "indexed" if ingestion.status == "ingested" else "reindexed"
         return IndexingResult(status, ingestion.document.document_id, len(chunks))

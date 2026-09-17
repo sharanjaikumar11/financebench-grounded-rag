@@ -62,6 +62,21 @@ def test_query_service_preserves_duplicate_protection_and_rejects_empty_question
     query_service = service(tmp_path, CitedAnswerProvider())
 
     assert query_service.index_document(source).status == "indexed"
-    assert query_service.index_document(source).status == "reindexed"
+    assert query_service.index_document(source).status == "duplicate"
     with pytest.raises(ValueError):
         query_service.answer("   ")
+
+
+def test_query_service_recovers_an_incomplete_document_index(tmp_path: Path) -> None:
+    source = tmp_path / "report.md"
+    source.write_text("# Results\nRevenue increased.", encoding="utf-8")
+    query_service = service(tmp_path, CitedAnswerProvider())
+
+    first = query_service.index_document(source)
+    assert first.document_id is not None
+    query_service.retriever.vector_store._connection.execute(
+        "DELETE FROM chunks WHERE document_id = ?", (first.document_id,)
+    )
+    query_service.retriever.vector_store._connection.commit()
+
+    assert query_service.index_document(source).status == "reindexed"

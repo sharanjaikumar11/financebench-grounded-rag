@@ -27,6 +27,17 @@ class DenseRetriever:
                 self.embedder.embed([chunk.text for chunk in batch]),
             )
 
+    def has_complete_index(self, chunks: Sequence[DocumentChunk]) -> bool:
+        """Determine whether a deterministic document/chunker result is already stored."""
+        if not chunks:
+            return False
+        first_chunk = chunks[0]
+        return self.vector_store.has_complete_document(
+            first_chunk.document_id,
+            first_chunk.chunking_strategy,
+            len(chunks),
+        )
+
     def retrieve(
         self,
         query: str,

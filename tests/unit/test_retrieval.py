@@ -89,6 +89,20 @@ def test_dense_retriever_indexes_in_bounded_batches(tmp_path: Path) -> None:
     store.close()
 
 
+def test_dense_retriever_detects_complete_document_indexes(tmp_path: Path) -> None:
+    store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
+    retriever = DenseRetriever(TestEmbedder(), store)
+    chunks = [
+        chunk("revenue", "doc-a", "revenue increased"),
+        chunk("risk", "doc-a", "operating risk"),
+    ]
+    assert retriever.has_complete_index(chunks) is False
+    retriever.index(chunks)
+    assert retriever.has_complete_index(chunks) is True
+    assert retriever.has_complete_index(chunks[:1]) is False
+    store.close()
+
+
 def test_gemini_embedder_requires_a_key_and_handles_an_empty_batch() -> None:
     with pytest.raises(ValueError):
         GeminiEmbeddingProvider("")
