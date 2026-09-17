@@ -150,7 +150,7 @@ class SQLiteVectorStore:
 
     @staticmethod
     def _filter_query(metadata_filter: Mapping[str, object]) -> tuple[list[str], list[object]]:
-        supported = {"document_id", "chunking_strategy"}
+        supported = {"document_id", "document_name", "chunking_strategy"}
         unknown = set(metadata_filter) - supported
         if unknown:
             raise ValueError(f"Unsupported metadata filter(s): {sorted(unknown)}")

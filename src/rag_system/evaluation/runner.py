@@ -13,6 +13,7 @@ from rag_system.evaluation.metrics import (
     grounding_supported,
     retrieval_hit,
 )
+from rag_system.retrieval.query_metadata import filing_metadata_filter
 from rag_system.schemas import GroundedAnswer, RetrievedChunk
 
 
@@ -46,6 +47,31 @@ class EvaluationReport:
     grounding_rate: float
     citation_accuracy: float
     failures: tuple[CaseResult, ...]
+
+    def as_dict(self) -> dict[str, object]:
+        return asdict(self)
+
+
+@dataclass(frozen=True, slots=True)
+class RetrievalCaseResult:
+    """Retrieval-only evidence record for controlled chunking and top-K experiments."""
+
+    case_id: str
+    expected_document: str
+    retrieved_documents: tuple[str, ...]
+    retrieved_pages: tuple[tuple[int, ...], ...]
+    retrieval_hit: bool
+
+
+@dataclass(frozen=True, slots=True)
+class RetrievalExperimentReport:
+    """Comparable retrieval result for one chunking strategy and top-K value."""
+
+    chunking_strategy: str
+    top_k: int
+    case_count: int
+    retrieval_recall: float
+    cases: tuple[RetrievalCaseResult, ...]
 
     def as_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -85,3 +111,46 @@ class EvaluationRunner:
             if not passed
         )
         return CaseResult(case.case_id, retrieval, answer, grounded, citation, failures)
+
+
+class RetrievalExperimentRunner:
+    """Measure retrieval recall and save source evidence without invoking an answer model."""
+
+    def run(
+        self,
+        retriever: object,
+        cases: Sequence[EvaluationCase],
+        chunking_strategy: str,
+        top_k: int,
+        apply_query_metadata_filter: bool = False,
+    ) -> RetrievalExperimentReport:
+        if not cases:
+            raise ValueError("At least one evaluation case is required")
+        results: list[RetrievalCaseResult] = []
+        for case in cases:
+            metadata_filter: dict[str, object] = {
+                "chunking_strategy": chunking_strategy,
+            }
+            if apply_query_metadata_filter:
+                metadata_filter.update(filing_metadata_filter(case.question))
+            retrieved = retriever.retrieve(
+                case.question,
+                top_k,
+                metadata_filter,
+            )
+            results.append(
+                RetrievalCaseResult(
+                    case_id=case.case_id,
+                    expected_document=case.expected_document,
+                    retrieved_documents=tuple(item.chunk.document_name for item in retrieved),
+                    retrieved_pages=tuple(item.chunk.page_numbers for item in retrieved),
+                    retrieval_hit=retrieval_hit(case, retrieved),
+                )
+            )
+        return RetrievalExperimentReport(
+            chunking_strategy=chunking_strategy,
+            top_k=top_k,
+            case_count=len(results),
+            retrieval_recall=sum(result.retrieval_hit for result in results) / len(results),
+            cases=tuple(results),
+        )

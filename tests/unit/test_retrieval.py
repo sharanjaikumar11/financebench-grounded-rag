@@ -4,6 +4,7 @@ import pytest
 
 from rag_system.retrieval.retriever import DenseRetriever
 from rag_system.retrieval.embeddings import GeminiEmbeddingProvider, SentenceTransformerEmbeddingProvider
+from rag_system.retrieval.query_metadata import filing_metadata_filter
 from rag_system.retrieval.vector_store import SQLiteVectorStore, VectorStoreError
 from rag_system.schemas import DocumentChunk
 
@@ -58,6 +59,7 @@ def test_dense_retriever_applies_document_and_strategy_filters(tmp_path: Path) -
 
     assert [item.chunk.chunk_id for item in retriever.retrieve("revenue query", 3, {"document_id": "doc-b"})] == ["risk"]
     assert retriever.retrieve("revenue query", 3, {"chunking_strategy": "missing"}) == ()
+    assert [item.chunk.chunk_id for item in retriever.retrieve("revenue query", 3, {"document_name": "doc-a.pdf"})] == ["revenue"]
     store.close()
 
 
@@ -113,3 +115,13 @@ def test_sentence_transformer_embedder_handles_an_empty_batch_without_loading_mo
     provider = SentenceTransformerEmbeddingProvider()
     assert provider.embed([]) == ()
     assert provider._model is None
+
+
+def test_filing_metadata_filter_requires_unambiguous_company_and_fiscal_year() -> None:
+    assert filing_metadata_filter("What was FY2018 capital expenditure for 3M?") == {
+        "document_name": "3M_2018_10K.pdf"
+    }
+    assert filing_metadata_filter("What was capital expenditure?") == {}
+    assert filing_metadata_filter("Is 3M a capital-intensive business based on FY2022 data?") == {
+        "document_name": "3M_2022_10K.pdf"
+    }

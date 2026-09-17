@@ -5,6 +5,7 @@ import pytest
 
 from rag_system.evaluation.datasets import EvaluationCase, load_evaluation_cases
 from rag_system.evaluation.runner import EvaluationResponse, EvaluationRunner
+from rag_system.evaluation.runner import RetrievalExperimentRunner
 from rag_system.schemas import Citation, DocumentChunk, GroundedAnswer, RetrievedChunk
 
 
@@ -43,6 +44,18 @@ class FakeSystem:
         return self.response
 
 
+class FakeRetriever:
+    def __init__(self, retrieved: tuple[RetrievedChunk, ...]) -> None:
+        self.retrieved = retrieved
+        self.calls: list[tuple[str, int, dict[str, object]]] = []
+
+    def retrieve(
+        self, question: str, top_k: int, metadata_filter: dict[str, object]
+    ) -> tuple[RetrievedChunk, ...]:
+        self.calls.append((question, top_k, metadata_filter))
+        return self.retrieved
+
+
 def test_runner_measures_all_required_metrics_for_a_passing_case() -> None:
     case = EvaluationCase("case-1", "Question", "$1577.00", "3M_2018_10K.pdf")
     report = EvaluationRunner().run(FakeSystem(EvaluationResponse((source(),), answer())), [case])
@@ -79,3 +92,28 @@ def test_case_loader_validates_nonempty_unique_case_ids(tmp_path: Path) -> None:
     invalid.write_text("[]")
     with pytest.raises(ValueError):
         load_evaluation_cases(invalid)
+
+
+def test_retrieval_experiment_records_source_evidence_and_recall() -> None:
+    case = EvaluationCase("case-1", "Question", "$1577.00", "3M_2018_10K.pdf")
+    retriever = FakeRetriever((source(),))
+
+    report = RetrievalExperimentRunner().run(retriever, [case], "fixed_token", 5)
+
+    assert report.retrieval_recall == 1.0
+    assert report.cases[0].retrieved_pages == ((59,),)
+    assert retriever.calls == [("Question", 5, {"chunking_strategy": "fixed_token"})]
+
+
+def test_retrieval_experiment_can_apply_inferred_filing_metadata() -> None:
+    case = EvaluationCase(
+        "case-1", "What was FY2018 capital expenditure for 3M?", "$1577.00", "3M_2018_10K.pdf"
+    )
+    retriever = FakeRetriever((source(),))
+
+    RetrievalExperimentRunner().run(retriever, [case], "fixed_token", 5, True)
+
+    assert retriever.calls[0][2] == {
+        "chunking_strategy": "fixed_token",
+        "document_name": "3M_2018_10K.pdf",
+    }

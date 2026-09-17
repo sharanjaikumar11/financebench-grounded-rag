@@ -1,4 +1,8 @@
 experiments:
-  chunking: []
-  retrieval: []
-  generation: []
+  chunking:
+    - fixed_token
+    - section_aware
+  retrieval:
+    top_k_values: [3, 5, 10]
+  generation:
+    metrics: [answer_accuracy, grounding_rate, citation_accuracy]
