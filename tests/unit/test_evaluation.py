@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from rag_system.evaluation.datasets import EvaluationCase, load_evaluation_cases
-from rag_system.evaluation.runner import EvaluationResponse, EvaluationRunner
+from rag_system.evaluation.runner import EvaluationResponse, EvaluationRunner, GroundedEvaluationSystem
 from rag_system.evaluation.runner import RetrievalExperimentRunner
 from rag_system.schemas import Citation, DocumentChunk, GroundedAnswer, RetrievedChunk
 
@@ -54,6 +54,11 @@ class FakeRetriever:
     ) -> tuple[RetrievedChunk, ...]:
         self.calls.append((question, top_k, metadata_filter))
         return self.retrieved
+
+
+class FakeGenerator:
+    def answer(self, question: str, retrieved: tuple[RetrievedChunk, ...]) -> GroundedAnswer:
+        return answer()
 
 
 def test_runner_measures_all_required_metrics_for_a_passing_case() -> None:
@@ -117,3 +122,13 @@ def test_retrieval_experiment_can_apply_inferred_filing_metadata() -> None:
         "chunking_strategy": "fixed_token",
         "document_name": "3M_2018_10K.pdf",
     }
+
+
+def test_grounded_evaluation_system_retrieves_with_inferred_filing_metadata() -> None:
+    retriever = FakeRetriever((source(),))
+    system = GroundedEvaluationSystem(retriever, FakeGenerator(), 3)
+
+    response = system.answer("What was FY2018 capital expenditure for 3M?")
+
+    assert response.answer.insufficient_context is False
+    assert retriever.calls[0][1:] == (3, {"document_name": "3M_2018_10K.pdf"})

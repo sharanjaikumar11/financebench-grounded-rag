@@ -29,6 +29,21 @@ class EvaluatedSystem(Protocol):
     def answer(self, question: str) -> EvaluationResponse: ...
 
 
+class GroundedEvaluationSystem:
+    """Adapter that evaluates retrieved evidence and grounded generation together."""
+
+    def __init__(self, retriever: object, answer_generator: object, top_k: int) -> None:
+        if top_k < 1:
+            raise ValueError("top_k must be at least one")
+        self.retriever = retriever
+        self.answer_generator = answer_generator
+        self.top_k = top_k
+
+    def answer(self, question: str) -> EvaluationResponse:
+        retrieved = self.retriever.retrieve(question, self.top_k, filing_metadata_filter(question))
+        return EvaluationResponse(retrieved, self.answer_generator.answer(question, retrieved))
+
+
 @dataclass(frozen=True, slots=True)
 class CaseResult:
     case_id: str
