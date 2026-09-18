@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from fastapi.testclient import TestClient
 
 from rag_system.chunking import SectionAwareChunker
 from rag_system.generation.answering import GroundedAnswerGenerator
@@ -8,6 +9,7 @@ from rag_system.ingestion.pipeline import DocumentIngestor, DocumentRegistry
 from rag_system.retrieval.retriever import DenseRetriever
 from rag_system.retrieval.vector_store import SQLiteVectorStore
 from rag_system.services.query import RAGQueryService
+from rag_system.api.app import create_app
 
 
 class DeterministicEmbedder:
@@ -80,3 +82,25 @@ def test_query_service_recovers_an_incomplete_document_index(tmp_path: Path) -> 
     query_service.retriever.vector_store._connection.commit()
 
     assert query_service.index_document(source).status == "reindexed"
+
+
+def test_api_indexes_documents_and_returns_grounded_citations(tmp_path: Path) -> None:
+    source = tmp_path / "report.md"
+    source.write_text("# Results\nRevenue increased by 10 percent.", encoding="utf-8")
+    client = TestClient(create_app(service(tmp_path, CitedAnswerProvider())))
+
+    indexed = client.post("/index", json={"source_path": str(source)})
+    response = client.post("/query", json={"question": "How did revenue change?"})
+
+    assert indexed.status_code == 200
+    assert indexed.json()["status"] == "indexed"
+    assert response.status_code == 200
+    assert response.json()["citations"][0]["document_name"] == "report.md"
+
+
+def test_api_reports_invalid_requests_without_server_errors(tmp_path: Path) -> None:
+    client = TestClient(create_app(service(tmp_path, CitedAnswerProvider())))
+
+    assert client.get("/health").json() == {"status": "ok"}
+    assert client.post("/query", json={"question": ""}).status_code == 422
+    assert client.post("/index", json={"source_path": str(tmp_path / "missing.pdf")}).status_code == 404

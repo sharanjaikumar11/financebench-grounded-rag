@@ -22,7 +22,7 @@ class SQLiteVectorStore:
     def __init__(self, database_path: Path) -> None:
         self.database_path = database_path
         self.database_path.parent.mkdir(parents=True, exist_ok=True)
-        self._connection = sqlite3.connect(database_path)
+        self._connection = sqlite3.connect(database_path, check_same_thread=False)
         self._connection.row_factory = sqlite3.Row
         self._connection.execute(
             """
