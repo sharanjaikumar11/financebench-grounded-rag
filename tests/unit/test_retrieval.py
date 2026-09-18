@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from rag_system.retrieval.retriever import DenseRetriever, HybridRetriever, _finance_query_expansions
+from rag_system.retrieval.retriever import DenseRetriever, HybridRetriever
 from rag_system.retrieval.embeddings import GeminiEmbeddingProvider, SentenceTransformerEmbeddingProvider
 from rag_system.retrieval.query_metadata import filing_metadata_filter
 from rag_system.retrieval.vector_store import SQLiteVectorStore, VectorStoreError, _sparse_query_terms
@@ -139,23 +139,13 @@ def test_filing_metadata_filter_requires_unambiguous_company_and_fiscal_year() -
     }
 
 
-def test_sparse_query_expands_common_finance_filing_terms() -> None:
+def test_sparse_query_keeps_meaningful_question_terms() -> None:
     terms = _sparse_query_terms("What is capital expenditure in the cash flow statement?")
 
-    assert "purchases" in terms
-    assert "property" in terms
-    assert "equipment" in terms
+    assert "capital" in terms
+    assert "expenditure" in terms
+    assert "statement" in terms
     assert " OR " in terms
-
-
-def test_finance_query_expansion_uses_only_needed_filing_language() -> None:
-    assert _finance_query_expansions("Is 3M capital-intensive based on FY2022 data?") == (
-        "capital spending compared with total company net sales",
-    )
-    assert _finance_query_expansions("What is FY2018 net PPNE?") == (
-        "consolidated balance sheet property plant equipment net",
-    )
-    assert _finance_query_expansions("What was revenue?") == ()
 
 
 def test_hybrid_retriever_includes_adjacent_chunks_for_split_table_context(tmp_path: Path) -> None:

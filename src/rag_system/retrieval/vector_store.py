@@ -243,7 +243,7 @@ def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
 
 
 def _sparse_query_terms(query: str) -> str:
-    """Build an OR query from meaningful finance terms and common filing aliases."""
+    """Build an OR query from the meaningful terms in any user question."""
     stop_words = {
         "answer", "amount", "based", "details", "from", "give", "shown", "that",
         "the", "this", "using", "what", "with", "would", "year",
@@ -253,11 +253,4 @@ def _sparse_query_terms(query: str) -> str:
         for term in re.findall(r"[A-Za-z0-9]+", query)
         if len(term) > 2 and term.casefold() not in stop_words
     }
-    normalized_query = query.casefold()
-    if "capital expenditure" in normalized_query or "capex" in normalized_query:
-        terms.update({"purchases", "property", "plant", "equipment", "investing", "activities"})
-    if "ppne" in normalized_query:
-        terms.update({"property", "plant", "equipment", "net", "assets", "balance"})
-    if "capital-intensive" in normalized_query or "capital intensive" in normalized_query:
-        terms.update({"capital", "spending", "property", "plant", "equipment", "sales"})
     return " OR ".join(sorted(terms))

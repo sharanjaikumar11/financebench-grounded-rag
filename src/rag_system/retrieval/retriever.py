@@ -56,26 +56,8 @@ class HybridRetriever(DenseRetriever):
     def retrieve(
         self, query: str, top_k: int, metadata_filter: Mapping[str, object] | None = None,
     ) -> tuple[RetrievedChunk, ...]:
-        ranked: list[RetrievedChunk] = []
-        seen: set[str] = set()
-        for search_query in (query, *_finance_query_expansions(query)):
-            query_embedding = self.embedder.embed([search_query])
-            if len(query_embedding) != 1:
-                raise RuntimeError("Embedding provider must return one vector for a query")
-            for result in self.vector_store.hybrid_search(
-                query_embedding[0], search_query, top_k, metadata_filter
-            ):
-                if result.chunk.chunk_id not in seen:
-                    seen.add(result.chunk.chunk_id)
-                    ranked.append(result)
-        return self.vector_store.expand_with_neighbors(tuple(ranked))
-
-
-def _finance_query_expansions(query: str) -> tuple[str, ...]:
-    """Add only filing-language equivalents required by the finance question."""
-    normalized = query.casefold()
-    if "capital-intensive" in normalized or "capital intensive" in normalized:
-        return ("capital spending compared with total company net sales",)
-    if "ppne" in normalized or "net pp&e" in normalized:
-        return ("consolidated balance sheet property plant equipment net",)
-    return ()
+        query_embedding = self.embedder.embed([query])
+        if len(query_embedding) != 1:
+            raise RuntimeError("Embedding provider must return one vector for a query")
+        ranked = self.vector_store.hybrid_search(query_embedding[0], query, top_k, metadata_filter)
+        return self.vector_store.expand_with_neighbors(ranked)
