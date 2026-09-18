@@ -52,6 +52,11 @@ class CaseResult:
     grounded: bool
     citation_correct: bool
     failures: tuple[str, ...]
+    expected_answer: str
+    expected_document: str
+    generated_answer: str
+    retrieved_documents: tuple[str, ...]
+    cited_documents: tuple[str, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -125,7 +130,19 @@ class EvaluationRunner:
             )
             if not passed
         )
-        return CaseResult(case.case_id, retrieval, answer, grounded, citation, failures)
+        return CaseResult(
+            case_id=case.case_id,
+            retrieval_hit=retrieval,
+            answer_correct=answer,
+            grounded=grounded,
+            citation_correct=citation,
+            failures=failures,
+            expected_answer=case.expected_answer,
+            expected_document=case.expected_document,
+            generated_answer=response.answer.text,
+            retrieved_documents=tuple(item.chunk.document_name for item in response.retrieved),
+            cited_documents=tuple(citation.document_name for citation in response.answer.citations),
+        )
 
 
 class RetrievalExperimentRunner:
