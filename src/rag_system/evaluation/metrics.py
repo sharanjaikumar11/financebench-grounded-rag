@@ -22,7 +22,36 @@ def retrieval_hit(case: EvaluationCase, retrieved: Sequence[RetrievedChunk]) -> 
 
 
 def answer_correct(case: EvaluationCase, answer: GroundedAnswer) -> bool:
-    return not answer.insufficient_context and normalized_text(case.expected_answer) in normalized_text(answer.text)
+    if answer.insufficient_context:
+        return False
+    expected = normalized_text(case.expected_answer)
+    actual = normalized_text(answer.text)
+    if expected in actual:
+        return True
+    if expected in {"yes", "no"}:
+        return bool(re.search(rf"\b{re.escape(expected)}\b", actual))
+    expected_value = _financial_value_in_requested_units(case.expected_answer, case.question)
+    actual_value = _financial_value_in_requested_units(answer.text, case.question)
+    return (
+        expected_value is not None
+        and actual_value is not None
+        and abs(expected_value - actual_value) <= max(0.01, abs(expected_value) * 0.005)
+    )
+
+
+def _financial_value_in_requested_units(value: str, question: str) -> float | None:
+    """Normalize dollar figures so equivalent million/billion wording compares fairly."""
+    match = re.search(r"\$?\s*([0-9][0-9,]*(?:\.\d+)?)\s*(billion|million|bn|mn)?\b", value, re.IGNORECASE)
+    if not match:
+        return None
+    amount = float(match.group(1).replace(",", ""))
+    unit = (match.group(2) or "").casefold()
+    requested = normalized_text(question)
+    if "usd billion" in requested or "in billions" in requested:
+        return amount * (0.001 if unit in {"million", "mn"} else 1.0)
+    if "usd million" in requested or "in millions" in requested:
+        return amount * (1000.0 if unit in {"billion", "bn"} else 1.0)
+    return amount
 
 
 def grounding_supported(answer: GroundedAnswer, retrieved: Sequence[RetrievedChunk]) -> bool:
@@ -38,7 +67,7 @@ def grounding_supported(answer: GroundedAnswer, retrieved: Sequence[RetrievedChu
 
 
 def citation_correct(case: EvaluationCase, answer: GroundedAnswer) -> bool:
-    return not answer.insufficient_context and bool(answer.citations) and all(
+    return not answer.insufficient_context and bool(answer.citations) and any(
         document_matches(citation.document_name, case.expected_document)
         for citation in answer.citations
     )

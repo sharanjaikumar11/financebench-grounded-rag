@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from rag_system.evaluation.datasets import EvaluationCase, load_evaluation_cases
+from rag_system.evaluation.metrics import answer_correct, citation_correct
 from rag_system.evaluation.runner import EvaluationResponse, EvaluationRunner, GroundedEvaluationSystem
 from rag_system.evaluation.runner import RetrievalExperimentRunner
 from rag_system.schemas import Citation, DocumentChunk, GroundedAnswer, RetrievedChunk
@@ -86,6 +87,30 @@ def test_runner_records_each_failure_category() -> None:
         "unsupported_answer",
         "incorrect_citation",
     )
+
+
+def test_answer_metric_accepts_equivalent_financial_units_and_yes_no_verdicts() -> None:
+    millions_case = EvaluationCase("case-1", "What is the value in USD millions?", "$1577.00", "source.pdf")
+    billions_case = EvaluationCase("case-2", "What is the value in USD billions?", "$8.70", "source.pdf")
+    verdict_case = EvaluationCase("case-3", "Is the company capital intensive?", "No", "source.pdf")
+
+    assert answer_correct(millions_case, GroundedAnswer("$1.577 billion [S1]", (), False))
+    assert answer_correct(billions_case, GroundedAnswer("$8,700 million [S1]", (), False))
+    assert answer_correct(verdict_case, GroundedAnswer("No, it is not. [S1]", (), False))
+
+
+def test_citation_metric_accepts_the_expected_source_among_direct_citations() -> None:
+    case = EvaluationCase("case-1", "Question", "answer", "expected.pdf")
+    cited = GroundedAnswer(
+        "Answer [S1] [S2]",
+        (
+            Citation("S1", "doc-1", "other.pdf", (), ()),
+            Citation("S2", "doc-2", "expected.pdf", (), ()),
+        ),
+        False,
+    )
+
+    assert citation_correct(case, cited)
 
 
 def test_case_loader_validates_nonempty_unique_case_ids(tmp_path: Path) -> None:
