@@ -3,7 +3,7 @@ from pathlib import Path
 import pymupdf
 import pytest
 
-from rag_system.ingestion.parsers import EmptyDocumentError, UnsupportedDocumentError
+from rag_system.ingestion.parsers import EmptyDocumentError, UnsupportedDocumentError, _extract_pdf_table_text
 from rag_system.ingestion.pipeline import DocumentIngestor, DocumentRegistry
 
 
@@ -82,6 +82,18 @@ def test_preserves_pdf_page_metadata(tmp_path: Path) -> None:
     assert [segment.page_number for segment in document.segments] == [1, 2]
     assert "First page evidence" in document.segments[0].text
     assert "Second page evidence" in document.segments[1].text
+
+
+def test_preserves_detected_pdf_table_rows_for_calculation() -> None:
+    class FakeTable:
+        def extract(self) -> list[list[str | None]]:
+            return [["Metric", "2024", "2023"], ["Revenue", "$100", "$90"]]
+
+    class FakePage:
+        def find_tables(self) -> list[FakeTable]:
+            return [FakeTable()]
+
+    assert _extract_pdf_table_text(FakePage()) == "Metric 2024 2023\nRevenue $100 $90"
 
 
 def test_rejects_empty_documents(tmp_path: Path) -> None:

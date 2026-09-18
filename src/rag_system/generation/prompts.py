@@ -10,7 +10,7 @@ INSUFFICIENT_CONTEXT = "INSUFFICIENT_CONTEXT"
 
 
 def grounded_answer_prompt(
-    question: str, source_map: Mapping[str, RetrievedChunk]
+    question: str, source_map: Mapping[str, RetrievedChunk], calculation_evidence: tuple[str, ...] = ()
 ) -> str:
     """Build a prompt that restricts the model to retrieved evidence."""
     sources = "\n\n".join(
@@ -32,5 +32,7 @@ def grounded_answer_prompt(
         "supports the conclusion. "
         "Every factual statement in a supported answer must include one or more source labels "
         "in the format [S1]. Cite only source labels that directly support that answer.\n\n"
-        f"Question: {question}\n\nSources:\n{sources}"
+        f"Question: {question}\n\n"
+        f"Deterministic table calculations:\n{'\n'.join(calculation_evidence) or 'None'}\n\n"
+        f"Sources:\n{sources}"
     )
