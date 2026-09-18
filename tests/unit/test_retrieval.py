@@ -15,16 +15,19 @@ class TestEmbedder:
             "revenue increased": (1.0, 0.0),
             "operating risk": (0.0, 1.0),
             "revenue query": (0.9, 0.1),
+            "the requested table value": (0.5, 0.5),
         }
         return tuple(vectors[text] for text in texts)
 
 
-def chunk(chunk_id: str, document_id: str, text: str, strategy: str = "fixed_token") -> DocumentChunk:
+def chunk(
+    chunk_id: str, document_id: str, text: str, strategy: str = "fixed_token", chunk_index: int = 0
+) -> DocumentChunk:
     return DocumentChunk(
         chunk_id=chunk_id,
         document_id=document_id,
         document_name=f"{document_id}.pdf",
-        chunk_index=0,
+        chunk_index=chunk_index,
         text=text,
         token_count=2,
         chunking_strategy=strategy,
@@ -143,3 +146,19 @@ def test_sparse_query_expands_common_finance_filing_terms() -> None:
     assert "property" in terms
     assert "equipment" in terms
     assert " OR " in terms
+
+
+def test_hybrid_retriever_includes_adjacent_chunks_for_split_table_context(tmp_path: Path) -> None:
+    store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
+    retriever = HybridRetriever(TestEmbedder(), store)
+    source = [
+        chunk("before", "doc-a", "operating risk", chunk_index=0),
+        chunk("matching", "doc-a", "revenue increased", chunk_index=1),
+        chunk("after", "doc-a", "the requested table value", chunk_index=2),
+    ]
+    retriever.index(source)
+
+    results = retriever.retrieve("revenue query", 1)
+
+    assert [item.chunk.chunk_id for item in results] == ["before", "matching", "after"]
+    store.close()

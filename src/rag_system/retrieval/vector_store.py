@@ -181,6 +181,38 @@ class SQLiteVectorStore:
             for chunk, score in sorted(fused.values(), key=lambda value: value[1], reverse=True)[:top_k]
         )
 
+    def expand_with_neighbors(
+        self, results: Sequence[RetrievedChunk], radius: int = 1
+    ) -> tuple[RetrievedChunk, ...]:
+        """Preserve table and sentence context across fixed-token chunk boundaries."""
+        if radius < 0:
+            raise ValueError("radius cannot be negative")
+        expanded: list[RetrievedChunk] = []
+        seen: set[str] = set()
+        for result in results:
+            rows = self._connection.execute(
+                """
+                SELECT * FROM chunks
+                WHERE document_id = ? AND chunking_strategy = ?
+                  AND chunk_index BETWEEN ? AND ?
+                ORDER BY chunk_index
+                """,
+                (
+                    result.chunk.document_id,
+                    result.chunk.chunking_strategy,
+                    result.chunk.chunk_index - radius,
+                    result.chunk.chunk_index + radius,
+                ),
+            ).fetchall()
+            for row in rows:
+                chunk = self._row_to_chunk(row)
+                if chunk.chunk_id in seen:
+                    continue
+                seen.add(chunk.chunk_id)
+                score = result.score if chunk.chunk_id == result.chunk.chunk_id else result.score - 0.0001
+                expanded.append(RetrievedChunk(chunk, score))
+        return tuple(expanded)
+
     @staticmethod
     def _row_to_chunk(row: sqlite3.Row) -> DocumentChunk:
         return DocumentChunk(

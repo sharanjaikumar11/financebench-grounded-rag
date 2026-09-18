@@ -59,4 +59,5 @@ class HybridRetriever(DenseRetriever):
         query_embedding = self.embedder.embed([query])
         if len(query_embedding) != 1:
             raise RuntimeError("Embedding provider must return one vector for a query")
-        return self.vector_store.hybrid_search(query_embedding[0], query, top_k, metadata_filter)
+        ranked = self.vector_store.hybrid_search(query_embedding[0], query, top_k, metadata_filter)
+        return self.vector_store.expand_with_neighbors(ranked)

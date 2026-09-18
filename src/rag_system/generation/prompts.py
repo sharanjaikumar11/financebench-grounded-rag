@@ -26,6 +26,8 @@ def grounded_answer_prompt(
         f"If the sources do not contain enough evidence, return exactly {INSUFFICIENT_CONTEXT}. "
         "Give the direct answer first and keep it concise. Preserve the unit requested in the "
         "question; for a yes/no question, begin with exactly Yes or No. "
+        "For a qualitative finance question, make a concise conclusion from the cited financial "
+        "figures when those figures provide the requested basis. "
         "Every factual statement in a supported answer must include one or more source labels "
         "in the format [S1]. Cite only source labels that directly support that answer.\n\n"
         f"Question: {question}\n\nSources:\n{sources}"
