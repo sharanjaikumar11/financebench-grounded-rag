@@ -158,16 +158,17 @@ class SQLiteVectorStore:
         metadata_filter: Mapping[str, object] | None = None,
     ) -> tuple[RetrievedChunk, ...]:
         """Fuse dense and exact-term ranking with reciprocal-rank fusion."""
-        dense = self.search(query_embedding, max(top_k * 5, 20), metadata_filter)
+        candidate_count = max(top_k * 10, 50)
+        dense = self.search(query_embedding, candidate_count, metadata_filter)
         clauses, parameters = self._filter_query(metadata_filter or {})
-        terms = " ".join(re.findall(r"[A-Za-z0-9]+", query))
+        terms = _sparse_query_terms(query)
         if not terms:
             return dense[:top_k]
         statement = "SELECT chunks.* FROM chunks_fts JOIN chunks ON chunks_fts.rowid = chunks.rowid WHERE chunks_fts MATCH ?"
         if clauses:
             statement += " AND " + " AND ".join(f"chunks.{clause}" for clause in clauses)
         statement += " ORDER BY bm25(chunks_fts) LIMIT ?"
-        sparse_rows = self._connection.execute(statement, [terms, *parameters, max(top_k * 5, 20)]).fetchall()
+        sparse_rows = self._connection.execute(statement, [terms, *parameters, candidate_count]).fetchall()
         sparse = [RetrievedChunk(self._row_to_chunk(row), 0.0) for row in sparse_rows]
         fused: dict[str, tuple[DocumentChunk, float]] = {}
         for rank, item in enumerate(dense, start=1):
@@ -207,3 +208,24 @@ def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
     if left_norm == 0 or right_norm == 0:
         raise VectorStoreError("Embeddings cannot have zero magnitude")
     return numerator / (left_norm * right_norm)
+
+
+def _sparse_query_terms(query: str) -> str:
+    """Build an OR query from meaningful finance terms and common filing aliases."""
+    stop_words = {
+        "answer", "amount", "based", "details", "from", "give", "shown", "that",
+        "the", "this", "using", "what", "with", "would", "year",
+    }
+    terms = {
+        term.casefold()
+        for term in re.findall(r"[A-Za-z0-9]+", query)
+        if len(term) > 2 and term.casefold() not in stop_words
+    }
+    normalized_query = query.casefold()
+    if "capital expenditure" in normalized_query or "capex" in normalized_query:
+        terms.update({"purchases", "property", "plant", "equipment", "investing", "activities"})
+    if "ppne" in normalized_query:
+        terms.update({"property", "plant", "equipment", "net", "assets", "balance"})
+    if "capital-intensive" in normalized_query or "capital intensive" in normalized_query:
+        terms.update({"capital", "spending", "property", "plant", "equipment", "sales"})
+    return " OR ".join(sorted(terms))
