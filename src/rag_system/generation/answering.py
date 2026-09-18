@@ -26,9 +26,14 @@ class GeminiAnswerProvider:
 
     def generate(self, prompt: str) -> str:
         from google import genai
+        from google.genai import types
 
         client = genai.Client(api_key=self.api_key)
-        response = client.models.generate_content(model=self.model, contents=prompt)
+        response = client.models.generate_content(
+            model=self.model,
+            contents=prompt,
+            config=types.GenerateContentConfig(temperature=0),
+        )
         if not response.text:
             raise RuntimeError("Gemini returned an empty answer")
         return response.text.strip()

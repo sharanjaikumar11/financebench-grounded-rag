@@ -41,6 +41,7 @@ def test_generator_returns_answer_with_only_explicit_valid_citations() -> None:
     assert result.citations[0].document_name == "annual-report.pdf"
     assert result.citations[0].page_numbers == (12,)
     assert "Do not add facts not supported" in provider.prompt
+    assert "only when the sources lack the facts" in provider.prompt
     assert "[S1]" in provider.prompt
 
 
