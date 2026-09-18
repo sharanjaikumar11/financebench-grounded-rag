@@ -61,14 +61,13 @@ def _build_document(
 
 
 def parse_pdf(path: Path, document_id: str, content_hash: str) -> ParsedDocument:
-    """Extract page text and preserve detected table rows for downstream calculations."""
+    """Extract one normalized segment per PDF page."""
 
     segments: list[DocumentSegment] = []
     try:
         with pymupdf.open(path) as pdf:
             for page_index, page in enumerate(pdf):
-                table_text = _extract_pdf_table_text(page)
-                text = normalize_text("\n\n".join(part for part in (page.get_text(), table_text) if part))
+                text = normalize_text(page.get_text())
                 if text:
                     segments.append(
                         DocumentSegment(
@@ -82,23 +81,6 @@ def parse_pdf(path: Path, document_id: str, content_hash: str) -> ParsedDocument
     return _build_document(
         path, document_id, content_hash, SourceFormat.PDF, segments
     )
-
-
-def _extract_pdf_table_text(page: pymupdf.Page) -> str:
-    """Return detected PDF tables as line-preserved text, or nothing when none are found."""
-    try:
-        tables = page.find_tables()
-    except (AttributeError, RuntimeError, ValueError):
-        return ""
-    rows: list[str] = []
-    for table in tables:
-        for row in table.extract():
-            cells = [normalize_text(cell or "") for cell in row]
-            if any(cells):
-                rows.append(" ".join(cell for cell in cells if cell))
-    return "\n".join(rows)
-
-
 def _read_text_file(path: Path) -> str:
     for encoding in ("utf-8", "utf-8-sig", "cp1252"):
         try:

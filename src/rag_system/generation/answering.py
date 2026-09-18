@@ -6,7 +6,6 @@ from typing import Protocol
 
 from rag_system.generation.citations import build_source_map, citations_from_answer
 from rag_system.generation.prompts import INSUFFICIENT_CONTEXT, grounded_answer_prompt
-from rag_system.generation.table_calculations import TableCalculator
 from rag_system.schemas import GroundedAnswer, RetrievedChunk
 
 
@@ -50,19 +49,15 @@ class UnavailableAnswerProvider:
 class GroundedAnswerGenerator:
     """Enforce evidence-only answering and return structured source citations."""
 
-    def __init__(self, provider: AnswerProvider, table_calculator: TableCalculator | None = None) -> None:
+    def __init__(self, provider: AnswerProvider) -> None:
         self.provider = provider
-        self.table_calculator = table_calculator or TableCalculator()
 
     def answer(self, question: str, sources: tuple[RetrievedChunk, ...]) -> GroundedAnswer:
         if not sources:
             return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True)
 
         source_map = build_source_map(sources)
-        calculations = tuple(
-            evidence.render() for evidence in self.table_calculator.evidence(question, source_map)
-        )
-        response = self.provider.generate(grounded_answer_prompt(question, source_map, calculations)).strip()
+        response = self.provider.generate(grounded_answer_prompt(question, source_map)).strip()
         if response == INSUFFICIENT_CONTEXT:
             return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True)
 
