@@ -99,6 +99,15 @@ def test_answer_metric_accepts_equivalent_financial_units_and_yes_no_verdicts() 
     assert answer_correct(verdict_case, GroundedAnswer("No, it is not. [S1]", (), False))
 
 
+def test_answer_metric_ignores_fiscal_year_when_selecting_a_financial_value() -> None:
+    case = EvaluationCase("case-1", "What is FY2018 net PPNE in USD billions?", "$8.70", "source.pdf")
+
+    assert answer_correct(
+        case,
+        GroundedAnswer("The FY2018 net PPNE was $8.738 billion. [S1]", (), False),
+    )
+
+
 def test_citation_metric_accepts_the_expected_source_among_direct_citations() -> None:
     case = EvaluationCase("case-1", "Question", "answer", "expected.pdf")
     cited = GroundedAnswer(
