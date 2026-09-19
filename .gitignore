@@ -4,7 +4,9 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
+.pytest-tmp/
 .test-tmp-ingestion/
+.streamlit/secrets.toml
 data/raw/*
 !data/raw/.gitkeep
 evaluation/results/*

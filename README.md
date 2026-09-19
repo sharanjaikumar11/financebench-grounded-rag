@@ -27,6 +27,16 @@ uvicorn rag_system.main:app --host 0.0.0.0 --port 8000
 
 Endpoints: `GET /health`, `POST /index`, and `POST /query`.
 
+## Lead demo
+
+With `GEMINI_API_KEY` set in the terminal, run the Streamlit demo:
+
+```powershell
+streamlit run streamlit_app.py
+```
+
+The browser opens at `http://localhost:8501` and shows grounded answers, source citations, and safe insufficient-context responses.
+
 ## Evaluation
 
 Run the reproducible final retrieval experiment:
