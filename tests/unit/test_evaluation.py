@@ -135,6 +135,15 @@ def test_retrieval_experiment_records_source_evidence_and_recall() -> None:
     assert retriever.calls == [("Question", 5, {"chunking_strategy": "fixed_token"})]
 
 
+def test_retrieval_experiment_records_exactly_the_requested_top_k() -> None:
+    case = EvaluationCase("case-1", "Question", "$1577.00", "3M_2018_10K.pdf")
+    retriever = FakeRetriever((source(), source("other.pdf")))
+
+    report = RetrievalExperimentRunner().run(retriever, [case], "fixed_token", 1)
+
+    assert report.cases[0].retrieved_documents == ("3M_2018_10K.pdf",)
+
+
 def test_retrieval_experiment_can_apply_inferred_filing_metadata() -> None:
     case = EvaluationCase(
         "case-1", "What was FY2018 capital expenditure for 3M?", "$1577.00", "3M_2018_10K.pdf"

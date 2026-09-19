@@ -211,7 +211,7 @@ class SQLiteVectorStore:
                 seen.add(chunk.chunk_id)
                 score = result.score if chunk.chunk_id == result.chunk.chunk_id else result.score - 0.0001
                 expanded.append(RetrievedChunk(chunk, score))
-        return tuple(expanded)
+        return tuple(sorted(expanded, key=lambda item: item.score, reverse=True))
 
     @staticmethod
     def _row_to_chunk(row: sqlite3.Row) -> DocumentChunk:

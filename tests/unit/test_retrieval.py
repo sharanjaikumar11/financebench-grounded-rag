@@ -160,5 +160,5 @@ def test_hybrid_retriever_includes_adjacent_chunks_for_split_table_context(tmp_p
 
     results = retriever.retrieve("revenue query", 1)
 
-    assert [item.chunk.chunk_id for item in results] == ["before", "matching", "after"]
+    assert [item.chunk.chunk_id for item in results] == ["matching", "before", "after"]
     store.close()

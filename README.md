@@ -29,6 +29,12 @@ Endpoints: `GET /health`, `POST /index`, and `POST /query`.
 
 ## Evaluation
 
+Run the reproducible final retrieval experiment:
+
+```powershell
+python scripts\run_evaluation.py --vector-store data\processed\local_sentence_transformers\vectors.sqlite3 --chunking-strategy fixed_token --top-k 3 --retrieval-mode hybrid --apply-query-metadata-filter --output evaluation\results\fixed_token_hybrid_top_k_3_metadata_filtered.json
+```
+
 Run grounded answer evaluation with the key available in the same terminal:
 
 ```powershell

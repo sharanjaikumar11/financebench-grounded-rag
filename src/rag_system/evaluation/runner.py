@@ -169,7 +169,7 @@ class RetrievalExperimentRunner:
                 case.question,
                 top_k,
                 metadata_filter,
-            )
+            )[:top_k]
             results.append(
                 RetrievalCaseResult(
                     case_id=case.case_id,
