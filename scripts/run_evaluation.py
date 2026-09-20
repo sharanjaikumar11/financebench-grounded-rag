@@ -14,7 +14,7 @@ from rag_system.retrieval.vector_store import SQLiteVectorStore
 
 
 def parse_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluate dense retrieval against FinanceBench cases.")
+    parser = argparse.ArgumentParser(description="Evaluate retrieval against FinanceBench cases.")
     parser.add_argument("--cases", type=Path, default=Path("evaluation/cases.json"))
     parser.add_argument("--vector-store", type=Path, required=True)
     parser.add_argument("--chunking-strategy", choices=("fixed_token", "section_aware"), required=True)
