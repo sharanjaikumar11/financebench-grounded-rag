@@ -47,7 +47,39 @@ class SQLiteVectorStore:
         self._connection.execute(
             "CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(text, content='chunks', content_rowid='rowid')"
         )
-        self._connection.execute("INSERT INTO chunks_fts(chunks_fts) VALUES ('rebuild')")
+        self._connection.execute(
+            "CREATE TABLE IF NOT EXISTS vector_store_metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)"
+        )
+        self._connection.execute(
+            """
+            CREATE TRIGGER IF NOT EXISTS chunks_fts_after_insert AFTER INSERT ON chunks BEGIN
+                INSERT INTO chunks_fts(rowid, text) VALUES (new.rowid, new.text);
+            END
+            """
+        )
+        self._connection.execute(
+            """
+            CREATE TRIGGER IF NOT EXISTS chunks_fts_after_delete AFTER DELETE ON chunks BEGIN
+                INSERT INTO chunks_fts(chunks_fts, rowid, text) VALUES ('delete', old.rowid, old.text);
+            END
+            """
+        )
+        self._connection.execute(
+            """
+            CREATE TRIGGER IF NOT EXISTS chunks_fts_after_update AFTER UPDATE OF text ON chunks BEGIN
+                INSERT INTO chunks_fts(chunks_fts, rowid, text) VALUES ('delete', old.rowid, old.text);
+                INSERT INTO chunks_fts(rowid, text) VALUES (new.rowid, new.text);
+            END
+            """
+        )
+        schema_version = self._connection.execute(
+            "SELECT value FROM vector_store_metadata WHERE key = 'fts_schema_version'"
+        ).fetchone()
+        if schema_version is None:
+            self._connection.execute("INSERT INTO chunks_fts(chunks_fts) VALUES ('rebuild')")
+            self._connection.execute(
+                "INSERT INTO vector_store_metadata(key, value) VALUES ('fts_schema_version', '1')"
+            )
         self._connection.commit()
 
     def close(self) -> None:
@@ -122,6 +154,7 @@ class SQLiteVectorStore:
         query_embedding: Sequence[float],
         top_k: int,
         metadata_filter: Mapping[str, object] | None = None,
+        candidate_document_ids: Sequence[str] | None = None,
     ) -> tuple[RetrievedChunk, ...]:
         if top_k < 1:
             raise ValueError("top_k must be at least one")
@@ -129,6 +162,12 @@ class SQLiteVectorStore:
             raise VectorStoreError("Query embedding cannot be empty")
 
         clauses, parameters = self._filter_query(metadata_filter or {})
+        if candidate_document_ids is not None:
+            if not candidate_document_ids:
+                return ()
+            placeholders = ", ".join("?" for _ in candidate_document_ids)
+            clauses.append(f"document_id IN ({placeholders})")
+            parameters.extend(candidate_document_ids)
         statement = "SELECT * FROM chunks"
         if clauses:
             statement += " WHERE " + " AND ".join(clauses)
@@ -159,17 +198,23 @@ class SQLiteVectorStore:
     ) -> tuple[RetrievedChunk, ...]:
         """Fuse dense and exact-term ranking with reciprocal-rank fusion."""
         candidate_count = max(top_k * 10, 50)
-        dense = self.search(query_embedding, candidate_count, metadata_filter)
         clauses, parameters = self._filter_query(metadata_filter or {})
         terms = _sparse_query_terms(query)
         if not terms:
-            return dense[:top_k]
+            return self.search(query_embedding, top_k, metadata_filter)
         statement = "SELECT chunks.* FROM chunks_fts JOIN chunks ON chunks_fts.rowid = chunks.rowid WHERE chunks_fts MATCH ?"
         if clauses:
             statement += " AND " + " AND ".join(f"chunks.{clause}" for clause in clauses)
         statement += " ORDER BY bm25(chunks_fts) LIMIT ?"
         sparse_rows = self._connection.execute(statement, [terms, *parameters, candidate_count]).fetchall()
         sparse = [RetrievedChunk(self._row_to_chunk(row), 0.0) for row in sparse_rows]
+        candidate_document_ids = tuple(dict.fromkeys(item.chunk.document_id for item in sparse))
+        dense = self.search(
+            query_embedding,
+            candidate_count,
+            metadata_filter,
+            candidate_document_ids=candidate_document_ids or None,
+        )
         fused: dict[str, tuple[DocumentChunk, float]] = {}
         for rank, item in enumerate(dense, start=1):
             fused[item.chunk.chunk_id] = (item.chunk, 1 / (60 + rank))

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from time import perf_counter
+
 import streamlit as st
 
 from rag_system.chunking import FixedTokenChunker
@@ -25,8 +27,20 @@ SUGGESTIONS = {
 
 
 @st.cache_resource
+def retriever() -> HybridRetriever:
+    """Create one shared local retrieval stack for the Streamlit process."""
+    from pathlib import Path
+
+    storage = Path(INDEX_DIRECTORY)
+    return HybridRetriever(
+        SentenceTransformerEmbeddingProvider(),
+        SQLiteVectorStore(storage / "vectors.sqlite3"),
+    )
+
+
+@st.cache_resource
 def query_service() -> RAGQueryService:
-    """Create one shared local RAG service for the Streamlit process."""
+    """Create one shared grounded-answer service for the Streamlit process."""
     settings = Settings.from_environment()
     api_key = settings.require_gemini_key()
     from pathlib import Path
@@ -35,10 +49,7 @@ def query_service() -> RAGQueryService:
     return RAGQueryService(
         ingestor=DocumentIngestor(DocumentRegistry(storage / "documents.sqlite3")),
         chunker=FixedTokenChunker(200, 40),
-        retriever=HybridRetriever(
-            SentenceTransformerEmbeddingProvider(),
-            SQLiteVectorStore(storage / "vectors.sqlite3"),
-        ),
+        retriever=retriever(),
         answer_generator=GroundedAnswerGenerator(
             GeminiAnswerProvider(api_key, settings.gemini_model)
         ),
@@ -92,8 +103,10 @@ if question:
     with st.chat_message("assistant"):
         try:
             with st.status(":shimmer[Retrieving source evidence]", type="compact") as status:
+                started_at = perf_counter()
                 response = query_service().answer(question)
-                status.update(label="Source retrieval complete", state="complete")
+                elapsed_seconds = perf_counter() - started_at
+                status.update(label=f"Answer ready in {elapsed_seconds:.1f} seconds", state="complete")
         except ValueError as error:
             st.error(str(error))
         except RuntimeError as error:
@@ -110,6 +123,7 @@ if question:
                     st.subheader("Sources")
                     for citation in citations:
                         st.caption(f":material/description: {citation}")
+                st.caption(f"Response time: {elapsed_seconds:.1f} seconds")
                 content = response.answer.text
             st.session_state.messages.append(
                 {"role": "assistant", "content": content, "citations": citations}

@@ -23,16 +23,18 @@ class GeminiAnswerProvider:
             raise ValueError("A Gemini API key is required for answer generation")
         self.api_key = api_key
         self.model = model
+        self._client: object | None = None
 
     def generate(self, prompt: str) -> str:
         from google import genai
         from google.genai import types
 
-        client = genai.Client(api_key=self.api_key)
-        response = client.models.generate_content(
+        if self._client is None:
+            self._client = genai.Client(api_key=self.api_key)
+        response = self._client.models.generate_content(
             model=self.model,
             contents=prompt,
-            config=types.GenerateContentConfig(temperature=0),
+            config=types.GenerateContentConfig(temperature=0, max_output_tokens=256),
         )
         if not response.text:
             raise RuntimeError("Gemini returned an empty answer")

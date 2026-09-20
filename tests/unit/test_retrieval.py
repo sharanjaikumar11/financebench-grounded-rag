@@ -61,6 +61,20 @@ def test_hybrid_retriever_combines_dense_and_keyword_candidates(tmp_path: Path) 
     store.close()
 
 
+def test_hybrid_retriever_scopes_dense_search_to_keyword_candidate_documents(tmp_path: Path) -> None:
+    store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
+    retriever = HybridRetriever(TestEmbedder(), store)
+    retriever.index([
+        chunk("revenue", "doc-a", "revenue increased"),
+        chunk("risk", "doc-b", "operating risk"),
+    ])
+
+    results = store.hybrid_search((0.9, 0.1), "revenue query", top_k=2)
+
+    assert [item.chunk.document_id for item in results] == ["doc-a"]
+    store.close()
+
+
 def test_dense_retriever_applies_document_and_strategy_filters(tmp_path: Path) -> None:
     store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
     retriever = DenseRetriever(TestEmbedder(), store)
