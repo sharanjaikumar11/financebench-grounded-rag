@@ -21,12 +21,17 @@ class TestEmbedder:
 
 
 def chunk(
-    chunk_id: str, document_id: str, text: str, strategy: str = "fixed_token", chunk_index: int = 0
+    chunk_id: str,
+    document_id: str,
+    text: str,
+    strategy: str = "fixed_token",
+    chunk_index: int = 0,
+    document_name: str | None = None,
 ) -> DocumentChunk:
     return DocumentChunk(
         chunk_id=chunk_id,
         document_id=document_id,
-        document_name=f"{document_id}.pdf",
+        document_name=document_name or f"{document_id}.pdf",
         chunk_index=chunk_index,
         text=text,
         token_count=2,
@@ -147,6 +152,38 @@ def test_filing_metadata_filter_requires_unambiguous_company_and_fiscal_year() -
     assert filing_metadata_filter("What was FY2018 capital expenditure for 3M?") == {
         "document_name": "3M_2018_10K.pdf"
     }
+
+
+def test_vector_store_infers_an_unambiguous_company_and_year_from_indexed_documents(
+    tmp_path: Path,
+) -> None:
+    store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
+    store.upsert(
+        [
+            chunk(
+                "amazon", "doc-amazon", "net income attributable to shareholders",
+                document_name="AMAZON_2019_10K.pdf",
+            ),
+            chunk(
+                "boeing", "doc-boeing", "property plant and equipment",
+                document_name="BOEING_2018_10K.pdf",
+            ),
+            chunk(
+                "johnson", "doc-johnson", "consumer health discontinued operation",
+                document_name="JOHNSON_JOHNSON_2023_8K_dated-2023-08-30.pdf",
+            ),
+        ],
+        [(1.0, 0.0), (0.0, 1.0), (0.5, 0.5)],
+    )
+
+    assert store.infer_filing_metadata_filter(
+        "What was Amazon's FY2019 net income attributable to shareholders?"
+    ) == {"document_name": "AMAZON_2019_10K.pdf"}
+    assert store.infer_filing_metadata_filter("What was FY2019 net income?") == {}
+    assert store.infer_filing_metadata_filter(
+        "Which Johnson and Johnson business segment was discontinued from August 30, 2023 onward?"
+    ) == {"document_name": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30.pdf"}
+    store.close()
     assert filing_metadata_filter("What was capital expenditure?") == {}
     assert filing_metadata_filter("Is 3M a capital-intensive business based on FY2022 data?") == {
         "document_name": "3M_2022_10K.pdf"

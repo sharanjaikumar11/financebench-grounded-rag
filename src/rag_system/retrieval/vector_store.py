@@ -85,6 +85,70 @@ class SQLiteVectorStore:
     def close(self) -> None:
         self._connection.close()
 
+    def infer_filing_metadata_filter(self, question: str) -> Mapping[str, object]:
+        """Infer one exact filing from a company name and year present in the index.
+
+        This is intentionally conservative: it returns a filter only when the
+        normalized company name and one year identify exactly one indexed filing.
+        """
+        normalized_question = self._normalize_name(question)
+        dated_match = re.search(
+            r"\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(20\d{2})\b",
+            question,
+            flags=re.IGNORECASE,
+        )
+        if dated_match:
+            month_numbers = {
+                "january": "01", "february": "02", "march": "03", "april": "04",
+                "may": "05", "june": "06", "july": "07", "august": "08",
+                "september": "09", "october": "10", "november": "11", "december": "12",
+            }
+            date_suffix = (
+                f"dated-{dated_match.group(3)}-"
+                f"{month_numbers[dated_match.group(1).casefold()]}-"
+                f"{int(dated_match.group(2)):02d}.pdf"
+            )
+            dated_names = self._connection.execute(
+                "SELECT DISTINCT document_name FROM chunks WHERE document_name LIKE ?",
+                (f"%{date_suffix}",),
+            ).fetchall()
+            dated_matches = [
+                row["document_name"]
+                for row in dated_names
+                if self._normalized_company_name(row["document_name"]) in normalized_question
+            ]
+            if len(dated_matches) == 1:
+                return {"document_name": dated_matches[0]}
+
+        years = re.findall(r"\b(?:FY)?(20\d{2})\b", question, flags=re.IGNORECASE)
+        if len(set(years)) != 1:
+            return {}
+        year = years[0]
+        names = self._connection.execute(
+            "SELECT DISTINCT document_name FROM chunks WHERE document_name LIKE ?",
+            (f"%_{year}%",),
+        ).fetchall()
+        matches: list[str] = []
+        for row in names:
+            document_name = row["document_name"]
+            normalized_company = self._normalized_company_name(document_name, year)
+            if normalized_company and normalized_company in normalized_question:
+                matches.append(document_name)
+        return {"document_name": matches[0]} if len(matches) == 1 else {}
+
+    @staticmethod
+    def _normalized_company_name(document_name: str, year: str | None = None) -> str:
+        """Return the normalized company part of a FinanceBench-style file name."""
+        company_name = re.split(rf"_{year}(?:Q\d+)?_", document_name, maxsplit=1)[0] if year else re.split(
+            r"_20\d{2}(?:Q\d+)?_", document_name, maxsplit=1
+        )[0]
+        return SQLiteVectorStore._normalize_name(company_name)
+
+    @staticmethod
+    def _normalize_name(value: str) -> str:
+        """Normalize company names while treating '&' and 'and' equivalently."""
+        return re.sub(r"[^A-Za-z0-9]", "", re.sub(r"\band\b", "", value, flags=re.IGNORECASE)).upper()
+
     def has_complete_document(
         self, document_id: str, chunking_strategy: str, expected_chunk_count: int
     ) -> bool:

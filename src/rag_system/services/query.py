@@ -79,6 +79,8 @@ class RAGQueryService:
         if not question:
             raise ValueError("A non-empty question is required")
         inferred_filter = filing_metadata_filter(question)
+        if not inferred_filter:
+            inferred_filter = self.retriever.vector_store.infer_filing_metadata_filter(question)
         combined_filter = dict(inferred_filter)
         combined_filter.update(metadata_filter or {})
         retrieved = self.retriever.retrieve(question, self.top_k, combined_filter)
