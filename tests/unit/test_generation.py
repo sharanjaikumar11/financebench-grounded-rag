@@ -2,6 +2,7 @@ import pytest
 
 from rag_system.generation.answering import (
     GeminiAnswerProvider,
+    GroqAnswerProvider,
     GroundedAnswerGenerator,
     _generation_evidence_sources,
 )
@@ -76,6 +77,7 @@ def test_generator_returns_answer_with_only_explicit_valid_citations() -> None:
     assert "Financial-statement tables are evidence" in provider.prompt
     assert "capital expenditure/capital spending" in provider.prompt
     assert "highest, lowest, largest, or smallest" in provider.prompt
+    assert "at most 40 words" in provider.prompt
     assert "[S1]" in provider.prompt
 
 
@@ -110,6 +112,8 @@ def test_generator_retries_a_safe_abstention_with_the_same_cited_evidence() -> N
     assert result.citations[0].source_label == "S1"
     assert len(provider.prompts) == 2
     assert "The first pass returned INSUFFICIENT_CONTEXT" in provider.prompts[1]
+    assert "financial-statement extraction task" in provider.prompts[1]
+    assert "exactly one answer sentence" in provider.prompts[1]
 
 
 def test_generation_evidence_reranking_promotes_financial_aliases_and_table_rows() -> None:
@@ -129,9 +133,44 @@ def test_generation_evidence_reranking_promotes_financial_aliases_and_table_rows
     assert ranked[0].chunk.chunk_id == "statement-row"
 
 
+def test_generation_evidence_keeps_all_expanded_chunks_by_default() -> None:
+    sources = tuple(evidence_source(f"chunk-{index}", f"Table row {index}", index) for index in range(9))
+
+    assert len(_generation_evidence_sources("What is the table value?", sources)) == 9
+
+
 def test_gemini_answer_provider_requires_an_api_key() -> None:
     with pytest.raises(ValueError):
         GeminiAnswerProvider("", "gemini-3.1-flash-lite")
+
+
+def test_groq_answer_provider_requires_an_api_key() -> None:
+    with pytest.raises(ValueError):
+        GroqAnswerProvider("", "openai/gpt-oss-20b")
+
+
+def test_groq_answer_provider_uses_citation_preserving_chat_completion(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import sys
+    from types import ModuleType, SimpleNamespace
+
+    captured: dict[str, object] = {}
+
+    class Completions:
+        def create(self, **kwargs: object) -> SimpleNamespace:
+            captured.update(kwargs)
+            return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="Answer [S1]"))])
+
+    fake_groq = ModuleType("groq")
+    fake_groq.Groq = lambda **_: SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+    monkeypatch.setitem(sys.modules, "groq", fake_groq)
+
+    assert GroqAnswerProvider("test-key", "openai/gpt-oss-20b").generate("question") == "Answer [S1]"
+    assert captured["temperature"] == 0
+    assert captured["messages"] == [{"role": "user", "content": "question"}]
+    assert captured["include_reasoning"] is False
+    assert captured["reasoning_effort"] == "low"
 
 
 def test_gemini_answer_provider_converts_provider_errors_to_safe_runtime_errors(

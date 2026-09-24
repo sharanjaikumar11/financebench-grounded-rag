@@ -331,6 +331,7 @@ def test_financial_retrieval_expands_standard_statement_aliases() -> None:
     assert "accumulated depreciation" in retrieval_query(
         "What was net property plant and equipment?"
     )
+    assert "balance sheet" in retrieval_query("What was year-end net PPNE?")
 
 
 def test_hybrid_retriever_includes_adjacent_chunks_for_split_table_context(tmp_path: Path) -> None:

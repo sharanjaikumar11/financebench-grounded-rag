@@ -1,6 +1,6 @@
 # Production RAG System
 
-Grounded retrieval-augmented generation over FinanceBench filings. The system ingests PDF, TXT, and Markdown sources, preserves source provenance, retrieves locally with Sentence Transformer embeddings, and produces Gemini-grounded answers with citations.
+Grounded retrieval-augmented generation over FinanceBench filings. The system ingests PDF, TXT, and Markdown sources, preserves source provenance, retrieves locally with Sentence Transformer embeddings, and produces source-cited answers using Gemini or Groq.
 
 ## Setup
 
@@ -16,7 +16,15 @@ Set the key only in the terminal session that will run answer generation:
 $env:GEMINI_API_KEY = "your_key"
 $env:GEMINI_MODEL = "gemini-3.1-flash-lite"
 $env:GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite"
-$env:GEMINI_THINKING_LEVEL = "low"
+$env:GEMINI_THINKING_LEVEL = "minimal"
+```
+
+Or use Groq for answer generation (retrieval remains local):
+
+```powershell
+$env:ANSWER_PROVIDER = "groq"
+$env:GROQ_API_KEY = "your_key"
+$env:GROQ_MODEL = "openai/gpt-oss-20b"
 ```
 
 ## Run
@@ -31,7 +39,7 @@ Endpoints: `GET /health`, `POST /index`, and `POST /query`.
 
 ## Lead demo
 
-With `GEMINI_API_KEY` set in the terminal, run the Streamlit demo:
+With the selected provider's API key set in the terminal, run the Streamlit demo:
 
 ```powershell
 streamlit run streamlit_app.py

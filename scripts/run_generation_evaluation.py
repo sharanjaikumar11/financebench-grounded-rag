@@ -1,4 +1,4 @@
-"""Evaluate grounded Gemini answers against FinanceBench cases."""
+"""Evaluate grounded provider answers against FinanceBench cases."""
 
 from __future__ import annotations
 
@@ -9,14 +9,14 @@ from pathlib import Path
 
 from rag_system.evaluation.datasets import load_evaluation_cases
 from rag_system.evaluation.runner import EvaluationRunner, GroundedEvaluationSystem
-from rag_system.generation.answering import GeminiAnswerProvider, GroundedAnswerGenerator
+from rag_system.generation.answering import GeminiAnswerProvider, GroqAnswerProvider, GroundedAnswerGenerator
 from rag_system.retrieval.embeddings import SentenceTransformerEmbeddingProvider
 from rag_system.retrieval.retriever import DenseRetriever, HybridRetriever
 from rag_system.retrieval.vector_store import SQLiteVectorStore
 
 
 def parse_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluate grounded Gemini answers against FinanceBench.")
+    parser = argparse.ArgumentParser(description="Evaluate grounded provider answers against FinanceBench.")
     parser.add_argument("--cases", type=Path, default=Path("evaluation/cases.json"))
     parser.add_argument("--vector-store", type=Path, required=True)
     parser.add_argument("--retrieval-mode", choices=("dense", "hybrid"), default="hybrid")
@@ -27,19 +27,31 @@ def parse_arguments() -> argparse.Namespace:
 
 def main() -> None:
     arguments = parse_arguments()
-    api_key = os.environ.get("GEMINI_API_KEY", "")
-    if not api_key.strip():
-        raise SystemExit("Set GEMINI_API_KEY before running generation evaluation")
-    model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
-    fallback_model = os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash-lite")
-    thinking_level = os.environ.get("GEMINI_THINKING_LEVEL", "low")
+    provider_name = os.environ.get("ANSWER_PROVIDER", "gemini").strip().casefold()
+    if provider_name == "groq":
+        api_key = os.environ.get("GROQ_API_KEY", "")
+        if not api_key.strip():
+            raise SystemExit("Set GROQ_API_KEY before running generation evaluation")
+        provider = GroqAnswerProvider(api_key, os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b"))
+    elif provider_name == "gemini":
+        api_key = os.environ.get("GEMINI_API_KEY", "")
+        if not api_key.strip():
+            raise SystemExit("Set GEMINI_API_KEY before running generation evaluation")
+        provider = GeminiAnswerProvider(
+            api_key,
+            os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite"),
+            os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash-lite"),
+            os.environ.get("GEMINI_THINKING_LEVEL", "minimal"),
+        )
+    else:
+        raise SystemExit("ANSWER_PROVIDER must be either 'gemini' or 'groq'")
     store = SQLiteVectorStore(arguments.vector_store)
     try:
         retriever_class = HybridRetriever if arguments.retrieval_mode == "hybrid" else DenseRetriever
         system = GroundedEvaluationSystem(
             retriever_class(SentenceTransformerEmbeddingProvider(), store),
             GroundedAnswerGenerator(
-                GeminiAnswerProvider(api_key, model, fallback_model, thinking_level)
+                provider
             ),
             arguments.top_k,
         )

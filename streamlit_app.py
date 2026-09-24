@@ -11,6 +11,7 @@ from rag_system.chunking import FixedTokenChunker
 from rag_system.config import Settings
 from rag_system.generation.answering import (
     GeminiAnswerProvider,
+    GroqAnswerProvider,
     GroundedAnswerGenerator,
 )
 from rag_system.ingestion.pipeline import DocumentIngestor, DocumentRegistry
@@ -47,7 +48,15 @@ def retriever() -> HybridRetriever:
 def query_service() -> RAGQueryService:
     """Create one shared grounded-answer service for the Streamlit process."""
     settings = Settings.from_environment()
-    api_key = settings.require_gemini_key()
+    if settings.answer_provider == "groq":
+        provider = GroqAnswerProvider(settings.require_groq_key(), settings.groq_model)
+    else:
+        provider = GeminiAnswerProvider(
+            settings.require_gemini_key(),
+            settings.gemini_model,
+            settings.gemini_fallback_model,
+            settings.gemini_thinking_level,
+        )
     from pathlib import Path
 
     storage = Path(INDEX_DIRECTORY)
@@ -56,12 +65,7 @@ def query_service() -> RAGQueryService:
         chunker=FixedTokenChunker(200, 40),
         retriever=retriever(),
         answer_generator=GroundedAnswerGenerator(
-            GeminiAnswerProvider(
-                api_key,
-                settings.gemini_model,
-                settings.gemini_fallback_model,
-                settings.gemini_thinking_level,
-            )
+            provider
         ),
         top_k=3,
     )
@@ -110,13 +114,13 @@ def render_answer(text: str) -> None:
 
 st.set_page_config(page_title="FinanceBench RAG demo", page_icon=":material/analytics:", layout="wide")
 st.title("FinanceBench grounded RAG")
-st.caption("Local embeddings and hybrid retrieval with Gemini-generated, source-cited answers.")
+st.caption("Local embeddings and hybrid retrieval with source-cited answers.")
 
 with st.sidebar:
     st.subheader("Demo configuration")
     st.write("**Index:** Fixed-token, 200 tokens, 40 overlap")
     st.write("**Retrieval:** SentenceTransformer + SQLite FTS5/BM25 hybrid")
-    st.write("**Generation:** Gemini, temperature 0")
+    st.write(f"**Generation:** {Settings.from_environment().answer_provider.title()}, temperature 0")
     st.divider()
     st.caption("Answers include only sources retrieved from the selected FinanceBench filing.")
 

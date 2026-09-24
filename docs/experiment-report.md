@@ -20,6 +20,14 @@ The measured run retrieved the expected filing for all 11 cases at K=3. This met
 
 Fixed-token chunking with 200 tokens and 40-token overlap is the production configuration. It provides controlled overlapping context across page and table boundaries and matches the existing API indexing workflow. The production API uses hybrid retrieval with `top_k=3` and generic index-backed filing metadata filtering.
 
+## Grounded generation evaluation
+
+The same fixed 11-case set was evaluated with Gemini generation configured at temperature zero and `GEMINI_THINKING_LEVEL=minimal`. The latest measured run produced 45.45% answer accuracy (5/11), 54.55% citation accuracy (6/11), and 100% grounding rate. An earlier run with the same configuration produced 63.64% citation accuracy (7/11), illustrating that generation metrics may vary between model calls. The reproducible retrieval metric remained 100% expected-filing recall (11/11).
+
+The result separates two properties that should not be conflated: the system reliably identifies the correct filing, while some financial-table questions still lead the generator to abstain or select incomplete evidence. The grounding rate remains 100% because answers without valid citations are returned as `INSUFFICIENT_CONTEXT` rather than being fabricated.
+
+The next measured improvement should be a cross-encoder reranker applied to a wider hybrid candidate set, followed by table-aware extraction that preserves a table's row label, period header, unit, and value together. Those changes should be compared on the unchanged 11-case set using answer accuracy, citation accuracy, answer-row/page recall, latency, and abstention rate.
+
 ## Baseline comparison
 
 The original unfiltered fixed-token dense baseline achieved 33.3% recall@10 (1/3) on the original three-case set. The current 11-case hybrid evaluation achieved 100% expected-filing recall@3 by using generic index-backed filing identification, including quarter-aware 10-Q routing. These are different evaluation sets and configurations, so they are not a direct controlled baseline comparison.

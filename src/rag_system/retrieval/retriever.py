@@ -21,7 +21,9 @@ def retrieval_query(question: str) -> str:
         "inventory": "inventories merchandise inventory",
         "total assets": "balance sheet total assets",
         "quick ratio": "cash equivalents accounts receivable current assets current liabilities inventory",
-        "net property plant and equipment": "accumulated depreciation property plant equipment net",
+        "net property plant and equipment": "accumulated depreciation property plant equipment net balance sheet",
+        "net property plant equipment": "accumulated depreciation property plant equipment net balance sheet",
+        "net ppne": "accumulated depreciation property plant equipment net balance sheet",
         "operating-income margin": "operating income net sales operating margin",
         "operating income margin": "operating income net sales operating margin",
     }

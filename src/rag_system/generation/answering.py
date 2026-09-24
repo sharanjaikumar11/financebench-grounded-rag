@@ -60,7 +60,7 @@ class GeminiAnswerProvider:
         return response.text.strip()
 
     def _generate(self, prompt: str, model: str, types: object) -> object:
-        config = {"temperature": 0, "max_output_tokens": 160}
+        config = {"temperature": 0, "max_output_tokens": 256}
         if model.startswith("gemini-3"):
             config["thinking_config"] = types.ThinkingConfig(thinking_level=self.thinking_level)
         return self._client.models.generate_content(
@@ -81,6 +81,42 @@ class GeminiAnswerProvider:
                 "Please retry this question in a moment."
             )
         return RuntimeError("Gemini answer generation failed. Please verify the configured model and retry.")
+
+
+class GroqAnswerProvider:
+    """Groq-backed answer provider, initialized only when selected."""
+
+    def __init__(self, api_key: str, model: str) -> None:
+        if not api_key.strip():
+            raise ValueError("A Groq API key is required for answer generation")
+        self.api_key = api_key
+        self.model = model
+        self._client: object | None = None
+
+    def generate(self, prompt: str) -> str:
+        try:
+            if self._client is None:
+                from groq import Groq
+
+                self._client = Groq(api_key=self.api_key)
+            completion = self._client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0,
+                # GPT-OSS otherwise returns reasoning separately and can spend a
+                # small completion budget before producing its cited final answer.
+                include_reasoning=False,
+                reasoning_effort="low",
+                max_completion_tokens=512,
+            )
+            text = completion.choices[0].message.content
+        except Exception as error:
+            raise RuntimeError(
+                "Groq answer generation failed. Please verify GROQ_API_KEY, the configured model, and retry."
+            ) from error
+        if not text:
+            raise RuntimeError("Groq returned an empty answer")
+        return text.strip()
 
 
 class UnavailableAnswerProvider:
@@ -114,14 +150,16 @@ class GroundedAnswerGenerator:
 
 
 def _generation_evidence_sources(
-    question: str, sources: tuple[RetrievedChunk, ...], maximum_sources: int = 5
+    question: str, sources: tuple[RetrievedChunk, ...], maximum_sources: int = 9
 ) -> tuple[RetrievedChunk, ...]:
     """Keep the most answer-bearing retrieved chunks prominent for generation.
 
     Retrieval intentionally adds neighboring chunks to preserve table context. For
     answer generation, prioritize the chunks whose text covers the question and
-    its standard financial-statement aliases, while retaining several candidates
-    for headers and supporting context.
+    its standard financial-statement aliases, while retaining the full default
+    expanded retrieval set for headers and supporting context. Nine 200-token
+    chunks remain a compact evidence package while avoiding loss of a table's
+    period header, unit, or direct value row.
     """
     if maximum_sources < 1:
         raise ValueError("maximum_sources must be at least one")
