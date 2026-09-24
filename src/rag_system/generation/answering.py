@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Protocol
 
 from rag_system.generation.citations import build_source_map, citations_from_answer
@@ -10,6 +11,7 @@ from rag_system.generation.prompts import (
     grounded_answer_prompt,
     grounded_answer_retry_prompt,
 )
+from rag_system.retrieval.retriever import retrieval_query
 from rag_system.schemas import GroundedAnswer, RetrievedChunk
 
 
@@ -98,7 +100,7 @@ class GroundedAnswerGenerator:
         if not sources:
             return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True)
 
-        source_map = build_source_map(sources)
+        source_map = build_source_map(_generation_evidence_sources(question, sources))
         response = self.provider.generate(grounded_answer_prompt(question, source_map)).strip()
         if response == INSUFFICIENT_CONTEXT:
             response = self.provider.generate(grounded_answer_retry_prompt(question, source_map)).strip()
@@ -109,3 +111,58 @@ class GroundedAnswerGenerator:
         if not citations:
             return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True)
         return GroundedAnswer(response, citations, False)
+
+
+def _generation_evidence_sources(
+    question: str, sources: tuple[RetrievedChunk, ...], maximum_sources: int = 5
+) -> tuple[RetrievedChunk, ...]:
+    """Keep the most answer-bearing retrieved chunks prominent for generation.
+
+    Retrieval intentionally adds neighboring chunks to preserve table context. For
+    answer generation, prioritize the chunks whose text covers the question and
+    its standard financial-statement aliases, while retaining several candidates
+    for headers and supporting context.
+    """
+    if maximum_sources < 1:
+        raise ValueError("maximum_sources must be at least one")
+    expanded_question = retrieval_query(question)
+    ranked = sorted(
+        enumerate(sources),
+        key=lambda item: (_generation_evidence_score(item[1].chunk.text, expanded_question), -item[0]),
+        reverse=True,
+    )
+    return tuple(item for _, item in ranked[:maximum_sources])
+
+
+def _generation_evidence_score(text: str, query: str) -> float:
+    """Score a chunk by financial-term coverage and table-value signals."""
+    stop_words = {
+        "amount", "answer", "based", "does", "following", "from", "give", "have", "highest",
+        "its", "million", "millions", "question", "shown", "that", "the", "this", "using", "was",
+        "what", "which", "with", "year", "years", "usd", "fiscal",
+    }
+    terms = {
+        _term_stem(term)
+        for term in re.findall(r"[A-Za-z]+", query.casefold())
+        if len(term) > 2 and term.casefold() not in stop_words
+    }
+    text_terms = {_term_stem(term) for term in re.findall(r"[A-Za-z]+", text.casefold())}
+    coverage = len(terms & text_terms) / len(terms) if terms else 0.0
+    numeric_density = min(len(re.findall(r"\b\d[\d,().%$-]*\b", text)), 8) / 40
+    table_signal = bool(
+        re.search(
+            r"\b(?:consolidated|statement|balance\s+sheet|cash\s+flow|total\s+assets|net\s+income|"
+            r"property,?\s+plant|notional\s+value)\b",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    return coverage + numeric_density + (0.35 if table_signal else 0.0)
+
+
+def _term_stem(term: str) -> str:
+    if term.endswith("ies") and len(term) > 4:
+        return term[:-3] + "y"
+    if term.endswith("s") and not term.endswith("ss") and len(term) > 3:
+        return term[:-1]
+    return term

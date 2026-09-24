@@ -3,6 +3,7 @@ import pytest
 from rag_system.generation.answering import (
     GeminiAnswerProvider,
     GroundedAnswerGenerator,
+    _generation_evidence_sources,
 )
 from rag_system.generation.prompts import INSUFFICIENT_CONTEXT
 from rag_system.schemas import DocumentChunk, RetrievedChunk
@@ -37,6 +38,23 @@ def source() -> RetrievedChunk:
             chunk_index=0,
             text="Revenue increased by 10 percent in 2024.",
             token_count=7,
+            chunking_strategy="fixed_token",
+            page_numbers=(12,),
+            section_titles=("Results",),
+        ),
+        score=0.9,
+    )
+
+
+def evidence_source(chunk_id: str, text: str, chunk_index: int) -> RetrievedChunk:
+    return RetrievedChunk(
+        chunk=DocumentChunk(
+            chunk_id=chunk_id,
+            document_id="doc-1",
+            document_name="annual-report.pdf",
+            chunk_index=chunk_index,
+            text=text,
+            token_count=len(text.split()),
             chunking_strategy="fixed_token",
             page_numbers=(12,),
             section_titles=("Results",),
@@ -92,6 +110,23 @@ def test_generator_retries_a_safe_abstention_with_the_same_cited_evidence() -> N
     assert result.citations[0].source_label == "S1"
     assert len(provider.prompts) == 2
     assert "The first pass returned INSUFFICIENT_CONTEXT" in provider.prompts[1]
+
+
+def test_generation_evidence_reranking_promotes_financial_aliases_and_table_rows() -> None:
+    sources = (
+        evidence_source("narrative", "Cash flow information and tax payments were discussed.", 0),
+        evidence_source(
+            "statement-row",
+            "Consolidated Statements of Cash Flows Purchases of property, plant and equipment (1,577)",
+            1,
+        ),
+    )
+
+    ranked = _generation_evidence_sources(
+        "What was FY2018 capital expenditure in USD millions?", sources
+    )
+
+    assert ranked[0].chunk.chunk_id == "statement-row"
 
 
 def test_gemini_answer_provider_requires_an_api_key() -> None:
