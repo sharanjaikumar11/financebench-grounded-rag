@@ -8,6 +8,20 @@ The unfiltered dense fixed-token baseline returned the expected filing for 1 of 
 
 The system infers a `document_name` filter only when a question clearly names both company and fiscal year. Hybrid retrieval then combines local dense retrieval and SQLite FTS5 BM25 ranking. This configuration achieved 3 of 3 expected-document retrieval hits at K=3, K=5, and K=10 for both tested chunking strategies.
 
+## Subsequent failure modes and mitigations
+
+The initial metadata rule did not distinguish a question about a fiscal quarter from an annual question, and an annual filing could compete with the relevant 10-Q. Filing inference now detects an explicit quarter and selects a uniquely matching quarterly filing. For annual questions where both filing types exist, it prefers the uniquely matching 10-K. The rule is only applied when the indexed metadata makes the choice unambiguous.
+
+Financial-statement questions also exposed a ranking problem: a narrative mention of a metric could outrank the statement row containing the requested value. The retrieval query now expands generic financial synonyms, table candidates receive a generic keyword-and-numeric relevance boost, and anchors are diversified before adjacent context is added. These rules are based on statement structure rather than a company or benchmark question.
+
+Some answers depend on a table header and its value row being in adjacent chunks. The generation prompt now instructs the model to combine directly supplied row, column, date, and unit evidence. This reduces unnecessary `INSUFFICIENT_CONTEXT` responses while retaining the requirement that every answer be supported by cited retrieved sources.
+
+Gemini capacity errors (for example, HTTP 503) previously ended the request immediately. The application now retries an optional fallback model only for temporary capacity errors and otherwise displays a clear failure message. This is an availability improvement, not evidence that a generated answer is grounded.
+
+The demo previously displayed source labels without a direct path to inspect the evidence. Citations now link to the locally indexed PDF and its first cited page when the file exists. The link is a usability aid; citation validity continues to depend on the retrieved evidence.
+
 ## Generation limitation
 
 Grounded answer evaluation depends on a Gemini API key being available in the same terminal that runs the evaluation. The generator is configured with temperature zero and returns `INSUFFICIENT_CONTEXT` rather than fabricate an answer or citation when retrieved evidence is insufficient.
+
+The 3-of-3 retrieval result above is the original small evaluation and must not be interpreted as a measurement of the subsequent routing and table-retrieval changes. A larger reproducible evaluation with expected answers and expected source pages is required before reporting updated answer-accuracy, citation-accuracy, or failure-rate metrics.

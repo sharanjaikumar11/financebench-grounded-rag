@@ -92,6 +92,25 @@ class SQLiteVectorStore:
         normalized company name and one year identify exactly one indexed filing.
         """
         normalized_question = self._normalize_name(question)
+        quarter_match = re.search(
+            r"\b(?:Q([1-4])\s*(?:FY)?(20\d{2})|(?:FY)?(20\d{2})\s*Q([1-4]))\b",
+            question,
+            flags=re.IGNORECASE,
+        )
+        if quarter_match:
+            quarter = quarter_match.group(1) or quarter_match.group(4)
+            year = quarter_match.group(2) or quarter_match.group(3)
+            quarterly_names = self._connection.execute(
+                "SELECT DISTINCT document_name FROM chunks WHERE document_name LIKE ?",
+                (f"%_{year}Q{quarter}_%",),
+            ).fetchall()
+            quarterly_matches = [
+                row["document_name"]
+                for row in quarterly_names
+                if self._normalized_company_name(row["document_name"], year) in normalized_question
+            ]
+            if len(quarterly_matches) == 1:
+                return {"document_name": quarterly_matches[0]}
         dated_match = re.search(
             r"\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(20\d{2})\b",
             question,
@@ -120,21 +139,38 @@ class SQLiteVectorStore:
             if len(dated_matches) == 1:
                 return {"document_name": dated_matches[0]}
 
-        years = re.findall(r"\b(?:FY)?(20\d{2})\b", question, flags=re.IGNORECASE)
-        if len(set(years)) != 1:
+        years = sorted(
+            set(re.findall(r"\b(?:FY)?(20\d{2})\b", question, flags=re.IGNORECASE)),
+            reverse=True,
+        )
+        if not years:
             return {}
+
+        # A comparison such as "FY2018-to-FY2019" is normally answered from
+        # the later annual filing, which contains both comparative periods.
+        # Select that filing only when the index makes the company/year choice
+        # unambiguous; this avoids guessing a document outside the corpus.
         year = years[0]
         names = self._connection.execute(
             "SELECT DISTINCT document_name FROM chunks WHERE document_name LIKE ?",
             (f"%_{year}%",),
         ).fetchall()
-        matches: list[str] = []
-        for row in names:
-            document_name = row["document_name"]
-            normalized_company = self._normalized_company_name(document_name, year)
-            if normalized_company and normalized_company in normalized_question:
-                matches.append(document_name)
-        return {"document_name": matches[0]} if len(matches) == 1 else {}
+        matches = [
+            row["document_name"]
+            for row in names
+            if (normalized_company := self._normalized_company_name(row["document_name"], year))
+            and normalized_company in normalized_question
+        ]
+        if len(matches) == 1:
+            return {"document_name": matches[0]}
+
+        # FinanceBench annual questions can have a same-year 10-Q as well as
+        # a 10-K in the index.  Unless the question explicitly names a quarter,
+        # prefer the annual filing rather than failing the retrieval entirely.
+        annual_matches = [name for name in matches if "_10K" in name.upper()]
+        if len(annual_matches) == 1:
+            return {"document_name": annual_matches[0]}
+        return {}
 
     @staticmethod
     def _normalized_company_name(document_name: str, year: str | None = None) -> str:
@@ -261,8 +297,23 @@ class SQLiteVectorStore:
         metadata_filter: Mapping[str, object] | None = None,
     ) -> tuple[RetrievedChunk, ...]:
         """Fuse dense and exact-term ranking with reciprocal-rank fusion."""
-        candidate_count = max(top_k * 10, 50)
+        # Financial statement rows can be ranked below narrative mentions by
+        # either dense or lexical retrieval.  Keep a wider local candidate set
+        # so the table-aware lexical rerank can promote the direct row.
         clauses, parameters = self._filter_query(metadata_filter or {})
+        candidate_count = max(top_k * 25, 200)
+        # Once a query is safely scoped to one filing, every matching chunk in
+        # that filing is a practical candidate.  This prevents a table row
+        # from being discarded behind repeated narrative references to the
+        # same term while keeping unfiltered corpus-wide retrieval bounded.
+        if metadata_filter and "document_name" in metadata_filter:
+            count_statement = "SELECT COUNT(*) AS chunk_count FROM chunks"
+            if clauses:
+                count_statement += " WHERE " + " AND ".join(clauses)
+            candidate_count = max(
+                candidate_count,
+                self._connection.execute(count_statement, parameters).fetchone()["chunk_count"],
+            )
         terms = _sparse_query_terms(query)
         if not terms:
             return self.search(query_embedding, top_k, metadata_filter)
@@ -272,6 +323,11 @@ class SQLiteVectorStore:
         statement += " ORDER BY bm25(chunks_fts) LIMIT ?"
         sparse_rows = self._connection.execute(statement, [terms, *parameters, candidate_count]).fetchall()
         sparse = [RetrievedChunk(self._row_to_chunk(row), 0.0) for row in sparse_rows]
+        sparse = sorted(
+            sparse,
+            key=lambda item: _financial_keyword_relevance(item.chunk.text, query),
+            reverse=True,
+        )
         candidate_document_ids = tuple(dict.fromkeys(item.chunk.document_id for item in sparse))
         dense = self.search(
             query_embedding,
@@ -285,10 +341,26 @@ class SQLiteVectorStore:
         for rank, item in enumerate(sparse, start=1):
             chunk, score = fused.get(item.chunk.chunk_id, (item.chunk, 0.0))
             fused[item.chunk.chunk_id] = (chunk, score + 1 / (60 + rank))
-        return tuple(
-            RetrievedChunk(chunk, score)
-            for chunk, score in sorted(fused.values(), key=lambda value: value[1], reverse=True)[:top_k]
-        )
+        # Avoid spending all top-k slots on consecutive chunks from the same
+        # table or paragraph.  Adjacent text is added later for context, so
+        # diversified anchors give the generator broader evidence coverage.
+        selected: list[RetrievedChunk] = []
+        for chunk, score in sorted(
+            fused.values(),
+            key=lambda value: value[1] + _financial_keyword_relevance(value[0].text, query),
+            reverse=True,
+        ):
+            is_near_selected = any(
+                candidate.chunk.document_id == chunk.document_id
+                and abs(candidate.chunk.chunk_index - chunk.chunk_index) <= 2
+                for candidate in selected
+            )
+            if is_near_selected:
+                continue
+            selected.append(RetrievedChunk(chunk, score))
+            if len(selected) == top_k:
+                break
+        return tuple(selected)
 
     def expand_with_neighbors(
         self, results: Sequence[RetrievedChunk], radius: int = 1
@@ -363,3 +435,47 @@ def _sparse_query_terms(query: str) -> str:
         if len(term) > 2 and term.casefold() not in stop_words
     }
     return " OR ".join(sorted(terms))
+
+
+def _financial_keyword_relevance(text: str, query: str) -> float:
+    """Rerank FTS candidates by coverage of meaningful financial terms."""
+    stop_words = {
+        "answer", "amount", "based", "briefly", "does", "explain", "from", "give",
+        "have", "healthy", "its", "million", "millions", "of", "on", "percent",
+        "question", "round", "shown", "state", "that", "the", "this", "to", "usd", "using",
+        "was", "were", "what", "with", "would", "year",
+    }
+    query_terms = [
+        term.casefold()
+        for term in re.findall(r"[A-Za-z0-9]+", query)
+        if len(term) > 2 and term.casefold() not in stop_words and not term.casefold().startswith("fy")
+    ]
+    if not query_terms:
+        return 0.0
+    normalized_text = text.casefold()
+    text_terms = {
+        _financial_term_stem(term)
+        for term in re.findall(r"[A-Za-z0-9]+", normalized_text)
+    }
+    matched = sum(_financial_term_stem(term) in text_terms for term in set(query_terms))
+    # Rows in statements normally contain several figures, while narrative
+    # text and a table of contents do not.  This makes the preference generic
+    # to financial tables rather than tied to any company or benchmark case.
+    numeric_density = min(len(re.findall(r"\b\d[\d,().%$-]*\b", text)), 8) / 40
+    statement_heading = bool(
+        re.search(
+            r"\b(?:consolidated\s+)?(?:balance\s+sheets?|income\s+statements?|"
+            r"statements?\s+of\s+(?:income|operations|cash\s+flows)|cash\s+flows?)\b",
+            normalized_text,
+        )
+    )
+    return matched / len(set(query_terms)) + numeric_density + (0.5 if statement_heading else 0.0)
+
+
+def _financial_term_stem(term: str) -> str:
+    """Normalize common singular/plural variations in statement labels."""
+    if term.endswith("ies") and len(term) > 4:
+        return term[:-3] + "y"
+    if term.endswith("s") and not term.endswith("ss") and len(term) > 3:
+        return term[:-1]
+    return term

@@ -9,8 +9,8 @@ from typing import Protocol
 
 from rag_system.generation.answering import GroundedAnswerGenerator
 from rag_system.ingestion.pipeline import DocumentIngestor
-from rag_system.retrieval.retriever import DenseRetriever
 from rag_system.retrieval.query_metadata import filing_metadata_filter
+from rag_system.retrieval.retriever import DenseRetriever
 from rag_system.schemas import DocumentChunk, GroundedAnswer, RetrievedChunk
 
 

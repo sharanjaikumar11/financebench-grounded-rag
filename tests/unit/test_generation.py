@@ -1,6 +1,9 @@
 import pytest
 
-from rag_system.generation.answering import GeminiAnswerProvider, GroundedAnswerGenerator
+from rag_system.generation.answering import (
+    GeminiAnswerProvider,
+    GroundedAnswerGenerator,
+)
 from rag_system.generation.prompts import INSUFFICIENT_CONTEXT
 from rag_system.schemas import DocumentChunk, RetrievedChunk
 
@@ -42,6 +45,7 @@ def test_generator_returns_answer_with_only_explicit_valid_citations() -> None:
     assert result.citations[0].page_numbers == (12,)
     assert "Do not add facts not supported" in provider.prompt
     assert "only when the sources lack the facts" in provider.prompt
+    assert "Financial-statement tables are evidence" in provider.prompt
     assert "[S1]" in provider.prompt
 
 
@@ -67,3 +71,70 @@ def test_generator_honors_the_model_insufficient_context_signal() -> None:
 def test_gemini_answer_provider_requires_an_api_key() -> None:
     with pytest.raises(ValueError):
         GeminiAnswerProvider("", "gemini-3.1-flash-lite")
+
+
+def test_gemini_answer_provider_converts_provider_errors_to_safe_runtime_errors(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import sys
+    from types import ModuleType, SimpleNamespace
+
+    class ProviderUnavailableError(Exception):
+        """A simulated provider failure."""
+
+    class FailingModels:
+        def generate_content(self, **_: object) -> None:
+            raise ProviderUnavailableError("503 unavailable")
+
+    fake_types = SimpleNamespace(
+        GenerateContentConfig=lambda **kwargs: kwargs,
+        ThinkingConfig=lambda **kwargs: kwargs,
+    )
+    fake_google = ModuleType("google")
+    fake_google.genai = SimpleNamespace(Client=lambda **_: SimpleNamespace(models=FailingModels()))
+    fake_genai = ModuleType("google.genai")
+    fake_genai.types = fake_types
+    monkeypatch.setitem(sys.modules, "google", fake_google)
+    monkeypatch.setitem(sys.modules, "google.genai", fake_genai)
+
+    with pytest.raises(RuntimeError, match="temporarily unavailable"):
+        GeminiAnswerProvider("test-key", "gemini-3.1-flash-lite").generate("question")
+
+
+def test_gemini_answer_provider_uses_fallback_after_a_capacity_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import sys
+    from types import ModuleType, SimpleNamespace
+
+    class CapacityError(Exception):
+        """A simulated 503 provider response."""
+
+    class Models:
+        def __init__(self) -> None:
+            self.models: list[str] = []
+
+        def generate_content(self, **kwargs: object) -> SimpleNamespace:
+            self.models.append(str(kwargs["model"]))
+            if len(self.models) == 1:
+                raise CapacityError("503 unavailable")
+            return SimpleNamespace(text="Grounded answer [S1]")
+
+    models = Models()
+    fake_types = SimpleNamespace(
+        GenerateContentConfig=lambda **kwargs: kwargs,
+        ThinkingConfig=lambda **kwargs: kwargs,
+    )
+    fake_google = ModuleType("google")
+    fake_google.genai = SimpleNamespace(Client=lambda **_: SimpleNamespace(models=models))
+    fake_genai = ModuleType("google.genai")
+    fake_genai.types = fake_types
+    monkeypatch.setitem(sys.modules, "google", fake_google)
+    monkeypatch.setitem(sys.modules, "google.genai", fake_genai)
+
+    provider = GeminiAnswerProvider(
+        "test-key", "gemini-3.1-flash-lite", "gemini-3.5-flash-lite"
+    )
+
+    assert provider.generate("question") == "Grounded answer [S1]"
+    assert models.models == ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite"]

@@ -15,6 +15,7 @@ Set the key only in the terminal session that will run answer generation:
 ```powershell
 $env:GEMINI_API_KEY = "your_key"
 $env:GEMINI_MODEL = "gemini-3.1-flash-lite"
+$env:GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite"
 ```
 
 ## Run
@@ -35,7 +36,7 @@ With `GEMINI_API_KEY` set in the terminal, run the Streamlit demo:
 streamlit run streamlit_app.py
 ```
 
-The browser opens at `http://localhost:8501` and shows grounded answers, source citations, and safe insufficient-context responses.
+The browser opens at `http://localhost:8501` and shows grounded answers, source citations, and safe insufficient-context responses. When the cited FinanceBench PDF is available under `data/raw/financebench/pdfs/`, each source is a link that opens the local PDF at the first cited page. The application uses `GEMINI_FALLBACK_MODEL` only when the primary Gemini model returns a temporary capacity error; otherwise, generation failures are reported clearly.
 
 ## Evaluation
 

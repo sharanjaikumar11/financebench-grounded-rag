@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from time import perf_counter
 
 import streamlit as st
 
 from rag_system.chunking import FixedTokenChunker
 from rag_system.config import Settings
-from rag_system.generation.answering import GeminiAnswerProvider, GroundedAnswerGenerator
+from rag_system.generation.answering import (
+    GeminiAnswerProvider,
+    GroundedAnswerGenerator,
+)
 from rag_system.ingestion.pipeline import DocumentIngestor, DocumentRegistry
 from rag_system.retrieval.embeddings import SentenceTransformerEmbeddingProvider
 from rag_system.retrieval.retriever import HybridRetriever
@@ -16,6 +20,7 @@ from rag_system.retrieval.vector_store import SQLiteVectorStore
 from rag_system.services.query import RAGQueryService
 
 INDEX_DIRECTORY = "data/processed/local_sentence_transformers"
+SOURCE_DIRECTORY = Path("data/raw/financebench/pdfs").resolve()
 SUGGESTIONS = {
     "FY2018 net PP&E": (
         "Assume that you are a public equities analyst. Answer the following question "
@@ -51,7 +56,11 @@ def query_service() -> RAGQueryService:
         chunker=FixedTokenChunker(200, 40),
         retriever=retriever(),
         answer_generator=GroundedAnswerGenerator(
-            GeminiAnswerProvider(api_key, settings.gemini_model)
+            GeminiAnswerProvider(
+                api_key,
+                settings.gemini_model,
+                settings.gemini_fallback_model,
+            )
         ),
         top_k=3,
     )
@@ -62,6 +71,40 @@ def citation_label(citation: object) -> str:
         f"{citation.document_name} | pages "
         f"{', '.join(str(page) for page in citation.page_numbers) or 'not available'}"
     )
+
+
+def citation_url(citation: object) -> str | None:
+    """Build a page-specific local PDF link for an indexed FinanceBench source."""
+    document_name = Path(citation.document_name).name
+    source_path = (SOURCE_DIRECTORY / document_name).resolve()
+    if source_path.parent != SOURCE_DIRECTORY or not source_path.is_file():
+        return None
+    page_number = citation.page_numbers[0] if citation.page_numbers else 1
+    return f"{source_path.as_uri()}#page={page_number}"
+
+
+def render_citation(citation: object, key: str) -> None:
+    """Show a source link when the cited PDF remains available locally."""
+    if not hasattr(citation, "document_name"):
+        st.caption(f":material/description: {citation}")
+        return
+    label = citation_label(citation)
+    url = citation_url(citation)
+    if url:
+        st.link_button(
+            label,
+            url,
+            key=key,
+            type="tertiary",
+            icon=":material/open_in_new:",
+        )
+    else:
+        st.caption(f":material/description: {label}")
+
+
+def render_answer(text: str) -> None:
+    """Display monetary values literally instead of as Markdown math."""
+    st.markdown(text.replace("$", r"\$"))
 
 
 st.set_page_config(page_title="FinanceBench RAG demo", page_icon=":material/analytics:", layout="wide")
@@ -85,11 +128,11 @@ if not st.session_state.messages:
         st.session_state.pending_question = SUGGESTIONS[choice]
         st.rerun()
 
-for message in st.session_state.messages:
+for message_index, message in enumerate(st.session_state.messages):
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-        for citation in message.get("citations", ()): 
-            st.caption(f":material/description: {citation}")
+        render_answer(message["content"])
+        for index, citation in enumerate(message.get("citations", ())):
+            render_citation(citation, f"history-{message.get('id', message_index)}-{index}")
 
 question = st.session_state.pop("pending_question", None) or st.chat_input(
     "Ask a question about the indexed filings", submit_mode="disable"
@@ -98,7 +141,7 @@ question = st.session_state.pop("pending_question", None) or st.chat_input(
 if question:
     st.session_state.messages.append({"role": "user", "content": question})
     with st.chat_message("user"):
-        st.markdown(question)
+        render_answer(question)
 
     with st.chat_message("assistant"):
         try:
@@ -117,14 +160,19 @@ if question:
                 content = "INSUFFICIENT_CONTEXT"
                 citations: tuple[str, ...] = ()
             else:
-                st.markdown(response.answer.text)
-                citations = tuple(citation_label(citation) for citation in response.answer.citations)
+                render_answer(response.answer.text)
+                citations = response.answer.citations
                 with st.container(border=True):
                     st.subheader("Sources")
-                    for citation in citations:
-                        st.caption(f":material/description: {citation}")
+                    for index, citation in enumerate(citations):
+                        render_citation(citation, f"current-{index}")
                 st.caption(f"Response time: {elapsed_seconds:.1f} seconds")
                 content = response.answer.text
             st.session_state.messages.append(
-                {"role": "assistant", "content": content, "citations": citations}
+                {
+                    "id": len(st.session_state.messages),
+                    "role": "assistant",
+                    "content": content,
+                    "citations": citations,
+                }
             )

@@ -2,11 +2,31 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping, Sequence
 
 from rag_system.retrieval.embeddings import EmbeddingProvider
 from rag_system.retrieval.vector_store import SQLiteVectorStore
 from rag_system.schemas import DocumentChunk, RetrievedChunk
+
+
+def retrieval_query(question: str) -> str:
+    """Add standard financial-statement terminology for retrieval only."""
+    normalized = re.sub(r"[^a-z0-9]+", " ", question.casefold()).strip()
+    aliases = {
+        "capital expenditure": "purchases property equipment additions property equipment cash flows",
+        "cost of goods sold": "cost of revenue cost of sales",
+        "inventory": "inventories merchandise inventory",
+        "total assets": "balance sheet total assets",
+        "inventory": "inventories merchandise inventory",
+        "total assets": "balance sheet total assets",
+        "quick ratio": "cash equivalents accounts receivable current assets current liabilities inventory",
+        "net property plant and equipment": "accumulated depreciation property plant equipment net",
+        "operating-income margin": "operating income net sales operating margin",
+        "operating income margin": "operating income net sales operating margin",
+    }
+    additions = [terms for term, terms in aliases.items() if term in normalized]
+    return " ".join((question, *additions))
 
 
 class DenseRetriever:
@@ -59,5 +79,7 @@ class HybridRetriever(DenseRetriever):
         query_embedding = self.embedder.embed([query])
         if len(query_embedding) != 1:
             raise RuntimeError("Embedding provider must return one vector for a query")
-        ranked = self.vector_store.hybrid_search(query_embedding[0], query, top_k, metadata_filter)
+        ranked = self.vector_store.hybrid_search(
+            query_embedding[0], retrieval_query(query), top_k, metadata_filter
+        )
         return self.vector_store.expand_with_neighbors(ranked)

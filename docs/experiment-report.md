@@ -2,9 +2,11 @@
 
 ## Scope
 
-This report evaluates the three committed FinanceBench cases against the complete local corpus of 363 unique documents. Both configurations use the `all-MiniLM-L6-v2` local embedding model, SQLite hybrid retrieval (dense cosine similarity plus FTS5 BM25 fused with reciprocal-rank fusion), and the same inferred filing metadata filter when the question explicitly states a company and fiscal year.
+This report evaluates the initial three committed FinanceBench cases against the complete local corpus of 363 unique documents. Both configurations use the `all-MiniLM-L6-v2` local embedding model, SQLite hybrid retrieval (dense cosine similarity plus FTS5 BM25 fused with reciprocal-rank fusion), and the same inferred filing metadata filter when the question explicitly states a company and fiscal year.
 
 The metadata filter is part of the evaluated configuration because the baseline dense-only system retrieved similar filings from incorrect years. The filter restricts those unambiguous queries to the matching filing before ranking chunks.
+
+The current implementation extends that evaluated pipeline with quarter-aware 10-Q routing, annual 10-K preference, financial-statement synonym expansion, table-aware reranking, diversified anchors, and neighboring context. These changes are implementation improvements motivated by observed failure cases. They have not yet been assigned new quantitative results in this report.
 
 ## Results
 
@@ -36,4 +38,4 @@ The machine-readable reports are generated locally under `evaluation/results/`:
 
 ## Limits
 
-These results measure retrieval recall against three cases. Answer accuracy, grounding, and citation accuracy remain separate generation evaluations and are not inferred from retrieval recall.
+These results measure retrieval recall against three initial cases. Answer accuracy, grounding, and citation accuracy remain separate generation evaluations and are not inferred from retrieval recall. Before final presentation, rerun the evaluation against an expanded dataset containing expected answers and expected source pages; report routing, table-row retrieval, abstention, answer accuracy, and citation accuracy separately.
