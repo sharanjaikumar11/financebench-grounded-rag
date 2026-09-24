@@ -9,17 +9,21 @@ from rag_system.schemas import RetrievedChunk
 INSUFFICIENT_CONTEXT = "INSUFFICIENT_CONTEXT"
 
 
-def grounded_answer_prompt(
-    question: str, source_map: Mapping[str, RetrievedChunk]
-) -> str:
-    """Build a prompt that restricts the model to retrieved evidence."""
-    sources = "\n\n".join(
+def _render_sources(source_map: Mapping[str, RetrievedChunk]) -> str:
+    return "\n\n".join(
         f"[{label}] document_id={item.chunk.document_id}; "
         f"document_name={item.chunk.document_name}; "
         f"pages={list(item.chunk.page_numbers)}; "
         f"sections={list(item.chunk.section_titles)}\n{item.chunk.text}"
         for label, item in source_map.items()
     )
+
+
+def grounded_answer_prompt(
+    question: str, source_map: Mapping[str, RetrievedChunk]
+) -> str:
+    """Build a prompt that restricts the model to retrieved evidence."""
+    sources = _render_sources(source_map)
     return (
         "Answer the question using only the supplied sources. "
         "Do not add facts not supported by them. "
@@ -47,4 +51,20 @@ def grounded_answer_prompt(
         "Every factual statement in a supported answer must include one or more source labels "
         "in the format [S1]. Cite only source labels that directly support that answer.\n\n"
         f"Question: {question}\n\nSources:\n{sources}"
+    )
+
+
+def grounded_answer_retry_prompt(
+    question: str, source_map: Mapping[str, RetrievedChunk]
+) -> str:
+    """Ask for a second, citation-validated pass after a cautious abstention."""
+    return (
+        "Re-evaluate the question against the supplied sources. The first pass returned "
+        f"{INSUFFICIENT_CONTEXT}; do not repeat that response automatically. First identify a "
+        "source label containing the row or statement that directly answers the question, its "
+        "relevant period, and its value or comparison. If all three are present, give a concise "
+        "answer with that source label in [S1] format. Treat adjacent table headers and rows as "
+        "one piece of evidence. Use standard financial-statement terminology equivalences only "
+        "when the source explicitly supports them. If no directly supporting source exists, return "
+        f"exactly {INSUFFICIENT_CONTEXT}.\n\nQuestion: {question}\n\nSources:\n{_render_sources(source_map)}"
     )

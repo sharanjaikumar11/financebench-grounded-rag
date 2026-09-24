@@ -5,7 +5,11 @@ from __future__ import annotations
 from typing import Protocol
 
 from rag_system.generation.citations import build_source_map, citations_from_answer
-from rag_system.generation.prompts import INSUFFICIENT_CONTEXT, grounded_answer_prompt
+from rag_system.generation.prompts import (
+    INSUFFICIENT_CONTEXT,
+    grounded_answer_prompt,
+    grounded_answer_retry_prompt,
+)
 from rag_system.schemas import GroundedAnswer, RetrievedChunk
 
 
@@ -90,7 +94,9 @@ class GroundedAnswerGenerator:
         source_map = build_source_map(sources)
         response = self.provider.generate(grounded_answer_prompt(question, source_map)).strip()
         if response == INSUFFICIENT_CONTEXT:
-            return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True)
+            response = self.provider.generate(grounded_answer_retry_prompt(question, source_map)).strip()
+            if response == INSUFFICIENT_CONTEXT:
+                return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True)
 
         citations = citations_from_answer(response, source_map)
         if not citations:

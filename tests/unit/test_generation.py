@@ -18,6 +18,16 @@ class FakeAnswerProvider:
         return self.response
 
 
+class SequenceAnswerProvider:
+    def __init__(self, responses: list[str]) -> None:
+        self.responses = responses
+        self.prompts: list[str] = []
+
+    def generate(self, prompt: str) -> str:
+        self.prompts.append(prompt)
+        return self.responses.pop(0)
+
+
 def source() -> RetrievedChunk:
     return RetrievedChunk(
         chunk=DocumentChunk(
@@ -68,6 +78,20 @@ def test_generator_honors_the_model_insufficient_context_signal() -> None:
         "Question", (source(),)
     )
     assert result == type(result)(INSUFFICIENT_CONTEXT, (), True)
+
+
+def test_generator_retries_a_safe_abstention_with_the_same_cited_evidence() -> None:
+    provider = SequenceAnswerProvider([
+        INSUFFICIENT_CONTEXT,
+        "Revenue increased by 10 percent in 2024. [S1]",
+    ])
+
+    result = GroundedAnswerGenerator(provider).answer("How did revenue change?", (source(),))
+
+    assert result.insufficient_context is False
+    assert result.citations[0].source_label == "S1"
+    assert len(provider.prompts) == 2
+    assert "The first pass returned INSUFFICIENT_CONTEXT" in provider.prompts[1]
 
 
 def test_gemini_answer_provider_requires_an_api_key() -> None:
