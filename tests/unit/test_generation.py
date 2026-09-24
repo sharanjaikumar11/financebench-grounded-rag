@@ -46,6 +46,8 @@ def test_generator_returns_answer_with_only_explicit_valid_citations() -> None:
     assert "Do not add facts not supported" in provider.prompt
     assert "only when the sources lack the facts" in provider.prompt
     assert "Financial-statement tables are evidence" in provider.prompt
+    assert "capital expenditure/capital spending" in provider.prompt
+    assert "highest, lowest, largest, or smallest" in provider.prompt
     assert "[S1]" in provider.prompt
 
 

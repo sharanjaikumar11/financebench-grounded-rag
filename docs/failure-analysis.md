@@ -16,6 +16,8 @@ Financial-statement questions also exposed a ranking problem: a narrative mentio
 
 Some answers depend on a table header and its value row being in adjacent chunks. The generation prompt now instructs the model to combine directly supplied row, column, date, and unit evidence. This reduces unnecessary `INSUFFICIENT_CONTEXT` responses while retaining the requirement that every answer be supported by cited retrieved sources.
 
+Generation evaluation identified a separate abstention pattern: answer-bearing rows were retrieved, but the model sometimes treated standard reporting terminology, signed cash-flow amounts, or a table comparison as insufficient evidence. The prompt now explicitly permits source-supported financial equivalents (such as PP&E purchases for capital expenditure), the magnitude of a parenthesized expenditure, consolidated net income when no separate attribution is reported, and direct maximum/minimum comparisons. These are generic financial-statement interpretation rules, not stored answers or company-specific exceptions.
+
 Gemini capacity errors (for example, HTTP 503) previously ended the request immediately. The application now retries an optional fallback model only for temporary capacity errors and otherwise displays a clear failure message. This is an availability improvement, not evidence that a generated answer is grounded.
 
 The demo previously displayed source labels without a direct path to inspect the evidence. Citations now link to the locally indexed PDF and its first cited page when the file exists. The link is a usability aid; citation validity continues to depend on the retrieved evidence.
