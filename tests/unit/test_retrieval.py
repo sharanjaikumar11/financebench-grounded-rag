@@ -191,6 +191,42 @@ def test_filing_metadata_filter_requires_unambiguous_company_and_fiscal_year() -
     }
 
 
+def test_query_service_prefers_indexed_filing_metadata_over_legacy_text_parsing(
+    tmp_path: Path,
+) -> None:
+    from rag_system.services.query import RAGQueryService
+
+    class NoOpIngestor:
+        pass
+
+    class NoOpChunker:
+        pass
+
+    class NoOpGenerator:
+        def answer(self, question: str, retrieved: tuple[object, ...]) -> object:
+            return None
+
+    class CapturingRetriever:
+        def __init__(self) -> None:
+            self.vector_store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
+            self.vector_store.upsert(
+                [chunk("microsoft", "doc-microsoft", "Cost of revenue 32,780", document_name="MICROSOFT_2016_10K.pdf")],
+                [(1.0, 0.0)],
+            )
+            self.metadata_filter: object = None
+
+        def retrieve(self, question: str, top_k: int, metadata_filter: object) -> tuple[object, ...]:
+            self.metadata_filter = metadata_filter
+            return ()
+
+    retriever = CapturingRetriever()
+    service = RAGQueryService(NoOpIngestor(), NoOpChunker(), retriever, NoOpGenerator(), 3)
+    service.answer("What was Microsoft's FY2016 cost of goods sold?")
+
+    assert retriever.metadata_filter == {"document_name": "MICROSOFT_2016_10K.pdf"}
+    retriever.vector_store.close()
+
+
 def test_vector_store_infers_an_unambiguous_company_and_year_from_indexed_documents(
     tmp_path: Path,
 ) -> None:

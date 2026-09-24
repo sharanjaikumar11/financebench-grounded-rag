@@ -40,7 +40,7 @@ class GroundedEvaluationSystem:
         self.top_k = top_k
 
     def answer(self, question: str) -> EvaluationResponse:
-        retrieved = self.retriever.retrieve(question, self.top_k, filing_metadata_filter(question))
+        retrieved = self.retriever.retrieve(question, self.top_k, _inferred_filing_filter(self.retriever, question))
         return EvaluationResponse(retrieved, self.answer_generator.answer(question, retrieved))
 
 
@@ -165,7 +165,7 @@ class RetrievalExperimentRunner:
                 "chunking_strategy": chunking_strategy,
             }
             if apply_query_metadata_filter:
-                metadata_filter.update(filing_metadata_filter(case.question))
+                metadata_filter.update(_inferred_filing_filter(retriever, case.question))
             retrieved = retriever.retrieve(
                 case.question,
                 top_k,
@@ -188,3 +188,11 @@ class RetrievalExperimentRunner:
             retrieval_recall=sum(result.retrieval_hit for result in results) / len(results),
             cases=tuple(results),
         )
+
+
+def _inferred_filing_filter(retriever: object, question: str) -> dict[str, object]:
+    """Prefer indexed filing metadata; use static parsing only as a fallback."""
+    vector_store = getattr(retriever, "vector_store", None)
+    infer_from_index = getattr(vector_store, "infer_filing_metadata_filter", None)
+    inferred = dict(infer_from_index(question)) if callable(infer_from_index) else {}
+    return inferred or dict(filing_metadata_filter(question))

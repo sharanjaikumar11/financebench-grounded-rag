@@ -57,6 +57,16 @@ class FakeRetriever:
         return self.retrieved
 
 
+class IndexAwareFakeRetriever(FakeRetriever):
+    def __init__(self, retrieved: tuple[RetrievedChunk, ...], inferred_filter: dict[str, object]) -> None:
+        super().__init__(retrieved)
+        self.vector_store = type(
+            "VectorStore",
+            (),
+            {"infer_filing_metadata_filter": staticmethod(lambda _: inferred_filter)},
+        )()
+
+
 class FakeGenerator:
     def answer(self, question: str, retrieved: tuple[RetrievedChunk, ...]) -> GroundedAnswer:
         return answer()
@@ -170,6 +180,22 @@ def test_retrieval_experiment_can_apply_inferred_filing_metadata() -> None:
     assert retriever.calls[0][2] == {
         "chunking_strategy": "fixed_token",
         "document_name": "3M_2018_10K.pdf",
+    }
+
+
+def test_retrieval_experiment_uses_indexed_metadata_when_static_parsing_cannot_identify_company() -> None:
+    case = EvaluationCase(
+        "case-amazon", "What was Amazon's FY2019 net income?", "$11,588", "AMAZON_2019_10K.pdf"
+    )
+    retriever = IndexAwareFakeRetriever((source("AMAZON_2019_10K.pdf"),), {
+        "document_name": "AMAZON_2019_10K.pdf"
+    })
+
+    RetrievalExperimentRunner().run(retriever, [case], "fixed_token", 3, True)
+
+    assert retriever.calls[0][2] == {
+        "chunking_strategy": "fixed_token",
+        "document_name": "AMAZON_2019_10K.pdf",
     }
 
 

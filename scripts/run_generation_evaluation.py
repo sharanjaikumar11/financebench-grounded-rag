@@ -31,12 +31,13 @@ def main() -> None:
     if not api_key.strip():
         raise SystemExit("Set GEMINI_API_KEY before running generation evaluation")
     model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
+    fallback_model = os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash-lite")
     store = SQLiteVectorStore(arguments.vector_store)
     try:
         retriever_class = HybridRetriever if arguments.retrieval_mode == "hybrid" else DenseRetriever
         system = GroundedEvaluationSystem(
             retriever_class(SentenceTransformerEmbeddingProvider(), store),
-            GroundedAnswerGenerator(GeminiAnswerProvider(api_key, model)),
+            GroundedAnswerGenerator(GeminiAnswerProvider(api_key, model, fallback_model)),
             arguments.top_k,
         )
         report = EvaluationRunner().run(system, load_evaluation_cases(arguments.cases))

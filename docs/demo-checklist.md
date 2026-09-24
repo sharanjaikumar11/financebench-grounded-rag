@@ -5,7 +5,7 @@
 1. Activate the project environment and set `GEMINI_API_KEY`. Set `GEMINI_FALLBACK_MODEL` if a fallback model is available.
 2. Confirm `data/processed/local_sentence_transformers/vectors.sqlite3` and the FinanceBench PDFs under `data/raw/financebench/pdfs/` are present on the demonstration machine.
 3. Run `python -m pytest -q`.
-4. Run the expanded retrieval evaluation using `evaluation/cases.json`. The evaluator requires enough available memory for the 1.86 GB local vector index.
+4. Run the expanded retrieval evaluation using `evaluation/cases.json`. The current measured result is 100% expected-filing recall at K=3 (11/11); rerun it when changing index, chunking, routing, or retrieval logic.
 5. With the Gemini key set, run the grounded generation evaluation and save its report under `evaluation/results/`.
 6. Update `docs/experiment-report.md` only with the newly generated measured metrics.
 
