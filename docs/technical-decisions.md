@@ -30,6 +30,6 @@ Once scoped to a single filing, hybrid retrieval considers all of that filing's 
 
 ## Availability and citation usability
 
-Gemini generation uses temperature zero and a configurable `GEMINI_THINKING_LEVEL` (default `low`) to provide enough reasoning capacity for table interpretation. If the configured primary model returns a temporary capacity error (such as HTTP 503), the application retries once using an optional separately configured fallback model. Other failures are surfaced as a clear error instead of being represented as an unsupported answer.
+Gemini generation uses temperature zero and a configurable `GEMINI_THINKING_LEVEL` (default `minimal`) to provide enough reasoning capacity for table interpretation. If the configured primary model returns a temporary capacity error (such as HTTP 503), the application retries once using an optional separately configured fallback model. Other failures are surfaced as a clear error instead of being represented as an unsupported answer.
 
 The Streamlit demo retains citation objects and renders them as local `file:///...#page=N` links when the referenced FinanceBench PDF is present in the source directory. This makes the cited page directly inspectable while retaining a plain-text citation fallback when the local file is unavailable.

@@ -64,7 +64,7 @@ python scripts\run_generation_evaluation.py --vector-store data\processed\local_
 ## Tests
 
 ```powershell
-python -m pytest -q
+python -m pytest -q --basetemp .pytest-tmp
 ```
 
 ## Container
