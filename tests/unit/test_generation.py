@@ -164,3 +164,32 @@ def test_gemini_answer_provider_uses_fallback_after_a_capacity_error(
 
     assert provider.generate("question") == "Grounded answer [S1]"
     assert models.models == ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite"]
+
+
+def test_gemini_answer_provider_uses_configured_thinking_level(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import sys
+    from types import ModuleType, SimpleNamespace
+
+    captured: dict[str, object] = {}
+
+    class Models:
+        def generate_content(self, **kwargs: object) -> SimpleNamespace:
+            captured.update(kwargs)
+            return SimpleNamespace(text="Grounded answer [S1]")
+
+    fake_types = SimpleNamespace(
+        GenerateContentConfig=lambda **kwargs: kwargs,
+        ThinkingConfig=lambda **kwargs: kwargs,
+    )
+    fake_google = ModuleType("google")
+    fake_google.genai = SimpleNamespace(Client=lambda **_: SimpleNamespace(models=Models()))
+    fake_genai = ModuleType("google.genai")
+    fake_genai.types = fake_types
+    monkeypatch.setitem(sys.modules, "google", fake_google)
+    monkeypatch.setitem(sys.modules, "google.genai", fake_genai)
+
+    GeminiAnswerProvider("test-key", "gemini-3.1-flash-lite", thinking_level="low").generate("question")
+
+    assert captured["config"]["thinking_config"] == {"thinking_level": "low"}

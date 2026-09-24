@@ -16,6 +16,7 @@ class Settings:
     gemini_api_key: str | None
     gemini_model: str
     gemini_fallback_model: str
+    gemini_thinking_level: str
 
     @classmethod
     def from_environment(cls) -> Settings:
@@ -28,6 +29,7 @@ class Settings:
             api_key,
             os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"),
             os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash-lite"),
+            os.getenv("GEMINI_THINKING_LEVEL", "low"),
         )
 
     def require_gemini_key(self) -> str:

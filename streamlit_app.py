@@ -60,6 +60,7 @@ def query_service() -> RAGQueryService:
                 api_key,
                 settings.gemini_model,
                 settings.gemini_fallback_model,
+                settings.gemini_thinking_level,
             )
         ),
         top_k=3,

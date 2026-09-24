@@ -22,12 +22,19 @@ class AnswerProvider(Protocol):
 class GeminiAnswerProvider:
     """Gemini-backed answer provider, initialized only when used."""
 
-    def __init__(self, api_key: str, model: str, fallback_model: str | None = None) -> None:
+    def __init__(
+        self,
+        api_key: str,
+        model: str,
+        fallback_model: str | None = None,
+        thinking_level: str = "low",
+    ) -> None:
         if not api_key.strip():
             raise ValueError("A Gemini API key is required for answer generation")
         self.api_key = api_key
         self.model = model
         self.fallback_model = fallback_model if fallback_model != model else None
+        self.thinking_level = thinking_level
         self._client: object | None = None
 
     def generate(self, prompt: str) -> str:
@@ -53,7 +60,7 @@ class GeminiAnswerProvider:
     def _generate(self, prompt: str, model: str, types: object) -> object:
         config = {"temperature": 0, "max_output_tokens": 160}
         if model.startswith("gemini-3"):
-            config["thinking_config"] = types.ThinkingConfig(thinking_level="minimal")
+            config["thinking_config"] = types.ThinkingConfig(thinking_level=self.thinking_level)
         return self._client.models.generate_content(
             model=model,
             contents=prompt,

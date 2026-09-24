@@ -16,6 +16,7 @@ Set the key only in the terminal session that will run answer generation:
 $env:GEMINI_API_KEY = "your_key"
 $env:GEMINI_MODEL = "gemini-3.1-flash-lite"
 $env:GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite"
+$env:GEMINI_THINKING_LEVEL = "low"
 ```
 
 ## Run

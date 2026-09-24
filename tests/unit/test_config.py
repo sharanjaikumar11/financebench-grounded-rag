@@ -11,6 +11,7 @@ def test_settings_reads_safe_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert settings.log_level == "INFO"
     assert settings.gemini_api_key is None
+    assert settings.gemini_thinking_level == "low"
     with pytest.raises(ConfigurationError):
         settings.require_gemini_key()
 
