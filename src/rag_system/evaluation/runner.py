@@ -78,6 +78,7 @@ class RetrievalCaseResult:
 
     case_id: str
     expected_document: str
+    expected_pages: tuple[int, ...]
     retrieved_documents: tuple[str, ...]
     retrieved_pages: tuple[tuple[int, ...], ...]
     retrieval_hit: bool
@@ -174,6 +175,7 @@ class RetrievalExperimentRunner:
                 RetrievalCaseResult(
                     case_id=case.case_id,
                     expected_document=case.expected_document,
+                    expected_pages=case.expected_pages,
                     retrieved_documents=tuple(item.chunk.document_name for item in retrieved),
                     retrieved_pages=tuple(item.chunk.page_numbers for item in retrieved),
                     retrieval_hit=retrieval_hit(case, retrieved),

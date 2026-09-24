@@ -6,7 +6,7 @@ This report evaluates the initial three committed FinanceBench cases against the
 
 The metadata filter is part of the evaluated configuration because the baseline dense-only system retrieved similar filings from incorrect years. The filter restricts those unambiguous queries to the matching filing before ranking chunks.
 
-The current implementation extends that evaluated pipeline with quarter-aware 10-Q routing, annual 10-K preference, financial-statement synonym expansion, table-aware reranking, diversified anchors, and neighboring context. These changes are implementation improvements motivated by observed failure cases. They have not yet been assigned new quantitative results in this report.
+The current implementation extends that evaluated pipeline with quarter-aware 10-Q routing, annual 10-K preference, financial-statement synonym expansion, table-aware reranking, diversified anchors, and neighboring context. The expanded evaluation dataset now contains 11 source-backed cases, including the annual, quarter-specific, table-row, and derivative scenarios used in the demo. Each case records an expected filing and, where directly established from source evidence, expected PDF pages. Fresh aggregate metrics remain pending execution on a machine with sufficient memory for the 1.86 GB local SQLite index.
 
 ## Results
 

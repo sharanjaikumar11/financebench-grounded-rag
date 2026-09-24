@@ -9,12 +9,13 @@ from pathlib import Path
 
 @dataclass(frozen=True, slots=True)
 class EvaluationCase:
-    """Question, expected answer, and expected source document for evaluation."""
+    """Question, expected answer, and source evidence for evaluation."""
 
     case_id: str
     question: str
     expected_answer: str
     expected_document: str
+    expected_pages: tuple[int, ...] = ()
 
 
 def load_evaluation_cases(path: Path) -> tuple[EvaluationCase, ...]:
@@ -28,6 +29,7 @@ def load_evaluation_cases(path: Path) -> tuple[EvaluationCase, ...]:
             question=item["question"],
             expected_answer=item["expected_answer"],
             expected_document=item["expected_document"],
+            expected_pages=tuple(item.get("expected_pages", ())),
         )
         for item in raw_cases
     )

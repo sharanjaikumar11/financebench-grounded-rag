@@ -2,7 +2,7 @@
 
 ## Embeddings
 
-`all-MiniLM-L6-v2` is used locally for embeddings. It removes embedding API rate limits during corpus indexing and produces 384-dimensional vectors. Gemini remains restricted to grounded answer generation.
+`all-MiniLM-L6-v2` is used locally for embeddings. It removes embedding API rate limits during corpus indexing and produces 384-dimensional vectors. The provider loads the model from the local Hugging Face cache only, so retrieval and evaluation do not silently depend on network access. Gemini remains restricted to grounded answer generation.
 
 ## Vector store
 

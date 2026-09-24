@@ -160,6 +160,31 @@ def test_sentence_transformer_embedder_handles_an_empty_batch_without_loading_mo
     assert provider._model is None
 
 
+def test_sentence_transformer_embedder_loads_only_from_the_local_cache(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import sys
+    from types import ModuleType
+
+    captured: dict[str, object] = {}
+
+    class FakeSentenceTransformer:
+        def __init__(self, model_name: str, **kwargs: object) -> None:
+            captured["model_name"] = model_name
+            captured.update(kwargs)
+
+        def encode(self, texts: list[str], normalize_embeddings: bool) -> list[list[float]]:
+            assert normalize_embeddings is True
+            return [[1.0] for _ in texts]
+
+    fake_module = ModuleType("sentence_transformers")
+    fake_module.SentenceTransformer = FakeSentenceTransformer
+    monkeypatch.setitem(sys.modules, "sentence_transformers", fake_module)
+
+    assert SentenceTransformerEmbeddingProvider().embed(["local evidence"]) == ((1.0,),)
+    assert captured == {"model_name": "all-MiniLM-L6-v2", "local_files_only": True}
+
+
 def test_filing_metadata_filter_requires_unambiguous_company_and_fiscal_year() -> None:
     assert filing_metadata_filter("What was FY2018 capital expenditure for 3M?") == {
         "document_name": "3M_2018_10K.pdf"

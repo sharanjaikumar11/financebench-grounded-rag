@@ -124,8 +124,13 @@ def test_citation_metric_accepts_the_expected_source_among_direct_citations() ->
 
 def test_case_loader_validates_nonempty_unique_case_ids(tmp_path: Path) -> None:
     valid = tmp_path / "cases.json"
-    valid.write_text(json.dumps([{"case_id": "one", "question": "q", "expected_answer": "a", "expected_document": "d.pdf"}]))
-    assert load_evaluation_cases(valid)[0].case_id == "one"
+    valid.write_text(json.dumps([{
+        "case_id": "one", "question": "q", "expected_answer": "a",
+        "expected_document": "d.pdf", "expected_pages": [12, 13],
+    }]))
+    case = load_evaluation_cases(valid)[0]
+    assert case.case_id == "one"
+    assert case.expected_pages == (12, 13)
 
     invalid = tmp_path / "invalid.json"
     invalid.write_text("[]")
@@ -134,12 +139,13 @@ def test_case_loader_validates_nonempty_unique_case_ids(tmp_path: Path) -> None:
 
 
 def test_retrieval_experiment_records_source_evidence_and_recall() -> None:
-    case = EvaluationCase("case-1", "Question", "$1577.00", "3M_2018_10K.pdf")
+    case = EvaluationCase("case-1", "Question", "$1577.00", "3M_2018_10K.pdf", (59,))
     retriever = FakeRetriever((source(),))
 
     report = RetrievalExperimentRunner().run(retriever, [case], "fixed_token", 5)
 
     assert report.retrieval_recall == 1.0
+    assert report.cases[0].expected_pages == (59,)
     assert report.cases[0].retrieved_pages == ((59,),)
     assert retriever.calls == [("Question", 5, {"chunking_strategy": "fixed_token"})]
 

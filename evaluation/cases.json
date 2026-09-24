@@ -3,18 +3,76 @@
     "case_id": "financebench_id_03029",
     "question": "What is the FY2018 capital expenditure amount (in USD millions) for 3M? Give a response to the question by relying on the details shown in the cash flow statement.",
     "expected_answer": "$1577.00",
-    "expected_document": "3M_2018_10K.pdf"
+    "expected_document": "3M_2018_10K.pdf",
+    "expected_pages": [46, 47]
   },
   {
     "case_id": "financebench_id_04672",
     "question": "Assume that you are a public equities analyst. Answer the following question by primarily using information that is shown in the balance sheet: what is the year end FY2018 net PPNE for 3M? Answer in USD billions.",
     "expected_answer": "$8.70",
-    "expected_document": "3M_2018_10K.pdf"
+    "expected_document": "3M_2018_10K.pdf",
+    "expected_pages": [58, 59]
   },
   {
     "case_id": "financebench_id_00499",
     "question": "Is 3M a capital-intensive business based on FY2022 data?",
     "expected_answer": "No",
     "expected_document": "3M_2022_10K.pdf"
+  },
+  {
+    "case_id": "financebench_demo_amazon_2019_net_income",
+    "question": "What was Amazon's FY2019 net income attributable to shareholders in USD millions?",
+    "expected_answer": "$11,588 million",
+    "expected_document": "AMAZON_2019_10K.pdf",
+    "expected_pages": [38, 39]
+  },
+  {
+    "case_id": "financebench_demo_bestbuy_2019_inventory",
+    "question": "What was Best Buy's year-end FY2019 inventory balance in USD millions?",
+    "expected_answer": "$5,409 million",
+    "expected_document": "BESTBUY_2019_10K.pdf",
+    "expected_pages": [51, 52]
+  },
+  {
+    "case_id": "financebench_demo_boeing_2018_net_ppe",
+    "question": "What was Boeing's year-end FY2018 net property, plant, and equipment in USD millions?",
+    "expected_answer": "$12,645 million",
+    "expected_document": "BOEING_2018_10K.pdf",
+    "expected_pages": [51, 52]
+  },
+  {
+    "case_id": "financebench_demo_costco_2021_total_assets",
+    "question": "What were Costco's total assets at the end of FY2021 in USD millions?",
+    "expected_answer": "$59,268 million",
+    "expected_document": "COSTCO_2021_10K.pdf",
+    "expected_pages": [38, 39]
+  },
+  {
+    "case_id": "financebench_demo_jpmorgan_2022q2_highest_net_income",
+    "question": "In Q2 2022, which JPMorgan business segment had the highest net income?",
+    "expected_answer": "Corporate & Investment Bank",
+    "expected_document": "JPMORGAN_2022Q2_10Q.pdf",
+    "expected_pages": [20, 21]
+  },
+  {
+    "case_id": "financebench_demo_microsoft_2016_cost_of_revenue",
+    "question": "What was Microsoft's FY2016 cost of goods sold in USD millions?",
+    "expected_answer": "$32,780 million",
+    "expected_document": "MICROSOFT_2016_10K.pdf",
+    "expected_pages": [51, 52]
+  },
+  {
+    "case_id": "financebench_demo_pepsico_2021_capex",
+    "question": "What was PepsiCo's FY2021 capital expenditure amount in USD billions?",
+    "expected_answer": "$4.625 billion",
+    "expected_document": "PEPSICO_2021_10K.pdf",
+    "expected_pages": [63, 64]
+  },
+  {
+    "case_id": "financebench_demo_verizon_2021_derivatives",
+    "question": "Among Verizon's derivative instruments in FY2021, which had the highest notional value?",
+    "expected_answer": "Cross currency swaps",
+    "expected_document": "VERIZON_2021_10K.pdf",
+    "expected_pages": [47]
   }
 ]
