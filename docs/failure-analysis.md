@@ -20,10 +20,10 @@ Generation evaluation identified a separate abstention pattern: answer-bearing r
 
 Gemini capacity errors (for example, HTTP 503) previously ended the request immediately. The application now retries an optional fallback model only for temporary capacity errors and otherwise displays a clear failure message. This is an availability improvement, not evidence that a generated answer is grounded.
 
-The demo previously displayed source labels without a direct path to inspect the evidence. Citations now link to the locally indexed PDF and its first cited page when the file exists. The link is a usability aid; citation validity continues to depend on the retrieved evidence.
+The demo previously displayed source labels without a direct path to inspect the evidence. Citations now link to a loopback-only local PDF server and its first cited page when the file exists. The link is a usability aid; citation validity continues to depend on the retrieved evidence.
 
 ## Generation limitation
 
 Grounded answer evaluation depends on a Gemini API key being available in the same terminal that runs the evaluation. The generator is configured with temperature zero and returns `INSUFFICIENT_CONTEXT` rather than fabricate an answer or citation when retrieved evidence is insufficient.
 
-The 3-of-3 retrieval result above is the original small evaluation and must not be interpreted as a measurement of the subsequent routing and table-retrieval changes. A larger reproducible evaluation with expected answers and expected source pages is required before reporting updated answer-accuracy, citation-accuracy, or failure-rate metrics.
+The 3-of-3 retrieval result above is the original small evaluation and must not be interpreted as a measurement of the subsequent routing and table-retrieval changes. The expanded 11-case run subsequently measured 100% expected-filing recall (11/11), 45.45% answer accuracy (5/11), 54.55% citation accuracy (6/11), and 100% grounding. These metrics are recorded in the experiment report and should be rerun when the generator model or prompts change.

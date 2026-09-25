@@ -6,6 +6,7 @@ __pycache__/
 .pytest_cache/
 .pytest-tmp/
 .test-tmp-ingestion/
+.presentation-build/
 .streamlit/secrets.toml
 data/raw/*
 !data/raw/.gitkeep

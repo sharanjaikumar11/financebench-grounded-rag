@@ -2,8 +2,14 @@
 
 from __future__ import annotations
 
+import os
+import shutil
+from dataclasses import dataclass
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from threading import Thread
 from time import perf_counter
+from urllib.parse import quote, unquote
 
 import streamlit as st
 
@@ -22,6 +28,8 @@ from rag_system.services.query import RAGQueryService
 
 INDEX_DIRECTORY = "data/processed/local_sentence_transformers"
 SOURCE_DIRECTORY = Path("data/raw/financebench/pdfs").resolve()
+PDF_SERVER_HOST = "127.0.0.1"
+PDF_SERVER_PORT = int(os.getenv("FINANCEBENCH_PDF_SERVER_PORT", "8502"))
 SUGGESTIONS = {
     "FY2018 net PP&E": (
         "Assume that you are a public equities analyst. Answer the following question "
@@ -71,6 +79,64 @@ def query_service() -> RAGQueryService:
     )
 
 
+class _LocalPdfRequestHandler(BaseHTTPRequestHandler):
+    """Serve only PDFs in the selected FinanceBench source directory."""
+
+    server_version = "FinanceBenchPdfServer/1.0"
+
+    def do_GET(self) -> None:  # noqa: N802 - required HTTP handler name
+        self._serve_pdf(include_body=True)
+
+    def do_HEAD(self) -> None:  # noqa: N802 - required HTTP handler name
+        self._serve_pdf(include_body=False)
+
+    def _serve_pdf(self, include_body: bool) -> None:
+        document_name = Path(unquote(self.path.split("?", 1)[0])).name
+        pdf_path = (SOURCE_DIRECTORY / document_name).resolve()
+        if (
+            pdf_path.parent != SOURCE_DIRECTORY
+            or pdf_path.suffix.lower() != ".pdf"
+            or not pdf_path.is_file()
+        ):
+            self.send_error(404, "PDF not found")
+            return
+
+        self.send_response(200)
+        self.send_header("Content-Type", "application/pdf")
+        self.send_header("Content-Length", str(pdf_path.stat().st_size))
+        self.send_header("Content-Disposition", f'inline; filename="{pdf_path.name}"')
+        self.end_headers()
+        if include_body:
+            with pdf_path.open("rb") as pdf_file:
+                shutil.copyfileobj(pdf_file, self.wfile)
+
+    def log_message(self, format: str, *args: object) -> None:
+        """Keep local PDF requests out of the Streamlit terminal output."""
+
+
+@dataclass(frozen=True)
+class _LocalPdfServer:
+    port: int
+
+    @property
+    def base_url(self) -> str:
+        return f"http://{PDF_SERVER_HOST}:{self.port}"
+
+
+@st.cache_resource
+def pdf_source_server() -> _LocalPdfServer:
+    """Start a loopback-only PDF server, separate from Streamlit static serving."""
+    try:
+        server = ThreadingHTTPServer((PDF_SERVER_HOST, PDF_SERVER_PORT), _LocalPdfRequestHandler)
+    except OSError as error:
+        raise RuntimeError(
+            f"Could not start the local PDF source server on port {PDF_SERVER_PORT}. "
+            "Set FINANCEBENCH_PDF_SERVER_PORT to an available port and restart Streamlit."
+        ) from error
+    Thread(target=server.serve_forever, name="financebench-pdf-server", daemon=True).start()
+    return _LocalPdfServer(PDF_SERVER_PORT)
+
+
 def citation_label(citation: object) -> str:
     return (
         f"{citation.document_name} | pages "
@@ -79,17 +145,17 @@ def citation_label(citation: object) -> str:
 
 
 def citation_url(citation: object) -> str | None:
-    """Build a page-specific local PDF link for an indexed FinanceBench source."""
+    """Build an HTTP-served PDF link that opens at the cited page."""
     document_name = Path(citation.document_name).name
     source_path = (SOURCE_DIRECTORY / document_name).resolve()
     if source_path.parent != SOURCE_DIRECTORY or not source_path.is_file():
         return None
     page_number = citation.page_numbers[0] if citation.page_numbers else 1
-    return f"{source_path.as_uri()}#page={page_number}"
+    return f"{pdf_source_server().base_url}/{quote(document_name)}#page={page_number}"
 
 
 def render_citation(citation: object, key: str) -> None:
-    """Show a source link when the cited PDF remains available locally."""
+    """Show a page-specific source link to the local loopback PDF server."""
     if not hasattr(citation, "document_name"):
         st.caption(f":material/description: {citation}")
         return

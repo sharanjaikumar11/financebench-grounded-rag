@@ -45,7 +45,7 @@ With the selected provider's API key set in the terminal, run the Streamlit demo
 streamlit run streamlit_app.py
 ```
 
-The browser opens at `http://localhost:8501` and shows grounded answers, source citations, and safe insufficient-context responses. When the cited FinanceBench PDF is available under `data/raw/financebench/pdfs/`, each source is a link that opens the local PDF at the first cited page. The application uses `GEMINI_FALLBACK_MODEL` only when the primary Gemini model returns a temporary capacity error; otherwise, generation failures are reported clearly.
+The browser opens at `http://localhost:8501` and shows grounded answers, source citations, and safe insufficient-context responses. When the cited FinanceBench PDF is available under `data/raw/financebench/pdfs/`, the application automatically starts a loopback-only PDF source server on port `8502`. Each source link then opens the browser-served PDF at its first cited page. Set `FINANCEBENCH_PDF_SERVER_PORT` before starting Streamlit only if port `8502` is occupied. The application uses `GEMINI_FALLBACK_MODEL` only when the primary Gemini model returns a temporary capacity error; otherwise, generation failures are reported clearly.
 
 ## Evaluation
 
