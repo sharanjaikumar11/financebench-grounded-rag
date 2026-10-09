@@ -21,6 +21,8 @@ def citations_from_answer(
     """Return only valid, explicitly referenced source citations."""
     citations: list[Citation] = []
     seen: set[str] = set()
+    if any(f"S{match.group(1)}" not in source_map for match in _SOURCE_LABEL.finditer(answer_text)):
+        return ()
     for match in _SOURCE_LABEL.finditer(answer_text):
         label = f"S{match.group(1)}"
         if label in seen or label not in source_map:

@@ -19,9 +19,7 @@ def _render_sources(source_map: Mapping[str, RetrievedChunk]) -> str:
     )
 
 
-def grounded_answer_prompt(
-    question: str, source_map: Mapping[str, RetrievedChunk]
-) -> str:
+def grounded_answer_prompt(question: str, source_map: Mapping[str, RetrievedChunk]) -> str:
     """Build a prompt that restricts the model to retrieved evidence."""
     sources = _render_sources(source_map)
     return (
@@ -55,9 +53,7 @@ def grounded_answer_prompt(
     )
 
 
-def grounded_answer_retry_prompt(
-    question: str, source_map: Mapping[str, RetrievedChunk]
-) -> str:
+def grounded_answer_retry_prompt(question: str, source_map: Mapping[str, RetrievedChunk]) -> str:
     """Ask for a second, citation-validated pass after a cautious abstention."""
     return (
         "Re-evaluate the question as a financial-statement extraction task. The first pass returned "

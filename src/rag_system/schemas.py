@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum
 from pathlib import Path
 
@@ -78,3 +78,4 @@ class GroundedAnswer:
     text: str
     citations: tuple[Citation, ...]
     insufficient_context: bool
+    diagnostics: tuple[dict[str, object], ...] = field(default=(), compare=False)

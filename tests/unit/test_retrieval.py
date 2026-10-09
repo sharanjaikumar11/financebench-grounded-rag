@@ -16,9 +16,31 @@ from rag_system.retrieval.vector_store import (
     SQLiteVectorStore,
     VectorStoreError,
     _financial_keyword_relevance,
+    _financial_row_relevance,
     _sparse_query_terms,
+    _statement_relevance,
 )
 from rag_system.schemas import DocumentChunk
+
+
+@pytest.mark.parametrize(
+    "label",
+    ["Property, plant and equipment, net", "Merchandise inventories", "Accounts receivable"],
+)
+def test_row_matching_prefers_values_over_mentions(label):
+    query = f"What is {label}?"
+    assert _financial_row_relevance(f"{label} 8,432 7,321", query) > 0
+    assert _financial_row_relevance(f"Note 8 - {label} 51", query) == 0
+    assert _financial_row_relevance(f"We discuss {label} in the balance sheet.", query) == 0
+
+
+def test_row_matching_does_not_reward_unrelated_numeric_rows():
+    assert (
+        _financial_row_relevance(
+            "Foreign exchange contracts 8,432 7,321", "net property plant and equipment"
+        )
+        == 0
+    )
 
 
 class TestEmbedder:
@@ -30,6 +52,56 @@ class TestEmbedder:
             "the requested table value": (0.5, 0.5),
         }
         return tuple(vectors[text] for text in texts)
+
+
+@pytest.mark.parametrize("heading", ["Balance sheets", "Statements of financial position"])
+def test_balance_intent_prefers_stock_over_cash_flow_additions(heading):
+    query = "What is net property plant and equipment?"
+    balance = f"{heading} Property plant and equipment net 8,123 7,654"
+    cash = "Statements of cash flows Property plant and equipment additions 1,234 1,123"
+    assert _statement_relevance(balance, query) > _statement_relevance(cash, query)
+
+
+def test_requested_cash_statement_beats_reconciliation():
+    query = "Capital expenditure relying on the cash flow statement"
+    statement = "Consolidated statements of cash flows Purchases of equipment (921) (812)"
+    summary = "Free cash flow reconciliation Purchases of equipment (921) (812)"
+    assert _statement_relevance(statement, query) > _statement_relevance(summary, query)
+
+
+def test_running_contents_footer_does_not_penalize_financial_row():
+    query = "total assets"
+    row = "Balance sheets Total assets 7,654 6,543"
+    assert _statement_relevance(row, query) == _statement_relevance(
+        row + " Table of Contents", query
+    )
+    contents = "Note 1 Policies 12 Note 2 Assets 15 Note 3 Debt 20 Note 4 Equity 22"
+    assert _statement_relevance(contents, query) < 0
+
+
+def test_hybrid_statement_preference_with_equal_vectors(tmp_path, monkeypatch):
+    monkeypatch.setenv("STATEMENT_AWARE_RANKING", "1")
+    store = SQLiteVectorStore(tmp_path / "statement-test.sqlite3")
+    try:
+        rows = [
+            chunk(
+                "stock",
+                "sample",
+                "Balance sheets net property plant and equipment 8,123 7,654",
+                chunk_index=0,
+            ),
+            chunk(
+                "flow",
+                "sample",
+                "Statements of cash flows property plant and equipment additions 1,234 1,123",
+                chunk_index=10,
+            ),
+        ]
+        store.upsert(rows, ((1.0, 0.0), (1.0, 0.0)))
+        result = store.hybrid_search((1.0, 0.0), "net property plant and equipment", 1)
+        assert result[0].chunk.chunk_id == "stock"
+    finally:
+        store.close()
 
 
 def chunk(
@@ -56,10 +128,12 @@ def chunk(
 def test_dense_retriever_returns_ranked_chunks_and_source_metadata(tmp_path: Path) -> None:
     store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
     retriever = DenseRetriever(TestEmbedder(), store)
-    retriever.index([
-        chunk("revenue", "doc-a", "revenue increased"),
-        chunk("risk", "doc-b", "operating risk"),
-    ])
+    retriever.index(
+        [
+            chunk("revenue", "doc-a", "revenue increased"),
+            chunk("risk", "doc-b", "operating risk"),
+        ]
+    )
 
     results = retriever.retrieve("revenue query", top_k=2)
 
@@ -72,19 +146,25 @@ def test_dense_retriever_returns_ranked_chunks_and_source_metadata(tmp_path: Pat
 def test_hybrid_retriever_combines_dense_and_keyword_candidates(tmp_path: Path) -> None:
     store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
     retriever = HybridRetriever(TestEmbedder(), store)
-    retriever.index([chunk("revenue", "doc-a", "revenue increased"), chunk("risk", "doc-b", "operating risk")])
+    retriever.index(
+        [chunk("revenue", "doc-a", "revenue increased"), chunk("risk", "doc-b", "operating risk")]
+    )
     results = retriever.retrieve("revenue query", 2)
     assert results[0].chunk.chunk_id == "revenue"
     store.close()
 
 
-def test_hybrid_retriever_scopes_dense_search_to_keyword_candidate_documents(tmp_path: Path) -> None:
+def test_hybrid_retriever_scopes_dense_search_to_keyword_candidate_documents(
+    tmp_path: Path,
+) -> None:
     store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
     retriever = HybridRetriever(TestEmbedder(), store)
-    retriever.index([
-        chunk("revenue", "doc-a", "revenue increased"),
-        chunk("risk", "doc-b", "operating risk"),
-    ])
+    retriever.index(
+        [
+            chunk("revenue", "doc-a", "revenue increased"),
+            chunk("risk", "doc-b", "operating risk"),
+        ]
+    )
 
     results = store.hybrid_search((0.9, 0.1), "revenue query", top_k=2)
 
@@ -95,14 +175,22 @@ def test_hybrid_retriever_scopes_dense_search_to_keyword_candidate_documents(tmp
 def test_dense_retriever_applies_document_and_strategy_filters(tmp_path: Path) -> None:
     store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
     retriever = DenseRetriever(TestEmbedder(), store)
-    retriever.index([
-        chunk("revenue", "doc-a", "revenue increased"),
-        chunk("risk", "doc-b", "operating risk", strategy="section_aware"),
-    ])
+    retriever.index(
+        [
+            chunk("revenue", "doc-a", "revenue increased"),
+            chunk("risk", "doc-b", "operating risk", strategy="section_aware"),
+        ]
+    )
 
-    assert [item.chunk.chunk_id for item in retriever.retrieve("revenue query", 3, {"document_id": "doc-b"})] == ["risk"]
+    assert [
+        item.chunk.chunk_id
+        for item in retriever.retrieve("revenue query", 3, {"document_id": "doc-b"})
+    ] == ["risk"]
     assert retriever.retrieve("revenue query", 3, {"chunking_strategy": "missing"}) == ()
-    assert [item.chunk.chunk_id for item in retriever.retrieve("revenue query", 3, {"document_name": "doc-a.pdf"})] == ["revenue"]
+    assert [
+        item.chunk.chunk_id
+        for item in retriever.retrieve("revenue query", 3, {"document_name": "doc-a.pdf"})
+    ] == ["revenue"]
     store.close()
 
 
@@ -210,12 +298,21 @@ def test_query_service_prefers_indexed_filing_metadata_over_legacy_text_parsing(
         def __init__(self) -> None:
             self.vector_store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
             self.vector_store.upsert(
-                [chunk("microsoft", "doc-microsoft", "Cost of revenue 32,780", document_name="MICROSOFT_2016_10K.pdf")],
+                [
+                    chunk(
+                        "microsoft",
+                        "doc-microsoft",
+                        "Cost of revenue 32,780",
+                        document_name="MICROSOFT_2016_10K.pdf",
+                    )
+                ],
                 [(1.0, 0.0)],
             )
             self.metadata_filter: object = None
 
-        def retrieve(self, question: str, top_k: int, metadata_filter: object) -> tuple[object, ...]:
+        def retrieve(
+            self, question: str, top_k: int, metadata_filter: object
+        ) -> tuple[object, ...]:
             self.metadata_filter = metadata_filter
             return ()
 
@@ -234,19 +331,27 @@ def test_vector_store_infers_an_unambiguous_company_and_year_from_indexed_docume
     store.upsert(
         [
             chunk(
-                "amazon", "doc-amazon", "net income attributable to shareholders",
+                "amazon",
+                "doc-amazon",
+                "net income attributable to shareholders",
                 document_name="AMAZON_2019_10K.pdf",
             ),
             chunk(
-                "boeing", "doc-boeing", "property plant and equipment",
+                "boeing",
+                "doc-boeing",
+                "property plant and equipment",
                 document_name="BOEING_2018_10K.pdf",
             ),
             chunk(
-                "johnson", "doc-johnson", "consumer health discontinued operation",
+                "johnson",
+                "doc-johnson",
+                "consumer health discontinued operation",
                 document_name="JOHNSON_JOHNSON_2023_8K_dated-2023-08-30.pdf",
             ),
             chunk(
-                "jpm-q2", "doc-jpm-q2", "consumer community banking net income",
+                "jpm-q2",
+                "doc-jpm-q2",
+                "consumer community banking net income",
                 document_name="JPMORGAN_2022Q2_10Q.pdf",
             ),
         ],
@@ -276,10 +381,25 @@ def test_vector_store_prefers_the_later_annual_filing_for_year_comparisons(
     store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
     store.upsert(
         [
-            chunk("walmart-2019-10k", "doc-walmart-10k", "operating income margin", document_name="WALMART_2019_10K.pdf"),
-            chunk("walmart-2019-10q", "doc-walmart-10q", "quarterly operating income", document_name="WALMART_2019Q4_10Q.pdf"),
+            chunk(
+                "walmart-2019-10k",
+                "doc-walmart-10k",
+                "operating income margin",
+                document_name="WALMART_2019_10K.pdf",
+            ),
+            chunk(
+                "walmart-2019-10q",
+                "doc-walmart-10q",
+                "quarterly operating income",
+                document_name="WALMART_2019Q4_10Q.pdf",
+            ),
             chunk("amd-2022-10k", "doc-amd-10k", "quick ratio", document_name="AMD_2022_10K.pdf"),
-            chunk("amd-2022-10q", "doc-amd-10q", "quarterly liquidity", document_name="AMD_2022Q3_10Q.pdf"),
+            chunk(
+                "amd-2022-10q",
+                "doc-amd-10q",
+                "quarterly liquidity",
+                document_name="AMD_2022Q3_10Q.pdf",
+            ),
         ],
         [(1.0, 0.0), (0.9, 0.1), (0.0, 1.0), (0.1, 0.9)],
     )
@@ -371,13 +491,23 @@ def test_hybrid_search_considers_all_sparse_matches_in_a_scoped_filing(tmp_path:
     store = SQLiteVectorStore(tmp_path / "vectors.sqlite3")
     store.upsert(
         [
-            chunk(f"narrative-{index}", "doc-a", "inventory discussion", chunk_index=index,
-                  document_name="COMPANY_2021_10K.pdf")
+            chunk(
+                f"narrative-{index}",
+                "doc-a",
+                "inventory discussion",
+                chunk_index=index,
+                document_name="COMPANY_2021_10K.pdf",
+            )
             for index in range(250)
         ]
         + [
-            chunk("statement-row", "doc-a", "Consolidated Balance Sheets Merchandise inventories 5,409",
-                  chunk_index=300, document_name="COMPANY_2021_10K.pdf")
+            chunk(
+                "statement-row",
+                "doc-a",
+                "Consolidated Balance Sheets Merchandise inventories 5,409",
+                chunk_index=300,
+                document_name="COMPANY_2021_10K.pdf",
+            )
         ],
         [(1.0, 0.0)] * 251,
     )

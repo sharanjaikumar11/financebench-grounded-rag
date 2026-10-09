@@ -5,7 +5,11 @@ from pathlib import Path
 from rag_system.api.app import create_app
 from rag_system.chunking import FixedTokenChunker
 from rag_system.config import Settings
-from rag_system.generation.answering import GeminiAnswerProvider, GroqAnswerProvider, GroundedAnswerGenerator
+from rag_system.generation.answering import (
+    GeminiAnswerProvider,
+    GroqAnswerProvider,
+    GroundedAnswerGenerator,
+)
 from rag_system.ingestion.pipeline import DocumentIngestor, DocumentRegistry
 from rag_system.logging import configure_logging
 from rag_system.retrieval.embeddings import SentenceTransformerEmbeddingProvider
@@ -21,8 +25,10 @@ def build_application(storage_directory: Path = Path("data/processed/local_sente
         provider = GroqAnswerProvider(settings.require_groq_key(), settings.groq_model)
     else:
         provider = GeminiAnswerProvider(
-            settings.require_gemini_key(), settings.gemini_model,
-            settings.gemini_fallback_model, settings.gemini_thinking_level,
+            settings.require_gemini_key(),
+            settings.gemini_model,
+            settings.gemini_fallback_model,
+            settings.gemini_thinking_level,
         )
     service = RAGQueryService(
         ingestor=DocumentIngestor(DocumentRegistry(storage_directory / "documents.sqlite3")),
@@ -31,9 +37,7 @@ def build_application(storage_directory: Path = Path("data/processed/local_sente
             SentenceTransformerEmbeddingProvider(),
             SQLiteVectorStore(storage_directory / "vectors.sqlite3"),
         ),
-        answer_generator=GroundedAnswerGenerator(
-            provider
-        ),
+        answer_generator=GroundedAnswerGenerator(provider),
         top_k=3,
     )
     return create_app(service)

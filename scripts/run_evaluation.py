@@ -17,7 +17,11 @@ def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate retrieval against FinanceBench cases.")
     parser.add_argument("--cases", type=Path, default=Path("evaluation/cases.json"))
     parser.add_argument("--vector-store", type=Path, required=True)
-    parser.add_argument("--chunking-strategy", choices=("fixed_token", "section_aware"), required=True)
+    parser.add_argument(
+        "--chunking-strategy",
+        choices=("fixed_token", "section_aware", "table_aware_v1"),
+        required=True,
+    )
     parser.add_argument("--top-k", type=int, required=True)
     parser.add_argument("--retrieval-mode", choices=("dense", "hybrid"), default="dense")
     parser.add_argument(
@@ -34,7 +38,9 @@ def main() -> None:
     cases = load_evaluation_cases(arguments.cases)
     store = SQLiteVectorStore(arguments.vector_store)
     try:
-        retriever_class = HybridRetriever if arguments.retrieval_mode == "hybrid" else DenseRetriever
+        retriever_class = (
+            HybridRetriever if arguments.retrieval_mode == "hybrid" else DenseRetriever
+        )
         retriever = retriever_class(SentenceTransformerEmbeddingProvider(), store)
         report = RetrievalExperimentRunner().run(
             retriever,
@@ -46,9 +52,7 @@ def main() -> None:
     finally:
         store.close()
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
-    arguments.output.write_text(
-        json.dumps(report.as_dict(), indent=2), encoding="utf-8"
-    )
+    arguments.output.write_text(json.dumps(report.as_dict(), indent=2), encoding="utf-8")
     print(json.dumps(report.as_dict(), indent=2))
 
 

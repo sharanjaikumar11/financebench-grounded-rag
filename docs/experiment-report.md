@@ -1,49 +1,82 @@
-# Retrieval experiment report
+# Experiment report
 
-## Scope
+## Current measured results
 
-This report evaluates an expanded 11-case FinanceBench set against the complete local corpus of 363 unique documents. The set includes annual filings, a quarter-specific 10-Q, statement-table questions, and a derivative-instrument comparison. The measured configuration uses the `all-MiniLM-L6-v2` local embedding model, SQLite hybrid retrieval (dense cosine similarity plus FTS5 BM25 fused with reciprocal-rank fusion), and inferred filing metadata filtering when the indexed filing can be identified unambiguously.
+The local `row_matching_generation.json` evaluates the unchanged 11-case set:
 
-The metadata filter is part of the evaluated configuration because the baseline dense-only system retrieved similar filings from incorrect years. The filter restricts those unambiguous queries to the matching filing before ranking chunks.
+| Metric | Result | Meaning |
+| --- | ---: | --- |
+| Expected-document recall | 11/11 | Correct filing retrieved |
+| Expected-page recall | 10/10 labelled | Reference-page overlap in retrieved context |
+| Answer accuracy | 9/11 (81.82%) | Deterministic answer checker |
+| Citation accuracy | 9/11 (81.82%) | Expected document/page overlap |
+| Grounding rate | 100% | Source membership; abstentions count as grounded |
+| Abstention rate | 2/11 | No supported answer returned |
 
-The current implementation adds quarter-aware 10-Q routing, annual 10-K preference, financial-statement synonym expansion, table-aware reranking, diversified anchors, and neighboring context. Each evaluation case records an expected filing and, where directly established from source evidence, expected PDF pages.
+Git-reviewable summaries are in `evaluation/published/`. Raw reports remain local
+because they contain source text and provider output. Summary hashes identify the
+source artifacts. Legacy reports do not record model revisions or all environment
+settings, so identical configurations cannot be established from artifacts alone.
 
-## Results
+## Generation and context experiments
 
-| Chunking strategy | Retrieval mode | K | Expected-filing recall |
-| --- | --- | ---: | ---: |
-| Fixed-token (200 tokens, 40 overlap) | Hybrid with inferred filing metadata | 3 | 100% (11/11) |
+| Local artifact | Answer accuracy | Citation accuracy |
+| --- | ---: | ---: |
+| evidence_quote_repair.json | 8/11 | 7/11 |
+| statement_quote_repair.json | 9/11 | 9/11 |
+| row_matching_generation.json | 9/11 | 9/11 |
 
-The measured run retrieved the expected filing for all 11 cases at K=3. This metric is **document-level recall**: it verifies that at least one of the retrieved chunks came from the expected filing. It does not by itself establish that the retrieved chunk contains the exact answer row or expected PDF page.
+The changes introduce separate verbatim excerpts, failure-specific repair, then
+statement/row relevance preferences. Sequential runs are development evidence,
+not isolated causal ablations: provider variability and incomplete configuration
+recording limit attribution. The last retrieval change did not increase aggregate
+generation accuracy. Repeat runs and held-out questions are still needed.
 
-## Final production selection
+## Retrieval experiments
 
-Fixed-token chunking with 200 tokens and 40-token overlap is the production configuration. It provides controlled overlapping context across page and table boundaries and matches the existing API indexing workflow. The production API uses hybrid retrieval with `top_k=3` and generic index-backed filing metadata filtering.
+Dense unfiltered retrieval scored 1/3 at K=10 on the original three questions.
+Metadata-filtered fixed-token and section-aware retrieval scored 3/3 expected-filing
+recall at K=3, 5 and 10. These small results do not establish answer-quality parity.
 
-## Grounded generation evaluation
+On the expanded set, saved full-context evidence rescored after the page-label
+audit gave 9/10 expected-page recall for hybrid retrieval and 6/10 for the optional
+MiniLM cross-encoder. The cross-encoder remains disabled by default. Label
+corrections are not model improvements. Earlier pre-audit results were 7/10 and 5/10.
 
-The same fixed 11-case set was evaluated with Gemini generation configured at temperature zero and `GEMINI_THINKING_LEVEL=minimal`. The latest measured run produced 45.45% answer accuracy (5/11), 54.55% citation accuracy (6/11), and 100% grounding rate. An earlier run with the same configuration produced 63.64% citation accuracy (7/11), illustrating that generation metrics may vary between model calls. The reproducible retrieval metric remained 100% expected-filing recall (11/11).
+The October 9 paired row-matching test used the same questions, index and full
+neighbor context: expected-page recall rose from 9/10 to 10/10 without page-hit
+regressions. The formerly missing net PP&E row was retrieved. This does not prove
+entailment or unseen-question performance.
 
-The result separates two properties that should not be conflated: the system reliably identifies the correct filing, while some financial-table questions still lead the generator to abstain or select incomplete evidence. The grounding rate remains 100% because answers without valid citations are returned as `INSUFFICIENT_CONTEXT` rather than being fabricated.
+## Chunking selection and remaining experiment gap
 
-The next measured improvement should be a cross-encoder reranker applied to a wider hybrid candidate set, followed by table-aware extraction that preserves a table's row label, period header, unit, and value together. Those changes should be compared on the unchanged 11-case set using answer accuracy, citation accuracy, answer-row/page recall, latency, and abstention rate.
+Both fixed-token and section-aware implementations exist. The demo uses 200
+whitespace-delimited tokens with 40 overlap, not model-token counts. Overlap and
+neighbors help reconnect headers and rows; page/section boundaries avoid some
+cross-section mixing. Both can still split financial tables.
 
-## Baseline comparison
+The three-case document-recall comparison is too weak to show that 200/40 is
+optimal. A chunk-size/overlap sensitivity experiment and an answer-quality
+comparison of both strategies on the same expanded cases remain pending.
+Do not describe this requirement as fully validated. Partial table-aware indexing
+was stopped; that index is not a completed comparison or the demo default.
 
-The original unfiltered fixed-token dense baseline achieved 33.3% recall@10 (1/3) on the original three-case set. The current 11-case hybrid evaluation achieved 100% expected-filing recall@3 by using generic index-backed filing identification, including quarter-aware 10-Q routing. These are different evaluation sets and configurations, so they are not a direct controlled baseline comparison.
+## Reproduction and artifact hygiene
 
-## Artifacts
+Use README commands with `GROUNDED_OUTPUT_MODE=evidence` and
+`STATEMENT_AWARE_RANKING=1` for the improved path. Preserve separate output names.
+The retrieval-only runner truncates neighbor-expanded results to K; do not compare
+its page coverage directly with full-context generation reports.
 
-The machine-readable reports are generated locally under `evaluation/results/`:
-
-- `fixed_token_hybrid_top_k_3_metadata_filtered.json`
-- `fixed_token_hybrid_top_k_5_metadata_filtered.json`
-- `fixed_token_hybrid_top_k_10_metadata_filtered.json`
-- `section_aware_hybrid_top_k_3_metadata_filtered.json`
-- `section_aware_hybrid_top_k_5_metadata_filtered.json`
-- `section_aware_hybrid_top_k_10_metadata_filtered.json`
-- `fixed_token_hybrid_top_k_3_expanded.json` (current 11-case measured run)
+The legacy `fixed_token_hybrid_top_k_3_metadata_filtered.json` currently reports
+11 cases and 27.27% filing recall. It is not the authoritative current result;
+do not relabel it or overwrite it to match older prose. The full-context generation
+report above and its published summary are the current reference.
 
 ## Limits
 
-These results measure retrieval recall only. Answer accuracy, grounding, citation correctness, and source-page correctness remain separate generation evaluations and are not inferred from retrieval recall. The Gemini generation evaluation must be run with `GEMINI_API_KEY` configured in the same terminal before those metrics can be reported.
+Eleven development cases are not a held-out production benchmark. Numeric answer
+checking allows a tolerance and is not semantic evaluation. Citation overlap does
+not verify every claim. Grounding membership does not establish entailment, and
+safe abstentions inflate that metric. Human evidence review, unanswerable tests,
+configuration capture and latency/cost measurements remain future work.

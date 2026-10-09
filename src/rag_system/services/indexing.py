@@ -5,8 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from rag_system.ingestion.parsers import detect_format
-from rag_system.ingestion.parsers import UnsupportedDocumentError
+from rag_system.ingestion.parsers import UnsupportedDocumentError, detect_format
 from rag_system.services.query import RAGQueryService
 
 

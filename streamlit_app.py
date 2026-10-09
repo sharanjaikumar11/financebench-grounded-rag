@@ -72,9 +72,7 @@ def query_service() -> RAGQueryService:
         ingestor=DocumentIngestor(DocumentRegistry(storage / "documents.sqlite3")),
         chunker=FixedTokenChunker(200, 40),
         retriever=retriever(),
-        answer_generator=GroundedAnswerGenerator(
-            provider
-        ),
+        answer_generator=GroundedAnswerGenerator(provider),
         top_k=3,
     )
 
@@ -178,7 +176,9 @@ def render_answer(text: str) -> None:
     st.markdown(text.replace("$", r"\$"))
 
 
-st.set_page_config(page_title="FinanceBench RAG demo", page_icon=":material/analytics:", layout="wide")
+st.set_page_config(
+    page_title="FinanceBench RAG demo", page_icon=":material/analytics:", layout="wide"
+)
 st.title("FinanceBench grounded RAG")
 st.caption("Local embeddings and hybrid retrieval with source-cited answers.")
 
@@ -186,7 +186,9 @@ with st.sidebar:
     st.subheader("Demo configuration")
     st.write("**Index:** Fixed-token, 200 tokens, 40 overlap")
     st.write("**Retrieval:** SentenceTransformer + SQLite FTS5/BM25 hybrid")
-    st.write(f"**Generation:** {Settings.from_environment().answer_provider.title()}, temperature 0")
+    st.write(
+        f"**Generation:** {Settings.from_environment().answer_provider.title()}, temperature 0"
+    )
     st.divider()
     st.caption("Answers include only sources retrieved from the selected FinanceBench filing.")
 
@@ -220,14 +222,18 @@ if question:
                 started_at = perf_counter()
                 response = query_service().answer(question)
                 elapsed_seconds = perf_counter() - started_at
-                status.update(label=f"Answer ready in {elapsed_seconds:.1f} seconds", state="complete")
+                status.update(
+                    label=f"Answer ready in {elapsed_seconds:.1f} seconds", state="complete"
+                )
         except ValueError as error:
             st.error(str(error))
         except RuntimeError as error:
             st.error(f"Query failed: {error}")
         else:
             if response.answer.insufficient_context:
-                st.warning("INSUFFICIENT_CONTEXT — the retrieved sources do not support a reliable answer.")
+                st.warning(
+                    "INSUFFICIENT_CONTEXT — the retrieved sources do not support a reliable answer."
+                )
                 content = "INSUFFICIENT_CONTEXT"
                 citations: tuple[str, ...] = ()
             else:

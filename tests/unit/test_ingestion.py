@@ -82,6 +82,8 @@ def test_preserves_pdf_page_metadata(tmp_path: Path) -> None:
     assert [segment.page_number for segment in document.segments] == [1, 2]
     assert "First page evidence" in document.segments[0].text
     assert "Second page evidence" in document.segments[1].text
+
+
 def test_rejects_empty_documents(tmp_path: Path) -> None:
     source = tmp_path / "empty.txt"
     source.write_text(" \n\t ", encoding="utf-8")

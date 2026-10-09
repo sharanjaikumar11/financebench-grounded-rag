@@ -31,7 +31,11 @@ def test_discovery_and_indexing_processes_only_supported_files_in_order(tmp_path
     result = index_directory(service, tmp_path)
 
     assert [path.name for path in discover_supported_documents(tmp_path)] == [
-        "a.md", "b.txt", "bad.md", "duplicate.txt", "c.pdf"
+        "a.md",
+        "b.txt",
+        "bad.md",
+        "duplicate.txt",
+        "c.pdf",
     ]
     assert result.indexed == 3
     assert result.reindexed == 1

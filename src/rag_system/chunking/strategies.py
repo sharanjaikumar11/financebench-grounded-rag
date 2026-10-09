@@ -90,9 +90,7 @@ class FixedTokenChunker:
             window = tokens[start : start + self.chunk_size]
             if not window:
                 break
-            chunks.append(
-                _build_chunk(document, len(chunks), self.strategy_name, window)
-            )
+            chunks.append(_build_chunk(document, len(chunks), self.strategy_name, window))
             if start + self.chunk_size >= len(tokens):
                 break
         return tuple(chunks)
@@ -113,9 +111,7 @@ class SectionAwareChunker(FixedTokenChunker):
                 window = tokens[start : start + self.chunk_size]
                 if not window:
                     break
-                chunks.append(
-                    _build_chunk(document, len(chunks), self.strategy_name, window)
-                )
+                chunks.append(_build_chunk(document, len(chunks), self.strategy_name, window))
                 if start + self.chunk_size >= len(tokens):
                     break
         return tuple(chunks)

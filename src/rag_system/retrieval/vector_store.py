@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import re
 import sqlite3
 from collections.abc import Mapping, Sequence
@@ -118,9 +119,18 @@ class SQLiteVectorStore:
         )
         if dated_match:
             month_numbers = {
-                "january": "01", "february": "02", "march": "03", "april": "04",
-                "may": "05", "june": "06", "july": "07", "august": "08",
-                "september": "09", "october": "10", "november": "11", "december": "12",
+                "january": "01",
+                "february": "02",
+                "march": "03",
+                "april": "04",
+                "may": "05",
+                "june": "06",
+                "july": "07",
+                "august": "08",
+                "september": "09",
+                "october": "10",
+                "november": "11",
+                "december": "12",
             }
             date_suffix = (
                 f"dated-{dated_match.group(3)}-"
@@ -175,15 +185,19 @@ class SQLiteVectorStore:
     @staticmethod
     def _normalized_company_name(document_name: str, year: str | None = None) -> str:
         """Return the normalized company part of a FinanceBench-style file name."""
-        company_name = re.split(rf"_{year}(?:Q\d+)?_", document_name, maxsplit=1)[0] if year else re.split(
-            r"_20\d{2}(?:Q\d+)?_", document_name, maxsplit=1
-        )[0]
+        company_name = (
+            re.split(rf"_{year}(?:Q\d+)?_", document_name, maxsplit=1)[0]
+            if year
+            else re.split(r"_20\d{2}(?:Q\d+)?_", document_name, maxsplit=1)[0]
+        )
         return SQLiteVectorStore._normalize_name(company_name)
 
     @staticmethod
     def _normalize_name(value: str) -> str:
         """Normalize company names while treating '&' and 'and' equivalently."""
-        return re.sub(r"[^A-Za-z0-9]", "", re.sub(r"\band\b", "", value, flags=re.IGNORECASE)).upper()
+        return re.sub(
+            r"[^A-Za-z0-9]", "", re.sub(r"\band\b", "", value, flags=re.IGNORECASE)
+        ).upper()
 
     def has_complete_document(
         self, document_id: str, chunking_strategy: str, expected_chunk_count: int
@@ -293,7 +307,10 @@ class SQLiteVectorStore:
         return tuple(sorted(results, key=lambda item: item.score, reverse=True)[:top_k])
 
     def hybrid_search(
-        self, query_embedding: Sequence[float], query: str, top_k: int,
+        self,
+        query_embedding: Sequence[float],
+        query: str,
+        top_k: int,
         metadata_filter: Mapping[str, object] | None = None,
     ) -> tuple[RetrievedChunk, ...]:
         """Fuse dense and exact-term ranking with reciprocal-rank fusion."""
@@ -321,7 +338,9 @@ class SQLiteVectorStore:
         if clauses:
             statement += " AND " + " AND ".join(f"chunks.{clause}" for clause in clauses)
         statement += " ORDER BY bm25(chunks_fts) LIMIT ?"
-        sparse_rows = self._connection.execute(statement, [terms, *parameters, candidate_count]).fetchall()
+        sparse_rows = self._connection.execute(
+            statement, [terms, *parameters, candidate_count]
+        ).fetchall()
         sparse = [RetrievedChunk(self._row_to_chunk(row), 0.0) for row in sparse_rows]
         sparse = sorted(
             sparse,
@@ -390,16 +409,23 @@ class SQLiteVectorStore:
                 if chunk.chunk_id in seen:
                     continue
                 seen.add(chunk.chunk_id)
-                score = result.score if chunk.chunk_id == result.chunk.chunk_id else result.score - 0.0001
+                score = (
+                    result.score
+                    if chunk.chunk_id == result.chunk.chunk_id
+                    else result.score - 0.0001
+                )
                 expanded.append(RetrievedChunk(chunk, score))
         return tuple(sorted(expanded, key=lambda item: item.score, reverse=True))
 
     @staticmethod
     def _row_to_chunk(row: sqlite3.Row) -> DocumentChunk:
         return DocumentChunk(
-            chunk_id=row["chunk_id"], document_id=row["document_id"],
-            document_name=row["document_name"], chunk_index=row["chunk_index"],
-            text=row["text"], token_count=row["token_count"],
+            chunk_id=row["chunk_id"],
+            document_id=row["document_id"],
+            document_name=row["document_name"],
+            chunk_index=row["chunk_index"],
+            text=row["text"],
+            token_count=row["token_count"],
             chunking_strategy=row["chunking_strategy"],
             page_numbers=tuple(json.loads(row["page_numbers"])),
             section_titles=tuple(json.loads(row["section_titles"])),
@@ -426,8 +452,21 @@ def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
 def _sparse_query_terms(query: str) -> str:
     """Build an OR query from the meaningful terms in any user question."""
     stop_words = {
-        "answer", "amount", "based", "details", "from", "give", "shown", "that",
-        "the", "this", "using", "what", "with", "would", "year",
+        "answer",
+        "amount",
+        "based",
+        "details",
+        "from",
+        "give",
+        "shown",
+        "that",
+        "the",
+        "this",
+        "using",
+        "what",
+        "with",
+        "would",
+        "year",
     }
     terms = {
         term.casefold()
@@ -440,22 +479,51 @@ def _sparse_query_terms(query: str) -> str:
 def _financial_keyword_relevance(text: str, query: str) -> float:
     """Rerank FTS candidates by coverage of meaningful financial terms."""
     stop_words = {
-        "answer", "amount", "based", "briefly", "does", "explain", "from", "give",
-        "have", "healthy", "its", "million", "millions", "of", "on", "percent",
-        "question", "round", "shown", "state", "that", "the", "this", "to", "usd", "using",
-        "was", "were", "what", "with", "would", "year",
+        "answer",
+        "amount",
+        "based",
+        "briefly",
+        "does",
+        "explain",
+        "from",
+        "give",
+        "have",
+        "healthy",
+        "its",
+        "million",
+        "millions",
+        "of",
+        "on",
+        "percent",
+        "question",
+        "round",
+        "shown",
+        "state",
+        "that",
+        "the",
+        "this",
+        "to",
+        "usd",
+        "using",
+        "was",
+        "were",
+        "what",
+        "with",
+        "would",
+        "year",
     }
     query_terms = [
         term.casefold()
         for term in re.findall(r"[A-Za-z0-9]+", query)
-        if len(term) > 2 and term.casefold() not in stop_words and not term.casefold().startswith("fy")
+        if len(term) > 2
+        and term.casefold() not in stop_words
+        and not term.casefold().startswith("fy")
     ]
     if not query_terms:
         return 0.0
     normalized_text = text.casefold()
     text_terms = {
-        _financial_term_stem(term)
-        for term in re.findall(r"[A-Za-z0-9]+", normalized_text)
+        _financial_term_stem(term) for term in re.findall(r"[A-Za-z0-9]+", normalized_text)
     }
     matched = sum(_financial_term_stem(term) in text_terms for term in set(query_terms))
     # Rows in statements normally contain several figures, while narrative
@@ -469,7 +537,84 @@ def _financial_keyword_relevance(text: str, query: str) -> float:
             normalized_text,
         )
     )
-    return matched / len(set(query_terms)) + numeric_density + (0.5 if statement_heading else 0.0)
+    return (
+        matched / len(set(query_terms))
+        + numeric_density
+        + (0.5 if statement_heading else 0.0)
+        + (
+            _statement_relevance(text, query)
+            if os.getenv("STATEMENT_AWARE_RANKING") == "1"
+            else 0.0
+        )
+    )
+
+
+def _statement_relevance(text: str, query: str) -> float:
+    """Soft statement-intent preferences, independent of company, year and answers."""
+    normalized = re.sub(r"[^a-z0-9]+", " ", text.casefold())
+    question = re.sub(r"[^a-z0-9]+", " ", query.casefold())
+    balance = r"balance sheets?|statements? of financial (?:position|condition)"
+    cash = r"statements? of cash flows?|cash flow statements?"
+    # Explicit statement requests precede inferred intent and alias additions.
+    explicit = re.search(rf"(?:{balance})|(?:{cash})", question)
+    intent = None
+    if explicit:
+        intent = "balance" if re.fullmatch(balance, explicit.group()) else "cash"
+    elif re.search(r"capital expenditures?|capex|capital spending", question):
+        intent = "cash"
+    elif re.search(r"net (?:property plant|ppne|pp e)|inventory balance|total assets", question):
+        intent = "balance"
+    score = _financial_row_relevance(text, query)
+    if intent:
+        preferred, other = (balance, cash) if intent == "balance" else (cash, balance)
+        if re.search(preferred, normalized):
+            score += 0.45
+        elif re.search(other, normalized):
+            score -= 0.25
+        if intent == "balance" and re.search(
+            r"property plant (?:and )?equipment (?:additions|reductions|purchases)", normalized
+        ):
+            score -= 0.4
+    # A repeated running 'Table of Contents' footer alone is not a contents page.
+    # Require multiple numbered note listings and avoid penalizing substantive rows.
+    listings = len(re.findall(r"\bnote\s+\d+\s*[-–—.]?", text, re.IGNORECASE))
+    financial_values = len(re.findall(r"\b\d{1,3},\d{3}\b|\$\s*\d", text))
+    if listings >= 4 and financial_values < 3:
+        score -= 0.8
+    return score
+
+
+def _financial_row_relevance(text: str, query: str) -> float:
+    """Reward multiword query labels immediately followed by tabular values.
+
+    No company names, expected values or benchmark pages are used. Requiring
+    adjacent numeric cells avoids rewarding a contents entry's lone page number.
+    """
+    ignored = {"and", "of", "the", "in", "at", "for", "net", "total"}
+    query_words = {
+        _financial_term_stem(word)
+        for word in re.findall(r"[a-z]+", query.casefold())
+        if word not in ignored
+    }
+    number = r"\(?[−-]?\$?\s*\d[\d,]*(?:\.\d+)?\)?%?"
+    pattern = rf"([A-Za-z][A-Za-z &,()/–-]{{2,100}}?)\s+({number})\s+({number})"
+    best = 0.0
+    for match in re.finditer(pattern, text):
+        label = match.group(1).casefold()
+        words = [
+            _financial_term_stem(word)
+            for word in re.findall(r"[a-z]+", label)
+            if word not in ignored
+        ]
+        # Use the label suffix; a fixed-token chunk can start mid-sentence.
+        consecutive = 0
+        for word in reversed(words):
+            if word not in query_words:
+                break
+            consecutive += 1
+        if consecutive >= 2:
+            best = max(best, min(consecutive, 4) * 0.25)
+    return best
 
 
 def _financial_term_stem(term: str) -> str:

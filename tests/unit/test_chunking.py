@@ -22,9 +22,7 @@ def make_document(*segments: DocumentSegment) -> ParsedDocument:
 
 
 def test_fixed_token_chunker_uses_overlap_and_stable_ids() -> None:
-    document = make_document(
-        DocumentSegment(0, "one two three four five six", page_number=1)
-    )
+    document = make_document(DocumentSegment(0, "one two three four five six", page_number=1))
 
     chunks = FixedTokenChunker(chunk_size=3, overlap=1).chunk(document)
 

@@ -5,6 +5,14 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .pytest-tmp/
+.pytest-tmp-*/
+.pytest-tmp-improvements/
+.ruff_cache/
+tmp/quality-tools/
+tmp/
+output/
+scripts/build_resume.py
+scripts/build_resume_pdf.py
 .test-tmp-ingestion/
 .presentation-build/
 .streamlit/secrets.toml

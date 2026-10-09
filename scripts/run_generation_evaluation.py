@@ -9,19 +9,30 @@ from pathlib import Path
 
 from rag_system.evaluation.datasets import load_evaluation_cases
 from rag_system.evaluation.runner import EvaluationRunner, GroundedEvaluationSystem
-from rag_system.generation.answering import GeminiAnswerProvider, GroqAnswerProvider, GroundedAnswerGenerator
+from rag_system.generation.answering import (
+    GeminiAnswerProvider,
+    GroqAnswerProvider,
+    GroundedAnswerGenerator,
+)
 from rag_system.retrieval.embeddings import SentenceTransformerEmbeddingProvider
 from rag_system.retrieval.retriever import DenseRetriever, HybridRetriever
 from rag_system.retrieval.vector_store import SQLiteVectorStore
 
 
 def parse_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluate grounded provider answers against FinanceBench.")
+    parser = argparse.ArgumentParser(
+        description="Evaluate grounded provider answers against FinanceBench."
+    )
     parser.add_argument("--cases", type=Path, default=Path("evaluation/cases.json"))
     parser.add_argument("--vector-store", type=Path, required=True)
     parser.add_argument("--retrieval-mode", choices=("dense", "hybrid"), default="hybrid")
     parser.add_argument("--top-k", type=int, default=3)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--include-provider-output",
+        action="store_true",
+        help="Store raw provider replies in the local report for debugging; may contain source text.",
+    )
     return parser.parse_args()
 
 
@@ -47,11 +58,13 @@ def main() -> None:
         raise SystemExit("ANSWER_PROVIDER must be either 'gemini' or 'groq'")
     store = SQLiteVectorStore(arguments.vector_store)
     try:
-        retriever_class = HybridRetriever if arguments.retrieval_mode == "hybrid" else DenseRetriever
+        retriever_class = (
+            HybridRetriever if arguments.retrieval_mode == "hybrid" else DenseRetriever
+        )
         system = GroundedEvaluationSystem(
             retriever_class(SentenceTransformerEmbeddingProvider(), store),
             GroundedAnswerGenerator(
-                provider
+                provider, include_provider_output=arguments.include_provider_output
             ),
             arguments.top_k,
         )

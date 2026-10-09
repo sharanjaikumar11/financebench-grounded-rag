@@ -2,10 +2,17 @@
 
 from __future__ import annotations
 
+import os
 import re
+from dataclasses import replace
 from typing import Protocol
 
 from rag_system.generation.citations import build_source_map, citations_from_answer
+from rag_system.generation.evidence import (
+    evidence_prompt,
+    evidence_repair_prompt,
+    inspect_evidence_answer,
+)
 from rag_system.generation.prompts import (
     INSUFFICIENT_CONTEXT,
     grounded_answer_prompt,
@@ -60,7 +67,10 @@ class GeminiAnswerProvider:
         return response.text.strip()
 
     def _generate(self, prompt: str, model: str, types: object) -> object:
-        config = {"temperature": 0, "max_output_tokens": 256}
+        config = {
+            "temperature": 0,
+            "max_output_tokens": 1024 if "OUTPUT FORMAT OVERRIDE" in prompt else 256,
+        }
         if model.startswith("gemini-3"):
             config["thinking_config"] = types.ThinkingConfig(thinking_level=self.thinking_level)
         return self._client.models.generate_content(
@@ -71,7 +81,11 @@ class GeminiAnswerProvider:
 
     @staticmethod
     def _is_capacity_error(error: Exception) -> bool:
-        return getattr(error, "code", None) == 503 or "503" in str(error) or "UNAVAILABLE" in str(error)
+        return (
+            getattr(error, "code", None) == 503
+            or "503" in str(error)
+            or "UNAVAILABLE" in str(error)
+        )
 
     @staticmethod
     def _unavailable_error(error: Exception) -> RuntimeError:
@@ -80,7 +94,9 @@ class GeminiAnswerProvider:
                 "Gemini is temporarily unavailable due to high demand. "
                 "Please retry this question in a moment."
             )
-        return RuntimeError("Gemini answer generation failed. Please verify the configured model and retry.")
+        return RuntimeError(
+            "Gemini answer generation failed. Please verify the configured model and retry."
+        )
 
 
 class GroqAnswerProvider:
@@ -107,7 +123,7 @@ class GroqAnswerProvider:
                 # small completion budget before producing its cited final answer.
                 include_reasoning=False,
                 reasoning_effort="low",
-                max_completion_tokens=512,
+                max_completion_tokens=1536 if "OUTPUT FORMAT OVERRIDE" in prompt else 512,
             )
             text = completion.choices[0].message.content
         except Exception as error:
@@ -129,17 +145,60 @@ class UnavailableAnswerProvider:
 class GroundedAnswerGenerator:
     """Enforce evidence-only answering and return structured source citations."""
 
-    def __init__(self, provider: AnswerProvider) -> None:
+    def __init__(
+        self,
+        provider: AnswerProvider,
+        structured_evidence: bool | None = None,
+        include_provider_output: bool = False,
+    ) -> None:
         self.provider = provider
+        self.include_provider_output = include_provider_output
+        self.structured_evidence = (
+            os.getenv("GROUNDED_OUTPUT_MODE", "text") == "evidence"
+            if structured_evidence is None
+            else structured_evidence
+        )
 
     def answer(self, question: str, sources: tuple[RetrievedChunk, ...]) -> GroundedAnswer:
         if not sources:
-            return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True)
+            return GroundedAnswer(
+                INSUFFICIENT_CONTEXT, (), True, ({"status": "no_sources", "attempt": 0},)
+            )
 
         source_map = build_source_map(_generation_evidence_sources(question, sources))
+        if self.structured_evidence:
+            diagnostics = []
+            source_details = {
+                label: {
+                    "chunk_id": item.chunk.chunk_id,
+                    "document_name": item.chunk.document_name,
+                    "pages": item.chunk.page_numbers,
+                }
+                for label, item in source_map.items()
+            }
+            prompt = evidence_prompt(question, source_map)
+            for attempt in range(2):
+                raw = self.provider.generate(prompt).strip()
+                validated, status = (
+                    (None, "model_abstention")
+                    if raw == INSUFFICIENT_CONTEXT
+                    else inspect_evidence_answer(raw, source_map)
+                )
+                record = {"attempt": attempt + 1, "status": status, "sources": source_details}
+                if self.include_provider_output:
+                    record["provider_output"] = raw
+                diagnostics.append(record)
+                if status == "model_abstention":
+                    return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True, tuple(diagnostics))
+                if validated is not None:
+                    return replace(validated, diagnostics=tuple(diagnostics))
+                prompt = evidence_repair_prompt(question, source_map, status, raw)
+            return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True, tuple(diagnostics))
         response = self.provider.generate(grounded_answer_prompt(question, source_map)).strip()
         if response == INSUFFICIENT_CONTEXT:
-            response = self.provider.generate(grounded_answer_retry_prompt(question, source_map)).strip()
+            response = self.provider.generate(
+                grounded_answer_retry_prompt(question, source_map)
+            ).strip()
             if response == INSUFFICIENT_CONTEXT:
                 return GroundedAnswer(INSUFFICIENT_CONTEXT, (), True)
 
@@ -166,18 +225,75 @@ def _generation_evidence_sources(
     expanded_question = retrieval_query(question)
     ranked = sorted(
         enumerate(sources),
-        key=lambda item: (_generation_evidence_score(item[1].chunk.text, expanded_question), -item[0]),
+        key=lambda item: (
+            _generation_evidence_score(item[1].chunk.text, expanded_question),
+            -item[0],
+        ),
         reverse=True,
     )
-    return tuple(item for _, item in ranked[:maximum_sources])
+    selected = {}
+    # Select relevant anchors with available immediate neighbors, then present
+    # them in source order so headers precede their rows. Never cross documents.
+    for _, anchor in ranked:
+        if len(selected) >= maximum_sources:
+            break
+        key = (anchor.chunk.document_id, anchor.chunk.chunk_id)
+        selected.setdefault(key, anchor)
+        neighbors = sorted(
+            (
+                item
+                for item in sources
+                if item.chunk.document_id == anchor.chunk.document_id
+                and item.chunk.chunking_strategy == anchor.chunk.chunking_strategy
+                and abs(item.chunk.chunk_index - anchor.chunk.chunk_index) == 1
+            ),
+            key=lambda item: item.chunk.chunk_index,
+        )
+        for item in neighbors:
+            if len(selected) < maximum_sources:
+                selected.setdefault((item.chunk.document_id, item.chunk.chunk_id), item)
+    document_order = {item.chunk.document_id: i for i, item in reversed(list(enumerate(sources)))}
+    return tuple(
+        sorted(
+            selected.values(),
+            key=lambda item: (
+                document_order[item.chunk.document_id],
+                item.chunk.chunking_strategy,
+                item.chunk.chunk_index,
+            ),
+        )
+    )
 
 
 def _generation_evidence_score(text: str, query: str) -> float:
     """Score a chunk by financial-term coverage and table-value signals."""
     stop_words = {
-        "amount", "answer", "based", "does", "following", "from", "give", "have", "highest",
-        "its", "million", "millions", "question", "shown", "that", "the", "this", "using", "was",
-        "what", "which", "with", "year", "years", "usd", "fiscal",
+        "amount",
+        "answer",
+        "based",
+        "does",
+        "following",
+        "from",
+        "give",
+        "have",
+        "highest",
+        "its",
+        "million",
+        "millions",
+        "question",
+        "shown",
+        "that",
+        "the",
+        "this",
+        "using",
+        "was",
+        "what",
+        "which",
+        "with",
+        "year",
+        "years",
+        "usd",
+        "fiscal",
     }
     terms = {
         _term_stem(term)

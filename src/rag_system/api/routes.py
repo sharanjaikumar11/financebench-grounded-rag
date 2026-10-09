@@ -35,7 +35,11 @@ def create_router(service: RAGQueryService) -> APIRouter:
             raise HTTPException(status.HTTP_404_NOT_FOUND, str(error)) from error
         except (ValueError, RuntimeError) as error:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
-        return {"status": result.status, "document_id": result.document_id, "chunk_count": result.chunk_count}
+        return {
+            "status": result.status,
+            "document_id": result.document_id,
+            "chunk_count": result.chunk_count,
+        }
 
     @router.post("/query")
     def query(request: QueryRequest) -> dict[str, object]:
@@ -47,9 +51,13 @@ def create_router(service: RAGQueryService) -> APIRouter:
             "answer": response.answer.text,
             "insufficient_context": response.answer.insufficient_context,
             "citations": [
-                {"source_label": citation.source_label, "document_id": citation.document_id,
-                 "document_name": citation.document_name, "page_numbers": citation.page_numbers,
-                 "section_titles": citation.section_titles}
+                {
+                    "source_label": citation.source_label,
+                    "document_id": citation.document_id,
+                    "document_name": citation.document_name,
+                    "page_numbers": citation.page_numbers,
+                    "section_titles": citation.section_titles,
+                }
                 for citation in response.answer.citations
             ],
         }

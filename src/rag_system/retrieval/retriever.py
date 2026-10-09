@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import os
 import re
 from collections.abc import Mapping, Sequence
 
 from rag_system.retrieval.embeddings import EmbeddingProvider
+from rag_system.retrieval.reranking import CrossEncoderReranker, Reranker
 from rag_system.retrieval.vector_store import SQLiteVectorStore
 from rag_system.schemas import DocumentChunk, RetrievedChunk
 
@@ -16,8 +18,6 @@ def retrieval_query(question: str) -> str:
     aliases = {
         "capital expenditure": "purchases property equipment additions property equipment cash flows",
         "cost of goods sold": "cost of revenue cost of sales",
-        "inventory": "inventories merchandise inventory",
-        "total assets": "balance sheet total assets",
         "inventory": "inventories merchandise inventory",
         "total assets": "balance sheet total assets",
         "quick ratio": "cash equivalents accounts receivable current assets current liabilities inventory",
@@ -75,13 +75,41 @@ class DenseRetriever:
 class HybridRetriever(DenseRetriever):
     """Combine dense similarity with local full-text matching."""
 
+    def __init__(
+        self,
+        embedder: EmbeddingProvider,
+        vector_store: SQLiteVectorStore,
+        reranker: Reranker | None = None,
+        candidate_k: int | None = None,
+    ) -> None:
+        super().__init__(embedder, vector_store)
+        model = os.environ.get("RERANKER_MODEL", "").strip()
+        self.reranker = (
+            reranker if reranker is not None else (CrossEncoderReranker(model) if model else None)
+        )
+        self.candidate_k = (
+            candidate_k
+            if candidate_k is not None
+            else int(os.environ.get("RERANKER_CANDIDATE_K", "30"))
+        )
+        if self.candidate_k < 1:
+            raise ValueError("candidate_k must be positive")
+
     def retrieve(
-        self, query: str, top_k: int, metadata_filter: Mapping[str, object] | None = None,
+        self,
+        query: str,
+        top_k: int,
+        metadata_filter: Mapping[str, object] | None = None,
     ) -> tuple[RetrievedChunk, ...]:
         query_embedding = self.embedder.embed([query])
         if len(query_embedding) != 1:
             raise RuntimeError("Embedding provider must return one vector for a query")
         ranked = self.vector_store.hybrid_search(
-            query_embedding[0], retrieval_query(query), top_k, metadata_filter
+            query_embedding[0],
+            retrieval_query(query),
+            max(top_k, self.candidate_k) if self.reranker else top_k,
+            metadata_filter,
         )
+        if self.reranker:
+            ranked = self.reranker.rerank(query, ranked, top_k)
         return self.vector_store.expand_with_neighbors(ranked)

@@ -78,9 +78,9 @@ def parse_pdf(path: Path, document_id: str, content_hash: str) -> ParsedDocument
                     )
     except pymupdf.FileDataError as error:
         raise IngestionError(f"Unable to read PDF: {path.name}") from error
-    return _build_document(
-        path, document_id, content_hash, SourceFormat.PDF, segments
-    )
+    return _build_document(path, document_id, content_hash, SourceFormat.PDF, segments)
+
+
 def _read_text_file(path: Path) -> str:
     for encoding in ("utf-8", "utf-8-sig", "cp1252"):
         try:
@@ -95,9 +95,7 @@ def parse_txt(path: Path, document_id: str, content_hash: str) -> ParsedDocument
 
     text = normalize_text(_read_text_file(path))
     segments = [DocumentSegment(segment_index=0, text=text)] if text else []
-    return _build_document(
-        path, document_id, content_hash, SourceFormat.TXT, segments
-    )
+    return _build_document(path, document_id, content_hash, SourceFormat.TXT, segments)
 
 
 def parse_markdown(path: Path, document_id: str, content_hash: str) -> ParsedDocument:
@@ -127,9 +125,7 @@ def parse_markdown(path: Path, document_id: str, content_hash: str) -> ParsedDoc
         else:
             current_lines.append(line)
     flush_section()
-    return _build_document(
-        path, document_id, content_hash, SourceFormat.MARKDOWN, segments
-    )
+    return _build_document(path, document_id, content_hash, SourceFormat.MARKDOWN, segments)
 
 
 class ParserRegistry:

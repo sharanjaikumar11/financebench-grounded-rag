@@ -6,6 +6,7 @@ import argparse
 from pathlib import Path
 
 from rag_system.chunking import FixedTokenChunker, SectionAwareChunker
+from rag_system.chunking.tables import TableAwareChunker
 from rag_system.generation.answering import GroundedAnswerGenerator, UnavailableAnswerProvider
 from rag_system.ingestion.pipeline import DocumentIngestor, DocumentRegistry
 from rag_system.retrieval.embeddings import SentenceTransformerEmbeddingProvider
@@ -23,7 +24,9 @@ def parse_arguments() -> argparse.Namespace:
         type=Path,
         default=Path("data/processed/local_sentence_transformers"),
     )
-    parser.add_argument("--strategy", choices=("fixed_token", "section_aware"), required=True)
+    parser.add_argument(
+        "--strategy", choices=("fixed_token", "section_aware", "table_aware_v1"), required=True
+    )
     parser.add_argument("--chunk-size", type=int, required=True)
     parser.add_argument("--overlap", type=int, default=0)
     parser.add_argument("--top-k", type=int, default=5)
@@ -34,6 +37,7 @@ def build_service(arguments: argparse.Namespace) -> RAGQueryService:
     chunker_class = {
         "fixed_token": FixedTokenChunker,
         "section_aware": SectionAwareChunker,
+        "table_aware_v1": TableAwareChunker,
     }[arguments.strategy]
     storage = arguments.storage_directory
     return RAGQueryService(

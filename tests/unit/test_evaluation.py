@@ -5,8 +5,12 @@ import pytest
 
 from rag_system.evaluation.datasets import EvaluationCase, load_evaluation_cases
 from rag_system.evaluation.metrics import answer_correct, citation_correct
-from rag_system.evaluation.runner import EvaluationResponse, EvaluationRunner, GroundedEvaluationSystem
-from rag_system.evaluation.runner import RetrievalExperimentRunner
+from rag_system.evaluation.runner import (
+    EvaluationResponse,
+    EvaluationRunner,
+    GroundedEvaluationSystem,
+    RetrievalExperimentRunner,
+)
 from rag_system.schemas import Citation, DocumentChunk, GroundedAnswer, RetrievedChunk
 
 
@@ -30,9 +34,7 @@ def source(document_name: str = "3M_2018_10K.pdf") -> RetrievedChunk:
 def answer(document_name: str = "3M_2018_10K.pdf") -> GroundedAnswer:
     return GroundedAnswer(
         text="Capital expenditure was $1577.00. [S1]",
-        citations=(
-            Citation("S1", "doc-1", document_name, (59,), ("Cash Flows",)),
-        ),
+        citations=(Citation("S1", "doc-1", document_name, (59,), ("Cash Flows",)),),
         insufficient_context=False,
     )
 
@@ -58,7 +60,9 @@ class FakeRetriever:
 
 
 class IndexAwareFakeRetriever(FakeRetriever):
-    def __init__(self, retrieved: tuple[RetrievedChunk, ...], inferred_filter: dict[str, object]) -> None:
+    def __init__(
+        self, retrieved: tuple[RetrievedChunk, ...], inferred_filter: dict[str, object]
+    ) -> None:
         super().__init__(retrieved)
         self.vector_store = type(
             "VectorStore",
@@ -100,8 +104,12 @@ def test_runner_records_each_failure_category() -> None:
 
 
 def test_answer_metric_accepts_equivalent_financial_units_and_yes_no_verdicts() -> None:
-    millions_case = EvaluationCase("case-1", "What is the value in USD millions?", "$1577.00", "source.pdf")
-    billions_case = EvaluationCase("case-2", "What is the value in USD billions?", "$8.70", "source.pdf")
+    millions_case = EvaluationCase(
+        "case-1", "What is the value in USD millions?", "$1577.00", "source.pdf"
+    )
+    billions_case = EvaluationCase(
+        "case-2", "What is the value in USD billions?", "$8.70", "source.pdf"
+    )
     verdict_case = EvaluationCase("case-3", "Is the company capital intensive?", "No", "source.pdf")
 
     assert answer_correct(millions_case, GroundedAnswer("$1.577 billion [S1]", (), False))
@@ -110,7 +118,9 @@ def test_answer_metric_accepts_equivalent_financial_units_and_yes_no_verdicts() 
 
 
 def test_answer_metric_ignores_fiscal_year_when_selecting_a_financial_value() -> None:
-    case = EvaluationCase("case-1", "What is FY2018 net PPNE in USD billions?", "$8.70", "source.pdf")
+    case = EvaluationCase(
+        "case-1", "What is FY2018 net PPNE in USD billions?", "$8.70", "source.pdf"
+    )
 
     assert answer_correct(
         case,
@@ -134,10 +144,19 @@ def test_citation_metric_accepts_the_expected_source_among_direct_citations() ->
 
 def test_case_loader_validates_nonempty_unique_case_ids(tmp_path: Path) -> None:
     valid = tmp_path / "cases.json"
-    valid.write_text(json.dumps([{
-        "case_id": "one", "question": "q", "expected_answer": "a",
-        "expected_document": "d.pdf", "expected_pages": [12, 13],
-    }]))
+    valid.write_text(
+        json.dumps(
+            [
+                {
+                    "case_id": "one",
+                    "question": "q",
+                    "expected_answer": "a",
+                    "expected_document": "d.pdf",
+                    "expected_pages": [12, 13],
+                }
+            ]
+        )
+    )
     case = load_evaluation_cases(valid)[0]
     assert case.case_id == "one"
     assert case.expected_pages == (12, 13)
@@ -183,13 +202,15 @@ def test_retrieval_experiment_can_apply_inferred_filing_metadata() -> None:
     }
 
 
-def test_retrieval_experiment_uses_indexed_metadata_when_static_parsing_cannot_identify_company() -> None:
+def test_retrieval_experiment_uses_indexed_metadata_when_static_parsing_cannot_identify_company() -> (
+    None
+):
     case = EvaluationCase(
         "case-amazon", "What was Amazon's FY2019 net income?", "$11,588", "AMAZON_2019_10K.pdf"
     )
-    retriever = IndexAwareFakeRetriever((source("AMAZON_2019_10K.pdf"),), {
-        "document_name": "AMAZON_2019_10K.pdf"
-    })
+    retriever = IndexAwareFakeRetriever(
+        (source("AMAZON_2019_10K.pdf"),), {"document_name": "AMAZON_2019_10K.pdf"}
+    )
 
     RetrievalExperimentRunner().run(retriever, [case], "fixed_token", 3, True)
 
@@ -207,3 +228,43 @@ def test_grounded_evaluation_system_retrieves_with_inferred_filing_metadata() ->
 
     assert response.answer.insufficient_context is False
     assert retriever.calls[0][1:] == (3, {"document_name": "3M_2018_10K.pdf"})
+
+
+def test_correct_document_wrong_page_is_not_a_correct_citation() -> None:
+    case = EvaluationCase("page", "Question", "$1577.00", "3M_2018_10K.pdf", (46,))
+    report = EvaluationRunner().run(FakeSystem(EvaluationResponse((source(),), answer())), [case])
+    assert report.retrieval_recall == 1.0
+    assert report.retrieval_page_recall == 0.0
+    assert report.citation_accuracy == 0.0
+    assert report.cases[0].retrieved_pages == ((59,),)
+    assert report.cases[0].retrieved_text == (source().chunk.text,)
+
+
+def test_abstention_and_unlabelled_pages_have_explicit_denominators() -> None:
+    case = EvaluationCase("abstain", "Question", "$1577.00", "3M_2018_10K.pdf")
+    report = EvaluationRunner().run(
+        FakeSystem(
+            EvaluationResponse((source(),), GroundedAnswer("INSUFFICIENT_CONTEXT", (), True))
+        ),
+        [case],
+    )
+    assert report.abstention_rate == 1.0
+    assert report.answered_accuracy is None
+    assert report.retrieval_page_recall is None
+    assert report.page_labelled_case_count == 0
+
+
+def test_mixed_valid_and_unknown_citation_labels_are_rejected() -> None:
+    from rag_system.generation.citations import build_source_map, citations_from_answer
+
+    assert (
+        citations_from_answer("Value [S1] and invented source [S99]", build_source_map((source(),)))
+        == ()
+    )
+
+
+def test_answer_metric_does_not_accept_numeric_prefix_or_opposite_verdict() -> None:
+    case = EvaluationCase("value", "Value in USD millions?", "$1577", "source.pdf")
+    assert not answer_correct(case, GroundedAnswer("$15770 million [S1]", (), False))
+    verdict = EvaluationCase("verdict", "Question", "No", "source.pdf")
+    assert not answer_correct(verdict, GroundedAnswer("Yes, there is no doubt. [S1]", (), False))

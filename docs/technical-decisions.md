@@ -14,6 +14,11 @@ Both fixed-token (200 tokens, 40 overlap) and page/section-aware strategies were
 
 ## Grounding
 
+The improved evaluation path uses `GROUNDED_OUTPUT_MODE=evidence` and
+`STATEMENT_AWARE_RANKING=1`. These are opt-in, not implied by the default setup.
+Exact quote membership validates provenance, not semantic entailment. Numeric
+answer checking and reference-page overlap also have limited scope.
+
 The generation prompt restricts answers to retrieved sources, requires citation labels, and returns `INSUFFICIENT_CONTEXT` if evidence is absent or citations are invalid. It explicitly treats financial-statement tables as evidence: a supported answer must connect the row label, relevant column/date, reported unit, and value. Adjacent retrieved chunks may jointly establish a table header and its row.
 
 ## Retrieval improvements
@@ -29,6 +34,43 @@ For retrieval only, common financial-language variants expand to standard statem
 Once scoped to a single filing, hybrid retrieval considers all of that filing's chunks before selecting anchors. A generic financial-keyword score promotes relevant statement rows over incidental narrative mentions. The final anchors are diversified across nearby chunk positions, and one neighboring chunk on each side is then included as context. This preserves table headers and related rows without filling the answer context with repeated fragments.
 
 ## Availability and citation usability
+
+## When reranking helps
+
+Reranking helps when candidate retrieval finds relevant passages but orders them
+poorly. A cross-encoder scores query/passage pairs jointly at additional latency.
+Our tested general-purpose MiniLM cross-encoder reduced audited page recall from
+9/10 to 6/10, so it is not enabled by default. Generic financial row scoring is a
+separate heuristic, not a learned cross-encoder or table-aware extraction.
+
+## Irrelevant context and absent answers
+
+Retrieving the correct document is not enough: the required row, period and unit
+must be in context. Evidence mode validates source IDs and verbatim excerpts,
+allows one repair attempt, then abstains on invalid evidence. A model may abstain
+immediately. Source membership cannot detect all plausible but unsupported claims;
+human review or an additional entailment evaluation is needed. Provider failures
+are errors, not evidence that a document lacks the answer.
+
+## Scaling the collection by 100x
+
+Measure bottlenecks before migrating. Replace exhaustive local vector scanning
+with an approximate-nearest-neighbor index when needed; preserve lexical search
+and metadata filters. Add background ingestion, incremental/versioned indexing,
+document access controls, storage-backed PDF delivery, monitoring and backups.
+Batch embeddings and evaluate latency, memory, retrieval quality and cost under
+concurrency. These are proposed production extensions, not implemented claims.
+
+## RAG versus fine-tuning
+
+Prefer RAG for changing, private or source-attributable knowledge: updating the
+corpus does not require retraining, and citations expose supporting evidence.
+Prefer fine-tuning for stable behavior, formatting, terminology or task patterns
+when sufficient quality training examples and evaluations exist. Fine-tuning is
+not a reliable replacement for an up-to-date factual store and does not itself
+provide provenance. The approaches can be combined; no fine-tuning was performed.
+
+## Availability implementation
 
 Gemini generation uses temperature zero and a configurable `GEMINI_THINKING_LEVEL` (default `minimal`) to provide enough reasoning capacity for table interpretation. If the configured primary model returns a temporary capacity error (such as HTTP 503), the application retries once using an optional separately configured fallback model. Other failures are surfaced as a clear error instead of being represented as an unsupported answer.
 

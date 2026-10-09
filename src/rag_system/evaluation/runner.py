@@ -12,6 +12,7 @@ from rag_system.evaluation.metrics import (
     citation_correct,
     grounding_supported,
     retrieval_hit,
+    retrieval_page_hit,
 )
 from rag_system.retrieval.query_metadata import filing_metadata_filter
 from rag_system.schemas import GroundedAnswer, RetrievedChunk
@@ -40,7 +41,9 @@ class GroundedEvaluationSystem:
         self.top_k = top_k
 
     def answer(self, question: str) -> EvaluationResponse:
-        retrieved = self.retriever.retrieve(question, self.top_k, _inferred_filing_filter(self.retriever, question))
+        retrieved = self.retriever.retrieve(
+            question, self.top_k, _inferred_filing_filter(self.retriever, question)
+        )
         return EvaluationResponse(retrieved, self.answer_generator.answer(question, retrieved))
 
 
@@ -57,6 +60,12 @@ class CaseResult:
     generated_answer: str
     retrieved_documents: tuple[str, ...]
     cited_documents: tuple[str, ...]
+    retrieval_page_hit: bool | None
+    abstained: bool
+    retrieved_pages: tuple[tuple[int, ...], ...]
+    cited_pages: tuple[tuple[int, ...], ...]
+    retrieved_text: tuple[str, ...]
+    generation_diagnostics: tuple[dict[str, object], ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,6 +76,11 @@ class EvaluationReport:
     grounding_rate: float
     citation_accuracy: float
     failures: tuple[CaseResult, ...]
+    cases: tuple[CaseResult, ...]
+    page_labelled_case_count: int
+    retrieval_page_recall: float | None
+    abstention_rate: float
+    answered_accuracy: float | None
 
     def as_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -106,6 +120,8 @@ class EvaluationRunner:
             raise ValueError("At least one evaluation case is required")
         results = tuple(self._evaluate_case(case, system.answer(case.question)) for case in cases)
         total = len(results)
+        page_results = [result for result in results if result.retrieval_page_hit is not None]
+        answered = [result for result in results if not result.abstained]
         return EvaluationReport(
             case_count=total,
             retrieval_recall=sum(result.retrieval_hit for result in results) / total,
@@ -113,6 +129,19 @@ class EvaluationRunner:
             grounding_rate=sum(result.grounded for result in results) / total,
             citation_accuracy=sum(result.citation_correct for result in results) / total,
             failures=tuple(result for result in results if result.failures),
+            cases=results,
+            page_labelled_case_count=len(page_results),
+            retrieval_page_recall=(
+                sum(result.retrieval_page_hit for result in page_results) / len(page_results)
+                if page_results
+                else None
+            ),
+            abstention_rate=sum(result.abstained for result in results) / total,
+            answered_accuracy=(
+                sum(result.answer_correct for result in answered) / len(answered)
+                if answered
+                else None
+            ),
         )
 
     @staticmethod
@@ -143,6 +172,12 @@ class EvaluationRunner:
             generated_answer=response.answer.text,
             retrieved_documents=tuple(item.chunk.document_name for item in response.retrieved),
             cited_documents=tuple(citation.document_name for citation in response.answer.citations),
+            retrieval_page_hit=retrieval_page_hit(case, response.retrieved),
+            abstained=response.answer.insufficient_context,
+            retrieved_pages=tuple(item.chunk.page_numbers for item in response.retrieved),
+            cited_pages=tuple(item.page_numbers for item in response.answer.citations),
+            retrieved_text=tuple(item.chunk.text for item in response.retrieved),
+            generation_diagnostics=response.answer.diagnostics,
         )
 
 

@@ -18,7 +18,9 @@ def document_matches(actual: str, expected: str) -> bool:
 
 
 def retrieval_hit(case: EvaluationCase, retrieved: Sequence[RetrievedChunk]) -> bool:
-    return any(document_matches(item.chunk.document_name, case.expected_document) for item in retrieved)
+    return any(
+        document_matches(item.chunk.document_name, case.expected_document) for item in retrieved
+    )
 
 
 def answer_correct(case: EvaluationCase, answer: GroundedAnswer) -> bool:
@@ -26,10 +28,10 @@ def answer_correct(case: EvaluationCase, answer: GroundedAnswer) -> bool:
         return False
     expected = normalized_text(case.expected_answer)
     actual = normalized_text(answer.text)
-    if expected in actual:
-        return True
     if expected in {"yes", "no"}:
-        return bool(re.search(rf"\b{re.escape(expected)}\b", actual))
+        return bool(re.match(rf"{re.escape(expected)}\b", actual))
+    if not re.search(r"\d", expected):
+        return expected in actual
     expected_value = _financial_value_in_requested_units(case.expected_answer, case.question)
     actual_value = _financial_value_in_requested_units(answer.text, case.question)
     return (
@@ -65,9 +67,7 @@ def _financial_value_in_requested_units(value: str, question: str) -> float | No
 def grounding_supported(answer: GroundedAnswer, retrieved: Sequence[RetrievedChunk]) -> bool:
     if answer.insufficient_context:
         return True
-    available_sources = {
-        (item.chunk.document_id, item.chunk.document_name) for item in retrieved
-    }
+    available_sources = {(item.chunk.document_id, item.chunk.document_name) for item in retrieved}
     return bool(answer.citations) and all(
         (citation.document_id, citation.document_name) in available_sources
         for citation in answer.citations
@@ -75,7 +75,26 @@ def grounding_supported(answer: GroundedAnswer, retrieved: Sequence[RetrievedChu
 
 
 def citation_correct(case: EvaluationCase, answer: GroundedAnswer) -> bool:
-    return not answer.insufficient_context and bool(answer.citations) and any(
-        document_matches(citation.document_name, case.expected_document)
-        for citation in answer.citations
+    return (
+        not answer.insufficient_context
+        and bool(answer.citations)
+        and any(
+            document_matches(citation.document_name, case.expected_document)
+            and (
+                not case.expected_pages
+                or bool(set(citation.page_numbers) & set(case.expected_pages))
+            )
+            for citation in answer.citations
+        )
+    )
+
+
+def retrieval_page_hit(case: EvaluationCase, retrieved: Sequence[RetrievedChunk]) -> bool | None:
+    """Page overlap within the expected filing; unlabelled cases are not scored."""
+    if not case.expected_pages:
+        return None
+    return any(
+        document_matches(item.chunk.document_name, case.expected_document)
+        and bool(set(item.chunk.page_numbers) & set(case.expected_pages))
+        for item in retrieved
     )

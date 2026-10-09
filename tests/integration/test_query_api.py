@@ -3,21 +3,18 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
+from rag_system.api.app import create_app
 from rag_system.chunking import SectionAwareChunker
 from rag_system.generation.answering import GroundedAnswerGenerator
 from rag_system.ingestion.pipeline import DocumentIngestor, DocumentRegistry
 from rag_system.retrieval.retriever import DenseRetriever
 from rag_system.retrieval.vector_store import SQLiteVectorStore
 from rag_system.services.query import RAGQueryService
-from rag_system.api.app import create_app
 
 
 class DeterministicEmbedder:
     def embed(self, texts: list[str]) -> tuple[tuple[float, ...], ...]:
-        return tuple(
-            (1.0, 0.0) if "revenue" in text.casefold() else (0.0, 1.0)
-            for text in texts
-        )
+        return tuple((1.0, 0.0) if "revenue" in text.casefold() else (0.0, 1.0) for text in texts)
 
 
 class CitedAnswerProvider:
@@ -31,7 +28,9 @@ class CitedAnswerProvider:
 
 def service(tmp_path: Path, provider: CitedAnswerProvider) -> RAGQueryService:
     ingestor = DocumentIngestor(DocumentRegistry(tmp_path / "documents.sqlite3"))
-    retriever = DenseRetriever(DeterministicEmbedder(), SQLiteVectorStore(tmp_path / "vectors.sqlite3"))
+    retriever = DenseRetriever(
+        DeterministicEmbedder(), SQLiteVectorStore(tmp_path / "vectors.sqlite3")
+    )
     return RAGQueryService(
         ingestor=ingestor,
         chunker=SectionAwareChunker(chunk_size=30),
@@ -58,7 +57,9 @@ def test_query_service_indexes_retrieves_and_returns_a_grounded_answer(tmp_path:
     assert provider.calls == 1
 
 
-def test_query_service_preserves_duplicate_protection_and_rejects_empty_questions(tmp_path: Path) -> None:
+def test_query_service_preserves_duplicate_protection_and_rejects_empty_questions(
+    tmp_path: Path,
+) -> None:
     source = tmp_path / "report.md"
     source.write_text("# Results\nRevenue increased.", encoding="utf-8")
     query_service = service(tmp_path, CitedAnswerProvider())
@@ -103,4 +104,7 @@ def test_api_reports_invalid_requests_without_server_errors(tmp_path: Path) -> N
 
     assert client.get("/health").json() == {"status": "ok"}
     assert client.post("/query", json={"question": ""}).status_code == 422
-    assert client.post("/index", json={"source_path": str(tmp_path / "missing.pdf")}).status_code == 404
+    assert (
+        client.post("/index", json={"source_path": str(tmp_path / "missing.pdf")}).status_code
+        == 404
+    )

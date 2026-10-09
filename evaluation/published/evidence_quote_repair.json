@@ -1,0 +1,51 @@
+{
+  "case_count": 11,
+  "retrieval_recall": 1.0,
+  "answer_accuracy": 0.7272727272727273,
+  "citation_accuracy": 0.6363636363636364,
+  "grounding_rate": 1.0,
+  "page_labelled_case_count": 10,
+  "retrieval_page_recall": 0.9,
+  "abstention_rate": 0.2727272727272727,
+  "answered_accuracy": 1.0,
+  "source_report": "evidence_quote_repair.json",
+  "source_sha256": "6d5a8b826cea71d2c21e3a0afe353dbd7698719887f702898905e224d2099e2c",
+  "configuration_caveat": "Legacy report does not capture model revision or environment settings. Do not infer those settings from this summary.",
+  "failures": [
+    {
+      "case_id": "financebench_id_03029",
+      "failures": [
+        "incorrect_citation"
+      ],
+      "abstained": false,
+      "retrieval_page_hit": false
+    },
+    {
+      "case_id": "financebench_id_00499",
+      "failures": [
+        "incorrect_answer",
+        "incorrect_citation"
+      ],
+      "abstained": true,
+      "retrieval_page_hit": null
+    },
+    {
+      "case_id": "financebench_demo_boeing_2018_net_ppe",
+      "failures": [
+        "incorrect_answer",
+        "incorrect_citation"
+      ],
+      "abstained": true,
+      "retrieval_page_hit": true
+    },
+    {
+      "case_id": "financebench_demo_jpmorgan_2022q2_highest_net_income",
+      "failures": [
+        "incorrect_answer",
+        "incorrect_citation"
+      ],
+      "abstained": true,
+      "retrieval_page_hit": true
+    }
+  ]
+}

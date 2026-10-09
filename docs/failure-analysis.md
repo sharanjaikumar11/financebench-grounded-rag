@@ -26,4 +26,15 @@ The demo previously displayed source labels without a direct path to inspect the
 
 Grounded answer evaluation depends on a Gemini API key being available in the same terminal that runs the evaluation. The generator is configured with temperature zero and returns `INSUFFICIENT_CONTEXT` rather than fabricate an answer or citation when retrieved evidence is insufficient.
 
-The 3-of-3 retrieval result above is the original small evaluation and must not be interpreted as a measurement of the subsequent routing and table-retrieval changes. The expanded 11-case run subsequently measured 100% expected-filing recall (11/11), 45.45% answer accuracy (5/11), 54.55% citation accuracy (6/11), and 100% grounding. These metrics are recorded in the experiment report and should be rerun when the generator model or prompts change.
+The 3-of-3 result above is historical, not a measurement of subsequent changes.
+The current saved row-matching generation run measures 9/11 answer and citation
+accuracy, 11/11 document recall and 10/10 labelled-page recall. See the experiment
+report and published summaries for remaining failed case IDs. Two abstentions
+remain; improved page coverage does not guarantee generation success.
+
+Structured output exposed another failure: the model abbreviated table rows
+into non-verbatim quotes. Repair now identifies failed evidence entries and asks
+for full contiguous rows and separate headers. Exact validation remains strict.
+Statement/row scoring helped retrieval find the missing asset balance, but did not
+increase aggregate generation accuracy in the latest run. Do not infer a causal
+accuracy gain from retrieval alone.
