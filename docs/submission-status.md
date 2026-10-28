@@ -1,28 +1,51 @@
 # Assessment submission status
 
-Audited against the lead's Production-Oriented RAG assessment on 2026-10-09.
+Reconciled 2026-10-15 using the previously reviewed lead assessment and current
+local evidence. The external assignment was not re-fetched during this
+documentation-only reconciliation.
 
-## Available
+## Required scope and evidence
 
-- Modular PDF/TXT/Markdown ingestion, normalization, provenance and deduplication.
-- Fixed-token and section-aware chunking; dense/hybrid retrieval and filing filters.
-- Grounded generation, citations, abstention and basic API error handling.
-- Evaluation cases, sanitized result summaries, architecture and technical decisions.
-- Unit/integration tests, README, Docker artifacts and a presentation file.
-- Optional reranker, evidence repair, statement/row ranking, Ruff and pre-commit.
+The assessment calls for ingestion/provenance, at least two chunking strategies
+and comparisons, embedding/retrieval experiments, grounded cited answers and
+abstention, a small evaluation with failure analysis, modular service/API,
+configuration/errors/tests, setup instructions, architecture/decisions, and a
+presentation/demo. Docker is preferred. Advanced techniques are choices, not a
+requirement to implement every listed technique.
 
-## Still pending or requiring confirmation
+| Area | Status |
+| --- | --- |
+| PDF/TXT/Markdown ingestion, cleaning, provenance, deduplication | Implemented |
+| Fixed-token and section-aware comparison | Complete on unchanged 11 cases: retrieval K=3/5/10 and generation K=3 |
+| Chunk-size/overlap sensitivity | Complete bounded 10-filing, five-setting retrieval comparison |
+| Embeddings, retrieval, metadata and top-K experiments | Implemented and measured; see experiment report |
+| Grounded generation, citations, abstention/errors | Implemented; semantic entailment is not guaranteed |
+| Dataset, metrics and failure report | Original 11 reviewed cases; current report reconciled |
+| API, tests and setup documentation | Implemented; latest suite 138 passed; fresh setup/demo verification pending |
+| Architecture and decisions | Reconciled to current implementation and results |
+| Presentation | Missing locally: Git shows deleted PPTX; final presentation still required |
+| Repository publication | Local changes pending; remote synchronization not verified |
+| Docker packaging | Files present; execution unverified, local engine unavailable |
 
-1. Compare answer quality for both chunkers on the same expanded cases; the old
-   three-case document-recall comparison is not enough. Test chunk-size sensitivity.
-2. Repeat generation with recorded model/configuration settings and add held-out
-   and unanswerable cases. No live generation run was performed in this doc pass.
-3. Verify setup from a clean checkout and container model/index provisioning.
-4. Review presentation contents against the latest numbers. File presence alone
-   is verified; slides were not updated in this pass.
-5. Confirm the reviewed commit is present on the submission remote before sharing.
-   Resume scripts/output and temporary artifacts are excluded from the project.
+See the [delivery checklist](../deliverables/SUBMISSION_GUIDE.md),
+[experiment report](experiment-report.md), and
+[bounded sensitivity results](chunk-sensitivity-results.md).
 
-Do not claim authentication, durable background jobs, cloud deployment, full
-semantic grounding verification or completed table-aware indexing. These are
-extensions rather than minimum assessment requirements.
+## Optional work kept separate
+
+[IMPROVEMENTS.md](../IMPROVEMENTS.md) lists implementation choices/enhancements:
+hybrid search, generic routing/ranking, structured evidence repair, PDF links,
+provider alternatives, provenance and Ruff tooling. Some satisfy the assessment's
+advanced-exploration component; none imply every advanced option was required.
+
+The 50-case draft, specific recall targets, held-out expansion and production
+scale-out are not minimum delivery requirements. Its best retrieval diagnostic
+is 50/50 filing hits, 45/49 full-context page hits, 40/49 selected-context page
+hits at K=5 with optional concept ranking. No 50-case generation score is claimed.
+
+## Remaining delivery checks
+
+Supply/refresh the missing presentation; verify startup, abstention and PDF page
+navigation; clean-checkout setup; final quality/security/licensing review; commit,
+push and remote verification. Do not claim cloud deployment, authentication,
+durable indexing jobs, complete table-aware indexing or perfect factual grounding.

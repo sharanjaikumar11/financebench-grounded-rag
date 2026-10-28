@@ -45,17 +45,24 @@ def _financial_value_in_requested_units(value: str, question: str) -> float | No
     """Normalize dollar figures so equivalent million/billion wording compares fairly."""
     matches = list(
         re.finditer(
-            r"(?P<currency>\$)?\s*(?P<amount>[0-9][0-9,]*(?:\.\d+)?)\s*(?P<unit>billion|million|bn|mn)?\b",
+            r"(?P<currency>\$|\bUSD\s+)?\s*"
+            r"(?P<amount>[0-9][0-9,]*(?:\.\d+)?)\s*"
+            r"(?P<suffix_currency>USD\b\s*)?"
+            r"(?P<unit>billions?|millions?|bn|mn)?\b",
             value,
             re.IGNORECASE,
         )
     )
-    preferred = [match for match in matches if match.group("currency") or match.group("unit")]
+    preferred = [
+        match
+        for match in matches
+        if match.group("currency") or match.group("suffix_currency") or match.group("unit")
+    ]
     match = (preferred or matches or [None])[0]
     if match is None:
         return None
     amount = float(match.group("amount").replace(",", ""))
-    unit = (match.group("unit") or "").casefold()
+    unit = (match.group("unit") or "").casefold().removesuffix("s")
     requested = normalized_text(question)
     if "usd billion" in requested or "in billions" in requested:
         return amount * (0.001 if unit in {"million", "mn"} else 1.0)

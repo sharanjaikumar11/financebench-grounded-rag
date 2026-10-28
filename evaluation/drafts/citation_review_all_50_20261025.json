@@ -1,0 +1,1759 @@
+{
+  "collection_sha256": "4af43630c2c1812639aa97a52cdf2870efe8d2cc3240748494b905794a96f9ed",
+  "cases": [
+    {
+      "case_id": "financebench_id_03029",
+      "question": "What is the FY2018 capital expenditure amount (in USD millions) for 3M? Give a response to the question by relying on the details shown in the cash flow statement.",
+      "generated_answer": "The FY2018 capital expenditure amount for 3M was 1,577 million USD. [S4]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S4",
+          "document_id": "doc_faf10c53fc6f1a8a",
+          "document_name": "3M_2018_10K.pdf",
+          "page_numbers": [
+            59,
+            60
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "3M_2018_10K.pdf",
+      "expected_pages": [
+        46,
+        60
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          60
+        ],
+        "reason": "FY2018 cash-flow PP&E purchases are 1,577 million; outflow magnitude is correctly reported as capex.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_04672",
+      "question": "Assume that you are a public equities analyst. Answer the following question by primarily using information that is shown in the balance sheet: what is the year end FY2018 net PPNE for 3M? Answer in USD billions.",
+      "generated_answer": "The year end FY2018 net property, plant and equipment for 3M was 8.738 billion USD. [S7]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S7",
+          "document_id": "doc_faf10c53fc6f1a8a",
+          "document_name": "3M_2018_10K.pdf",
+          "page_numbers": [
+            80,
+            81
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "3M_2018_10K.pdf",
+      "expected_pages": [
+        58,
+        81
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          81
+        ],
+        "reason": "2018 net PP&E 8,738 million converts to 8.738 billion. The note is supplemental balance-sheet information.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00499",
+      "question": "Is 3M a capital-intensive business based on FY2022 data?",
+      "generated_answer": "INSUFFICIENT_CONTEXT",
+      "abstained": true,
+      "citations": [],
+      "citation_correct": false,
+      "expected_document": "3M_2022_10K.pdf",
+      "expected_pages": [],
+      "review": {
+        "classification": "no_citation_abstention",
+        "verified_physical_pdf_pages": [],
+        "topic": "3M capital intensity",
+        "reason": "The final response abstained and returned no citations. This is an answer-coverage failure under the existing benchmark, not an incorrect emitted citation. Diagnostic statuses are preserved; rejected intermediate outputs are not accepted answers.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_demo_amazon_2019_net_income",
+      "question": "What was Amazon's FY2019 net income attributable to shareholders in USD millions?",
+      "generated_answer": "Amazon's net income attributable to shareholders for FY2019 was 11,588 million USD. [S5]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S5",
+          "document_id": "doc_d7df8c6cf3e351a8",
+          "document_name": "AMAZON_2019_10K.pdf",
+          "page_numbers": [
+            38,
+            39
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "AMAZON_2019_10K.pdf",
+      "expected_pages": [
+        38,
+        39
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          38
+        ],
+        "reason": "2019 income statement reports net income 11,588 million; year and units match.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_demo_bestbuy_2019_inventory",
+      "question": "What was Best Buy's year-end FY2019 inventory balance in USD millions?",
+      "generated_answer": "Best Buy's year-end FY2019 inventory balance was 5,409 million USD. [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_d3228e9acd2ce498",
+          "document_name": "BESTBUY_2019_10K.pdf",
+          "page_numbers": [
+            51,
+            52
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "BESTBUY_2019_10K.pdf",
+      "expected_pages": [
+        52
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          52
+        ],
+        "reason": "February 2, 2019 balance sheet reports merchandise inventory 5,409 million.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_demo_boeing_2018_net_ppe",
+      "question": "What was Boeing's year-end FY2018 net property, plant, and equipment in USD millions?",
+      "generated_answer": "Boeing's net property, plant, and equipment at year-end 2018 was 12,645 million USD. [S4]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S4",
+          "document_id": "doc_6f1ace34b3b01778",
+          "document_name": "BOEING_2018_10K.pdf",
+          "page_numbers": [
+            51,
+            52
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "BOEING_2018_10K.pdf",
+      "expected_pages": [
+        52,
+        85
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          52
+        ],
+        "reason": "December 31, 2018 balance sheet reports net PP&E 12,645 million.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_demo_costco_2021_total_assets",
+      "question": "What were Costco's total assets at the end of FY2021 in USD millions?",
+      "generated_answer": "Costco's total assets at the end of FY2021 were $59,268 million. [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_29e05b3862cf6ffa",
+          "document_name": "COSTCO_2021_10K.pdf",
+          "page_numbers": [
+            36,
+            37,
+            38
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "COSTCO_2021_10K.pdf",
+      "expected_pages": [
+        38,
+        64
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          38
+        ],
+        "reason": "August 29, 2021 balance sheet reports total assets 59,268 million.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_demo_jpmorgan_2022q2_highest_net_income",
+      "question": "In Q2 2022, which JPMorgan business segment had the highest net income?",
+      "generated_answer": "In Q2 2022, the Corporate & Investment Bank business segment had the highest net income at $3,725 million. [S9]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S9",
+          "document_id": "doc_7d715f552d4eeb6b",
+          "document_name": "JPMORGAN_2022Q2_10Q.pdf",
+          "page_numbers": [
+            177
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "JPMORGAN_2022Q2_10Q.pdf",
+      "expected_pages": [
+        21
+      ],
+      "review": {
+        "classification": "supported_alternative",
+        "verified_physical_pdf_pages": [
+          177
+        ],
+        "topic": "JPMorgan",
+        "reason": "Q2 2022 segment table reports net income (millions): CCB 3,100; CIB 3,725; Commercial 994; AWM 1,004; Corporate -174. The cited page supports the maximum and amount.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_demo_microsoft_2016_cost_of_revenue",
+      "question": "What was Microsoft's FY2016 cost of goods sold in USD millions?",
+      "generated_answer": "Microsoft's total cost of revenue for the fiscal year ended June 30, 2016, was 32,780 million USD. [S8]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S8",
+          "document_id": "doc_f3555bd5ea180277",
+          "document_name": "MICROSOFT_2016_10K.pdf",
+          "page_numbers": [
+            51,
+            52
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "MICROSOFT_2016_10K.pdf",
+      "expected_pages": [
+        52
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          52
+        ],
+        "reason": "FY2016 income statement reports total cost of revenue 32,780 million.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_demo_pepsico_2021_capex",
+      "question": "What was PepsiCo's FY2021 capital expenditure amount in USD billions?",
+      "generated_answer": "PepsiCo's FY2021 capital expenditure amount was 4.625 billion USD. [S4] [S7]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S4",
+          "document_id": "doc_f2c7cf1969c7f6df",
+          "document_name": "PEPSICO_2021_10K.pdf",
+          "page_numbers": [
+            63
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S7",
+          "document_id": "doc_f2c7cf1969c7f6df",
+          "document_name": "PEPSICO_2021_10K.pdf",
+          "page_numbers": [
+            70,
+            71
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "PEPSICO_2021_10K.pdf",
+      "expected_pages": [
+        53,
+        63,
+        71
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          63
+        ],
+        "reason": "2021 cash-flow capital spending 4,625 million converts to 4.625 billion; page 71 also reports capital spending by segment.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_demo_verizon_2021_derivatives",
+      "question": "Among Verizon's derivative instruments in FY2021, which had the highest notional value?",
+      "generated_answer": "Among Verizon's derivative instruments, cross currency swaps had the highest notional value at $32,502 million as of December 31, 2021. [S4]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S4",
+          "document_id": "doc_f7fcb508f920e3df",
+          "document_name": "VERIZON_2021_10K.pdf",
+          "page_numbers": [
+            85
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "VERIZON_2021_10K.pdf",
+      "expected_pages": [
+        85
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          85
+        ],
+        "reason": "2021 notionals are interest-rate swaps 19,779; cross-currency 32,502; forward-starting interest-rate swaps 1,000; FX forwards 932 million. Cross-currency is the maximum.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01858",
+      "question": "Does 3M maintain a stable trend of dividend distribution?",
+      "generated_answer": "Yes, 3M maintains a stable trend of dividend distribution, having achieved 65 consecutive years of dividend increases as of 2023. [S7]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S7",
+          "document_id": "doc_3e66115793459f42",
+          "document_name": "3M_2023Q2_10Q.pdf",
+          "page_numbers": [
+            73
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "3M_2023Q2_10Q.pdf",
+      "expected_pages": [
+        62
+      ],
+      "review": {
+        "classification": "supported_alternative",
+        "verified_physical_pdf_pages": [
+          73
+        ],
+        "topic": "3M dividends",
+        "reason": "The page states 65 consecutive years of dividend increases and describes the February and May 2023 dividends. This supports the answer's explicit as-of-2023 qualification.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_10420",
+      "question": "Based on the information provided primarily in the statement of financial position and the statement of income, what is AES's FY2022 return on assets (ROA)? ROA is defined as: FY2022 net income / (average total assets between FY2021 and FY2022). Round your answer to two decimal places.",
+      "generated_answer": "INSUFFICIENT_CONTEXT",
+      "abstained": true,
+      "citations": [],
+      "citation_correct": false,
+      "expected_document": "AES_2022_10K.pdf",
+      "expected_pages": [
+        130,
+        132
+      ],
+      "review": {
+        "classification": "no_citation_abstention",
+        "verified_physical_pdf_pages": [],
+        "topic": "AES ROA",
+        "reason": "The final response abstained and returned no citations. This is an answer-coverage failure under the existing benchmark, not an incorrect emitted citation. Diagnostic statuses are preserved; rejected intermediate outputs are not accepted answers.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01279",
+      "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for AMD in FY22?",
+      "generated_answer": "Operating activities brought in the most cash flow for AMD in FY22, with $3,565 million in net cash provided by these activities compared to $1,999 million from investing activities and a $3,264 million outflow from financing activities. [S3]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S3",
+          "document_id": "doc_a3bd74088fae0ad4",
+          "document_name": "AMD_2022_10K.pdf",
+          "page_numbers": [
+            51
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "AMD_2022_10K.pdf",
+      "expected_pages": [
+        58
+      ],
+      "review": {
+        "classification": "supported_alternative",
+        "verified_physical_pdf_pages": [
+          51
+        ],
+        "topic": "AMD cash flow",
+        "reason": "FY2022 net cash flows (millions) are operating 3,565, investing 1,999 and financing -3,264. All three amounts and the comparison are supported.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_02987",
+      "question": "What is the FY2019 fixed asset turnover ratio for Activision Blizzard? Fixed asset turnover ratio is defined as: FY2019 revenue / (average PP&E between FY2018 and FY2019). Round your answer to two decimal places. Base your judgments on the information provided primarily in the statement of income and the statement of financial position.",
+      "generated_answer": "The FY2019 fixed asset turnover ratio for Activision Blizzard is 24.58, calculated as $6,489 million revenue divided by the average property and equipment of $267.5 million. [S1] [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S1",
+          "document_id": "doc_017f1bbc1e37f294",
+          "document_name": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+          "page_numbers": [
+            68,
+            69
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S2",
+          "document_id": "doc_017f1bbc1e37f294",
+          "document_name": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+          "page_numbers": [
+            69,
+            70
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+      "expected_pages": [
+        69,
+        70
+      ],
+      "review": {
+        "classification": "arithmetic_error",
+        "verified_physical_pdf_pages": [
+          69,
+          70
+        ],
+        "reason": "Operands are supported, but 6489 / ((253+282)/2) = 24.2579439, rounding to 24.26, not 24.58. The displayed 267.5 average is correct.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_07507",
+      "question": "What is Adobe's year-over-year change in unadjusted operating income from FY2015 to FY2016 (in units of percents and round to one decimal place)? Give a solution to the question by using the income statement.",
+      "generated_answer": "INSUFFICIENT_CONTEXT",
+      "abstained": true,
+      "citations": [],
+      "citation_correct": false,
+      "expected_document": "ADOBE_2016_10K.pdf",
+      "expected_pages": [
+        62
+      ],
+      "review": {
+        "classification": "no_citation_abstention",
+        "verified_physical_pdf_pages": [],
+        "topic": "Adobe operating-income growth",
+        "reason": "The final response abstained and returned no citations. This is an answer-coverage failure under the existing benchmark, not an incorrect emitted citation. Diagnostic statuses are preserved; rejected intermediate outputs are not accepted answers.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_08135",
+      "question": "What is Amazon's year-over-year change in revenue from FY2016 to FY2017 (in units of percents and round to one decimal place)? Calculate what was asked by utilizing the line items clearly shown in the statement of income.",
+      "generated_answer": "Amazon's year-over-year revenue increased by 30.8% from 2016 to 2017, calculated as ($177,866 million - $135,987 million) / $135,987 million. [S3]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S3",
+          "document_id": "doc_f8af08ff6c414735",
+          "document_name": "AMAZON_2017_10K.pdf",
+          "page_numbers": [
+            37,
+            38
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "AMAZON_2017_10K.pdf",
+      "expected_pages": [
+        38
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          38
+        ],
+        "reason": "FY2017 revenue 177,866 and FY2016 revenue 135,987 million imply growth of 30.8% rounded to one decimal.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01079",
+      "question": "What are major acquisitions that AMCOR has done in FY2023, FY2022 and FY2021?",
+      "generated_answer": "INSUFFICIENT_CONTEXT",
+      "abstained": true,
+      "citations": [],
+      "citation_correct": false,
+      "expected_document": "AMCOR_2023_10K.pdf",
+      "expected_pages": [
+        64
+      ],
+      "review": {
+        "classification": "no_citation_abstention",
+        "verified_physical_pdf_pages": [],
+        "topic": "AMCOR acquisitions",
+        "reason": "The final response abstained and returned no citations. This is an answer-coverage failure under the existing benchmark, not an incorrect emitted citation. Diagnostic statuses are preserved; rejected intermediate outputs are not accepted answers.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01351",
+      "question": "How much has the effective tax rate of American Express changed between FY2021 and FY2022?",
+      "generated_answer": "The effective tax rate of American Express decreased by 3.0 percentage points, falling from 24.6 percent in 2021 to 21.6 percent in 2022. [S4] [S6]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S4",
+          "document_id": "doc_d3bbc7ab23d6160e",
+          "document_name": "AMERICANEXPRESS_2022_10K.pdf",
+          "page_numbers": [
+            44
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S6",
+          "document_id": "doc_d3bbc7ab23d6160e",
+          "document_name": "AMERICANEXPRESS_2022_10K.pdf",
+          "page_numbers": [
+            49,
+            50
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "AMERICANEXPRESS_2022_10K.pdf",
+      "expected_pages": [
+        44
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          44
+        ],
+        "reason": "2022 and 2021 effective tax rates 21.6% and 24.6% imply a 3.0 percentage-point decrease; page 49 independently confirms the periods.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_04254",
+      "question": "Basing your judgments off of the cash flow statement and the income statement, what is American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA) in USD millions?",
+      "generated_answer": "American Water Works's FY2021 unadjusted operating income of $1,196 million plus depreciation and amortization of $636 million results in an unadjusted EBITDA of $1,832 million. [S6]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S6",
+          "document_id": "doc_701528ae6d14a772",
+          "document_name": "AMERICANWATERWORKS_2021_10K.pdf",
+          "page_numbers": [
+            86,
+            87
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "AMERICANWATERWORKS_2021_10K.pdf",
+      "expected_pages": [
+        86,
+        88
+      ],
+      "review": {
+        "classification": "requested_statement_not_cited",
+        "verified_physical_pdf_pages": [
+          86,
+          87
+        ],
+        "reason": "The cited income statement supports 1,196 + 636 = 1,832 million. The question explicitly requires cash-flow D&A. Uncited page 88 confirms the same 636, so the answer value is correct but the requested statement evidence is missing from the citation.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01077",
+      "question": "What are major acquisitions that Best Buy has done in FY2023, FY2022 and FY2021?",
+      "generated_answer": "In fiscal 2022, Best Buy acquired Current Health Ltd. and Two Peaks, LLC (Yardbird); no major acquisitions were reported for fiscal 2021 or fiscal 2023. [S4] [S1] [S7]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S4",
+          "document_id": "doc_7ca465d31a08be29",
+          "document_name": "BESTBUY_2023_10K.pdf",
+          "page_numbers": [
+            44
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S1",
+          "document_id": "doc_a9a46c9fae1af1b3",
+          "document_name": "BESTBUY_2023Q4_EARNINGS.pdf",
+          "page_numbers": [
+            7,
+            8
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S7",
+          "document_id": "doc_7ca465d31a08be29",
+          "document_name": "BESTBUY_2023_10K.pdf",
+          "page_numbers": [
+            51
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "BESTBUY_2023_10K.pdf",
+      "expected_pages": [
+        51
+      ],
+      "review": {
+        "classification": "incomplete_negative_claim",
+        "verified_physical_pdf_pages": [
+          44,
+          51
+        ],
+        "reason": "FY2022 Current Health and Yardbird acquisitions are supported. Cited earnings page 8 shows no FY2023 net acquisition cash outflow, but does not establish no major acquisitions in FY2021 or rule out noncash acquisitions. Do not approve the full negative claim from these citations.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_07661",
+      "question": "Using the cash flow statement, answer the following question to the best of your abilities: how much did Block (formerly known as Square) generate in cash flow from operating activities in FY2020? Answer in USD millions.",
+      "generated_answer": "Block generated 381.6 million USD in cash flow from operating activities in FY2020. [S3] [S8]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S3",
+          "document_id": "doc_c19a9fb25db3270e",
+          "document_name": "BLOCK_2020_10K.pdf",
+          "page_numbers": [
+            74
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S8",
+          "document_id": "doc_c19a9fb25db3270e",
+          "document_name": "BLOCK_2020_10K.pdf",
+          "page_numbers": [
+            90
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "BLOCK_2020_10K.pdf",
+      "expected_pages": [
+        90
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          90
+        ],
+        "reason": "2020 operating cash flow 381,603 thousand equals 381.603 million; 381.6 is supported rounded precision, also explicitly stated on page 74.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01091",
+      "question": "Has Boeing reported any materially important ongoing legal battles from FY2022?",
+      "generated_answer": "Yes, Boeing is involved in a number of ongoing legal proceedings, including pending lawsuits related to the 2018 Lion Air Flight 610 and 2019 Ethiopian Airlines Flight 302 accidents. [S4] [S9]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S4",
+          "document_id": "doc_09285ff7ee737d33",
+          "document_name": "BOEING_2022_10K.pdf",
+          "page_numbers": [
+            20,
+            21
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S9",
+          "document_id": "doc_09285ff7ee737d33",
+          "document_name": "BOEING_2022_10K.pdf",
+          "page_numbers": [
+            113
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "BOEING_2022_10K.pdf",
+      "expected_pages": [
+        113
+      ],
+      "review": {
+        "classification": "materiality_requires_review",
+        "verified_physical_pdf_pages": [
+          20,
+          113
+        ],
+        "reason": "Pending accident litigation is supported. The question asks materially important battles; the answer's Yes does not address materiality, and page 113 includes a material-effect qualification plus unquantified losses. The existence claim is supported but a full materiality conclusion needs review.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01244",
+      "question": "Has CVS Health paid dividends to common shareholders in Q2 of FY2022?",
+      "generated_answer": "Yes, CVS Health Corporation has paid cash dividends every quarter since becoming a public company, including during 2022 when the quarterly cash dividend was $0.55 per share. [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_183c196a41793cd5",
+          "document_name": "CVSHEALTH_2022_10K.pdf",
+          "page_numbers": [
+            66,
+            67,
+            68
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "CVSHEALTH_2022_10K.pdf",
+      "expected_pages": [
+        68
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          68
+        ],
+        "reason": "The filing states dividends were paid every quarter and the 2022 quarterly cash dividend was $0.55 per share, supporting inclusion of Q2.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_06272",
+      "question": "What is Coca Cola's FY2022 dividend payout ratio (using total cash dividends paid and net income attributable to shareholders)? Round answer to two decimal places. Answer the question asked by assuming you only have access to information clearly displayed in the cash flow statement and the income statement.",
+      "generated_answer": "Coca-Cola's FY2022 dividend payout ratio is 0.80, calculated by dividing total cash dividends paid of $7,616 million by consolidated net income of $9,571 million. [S2] [S3]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_9f91bb914d94d014",
+          "document_name": "COCACOLA_2022_10K.pdf",
+          "page_numbers": [
+            65,
+            66
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S3",
+          "document_id": "doc_9f91bb914d94d014",
+          "document_name": "COCACOLA_2022_10K.pdf",
+          "page_numbers": [
+            66
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "COCACOLA_2022_10K.pdf",
+      "expected_pages": [
+        63,
+        66
+      ],
+      "review": {
+        "classification": "wrong_metric_operand",
+        "verified_physical_pdf_pages": [
+          66
+        ],
+        "reason": "The cited 9,571 is consolidated net income. The question asks income attributable to shareholders: uncited page 63 reports 9,542. Both 7616/9571 and 7616/9542 round to 0.80, but the supplied explanation uses the wrong denominator.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01346",
+      "question": "How much has the effective tax rate of Corning changed between FY2021 and FY2022?",
+      "generated_answer": "Corning's effective tax rate increased by 2.7 percentage points, rising from 20.2% in FY2021 to 22.9% in FY2022. [S6]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S6",
+          "document_id": "doc_a63f102f045826b3",
+          "document_name": "CORNING_2022_10K.pdf",
+          "page_numbers": [
+            76,
+            77
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "CORNING_2022_10K.pdf",
+      "expected_pages": [
+        24
+      ],
+      "review": {
+        "classification": "supported_alternative",
+        "verified_physical_pdf_pages": [
+          77
+        ],
+        "topic": "Corning tax rate",
+        "reason": "The tax reconciliation reports 22.9% for 2022 and 20.2% for 2021, a 2.7 percentage-point increase. The reference uses rounded rates; this is a precision difference, not fabricated evidence. Cited page 76 is unnecessary.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_04209",
+      "question": "Using only the information within the balance sheet, how much total assets did Costco have at the end of FY2021? Answer in USD millions.",
+      "generated_answer": "At the end of FY2021, Costco had total assets of $59,268 million. [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_29e05b3862cf6ffa",
+          "document_name": "COSTCO_2021_10K.pdf",
+          "page_numbers": [
+            36,
+            37,
+            38
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "COSTCO_2021_10K.pdf",
+      "expected_pages": [
+        38
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          38
+        ],
+        "reason": "Duplicate subject of the Costco demo case; total assets 59,268 million as of August 29, 2021.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00839",
+      "question": "Does Foot Locker's new CEO have previous CEO experience in a similar company to Footlocker?",
+      "generated_answer": "Yes, Foot Locker's CEO Mary N. Dillon previously served as the Chief Executive Officer of Ulta Beauty, Inc. from July 2013 through June 2021. [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_3d5d700c4cdbfe8a",
+          "document_name": "FOOTLOCKER_2023_10K.pdf",
+          "page_numbers": [
+            18
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "FOOTLOCKER_2022_8K_dated_2022-08-19.pdf",
+      "expected_pages": [
+        2
+      ],
+      "review": {
+        "classification": "partial_support",
+        "verified_physical_pdf_pages": [
+          18
+        ],
+        "topic": "Foot Locker CEO",
+        "reason": "The page confirms Mary Dillon was Ulta Beauty CEO from July 2013 through June 2021. It does not establish that Ulta is a similar company to Foot Locker. Prior CEO experience is supported; the full affirmative comparison remains unresolved.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_04854",
+      "question": "According to the information provided in the statement of cash flows, what is the FY2020 free cash flow (FCF) for General Mills? FCF here is defined as: (cash from operations - capex). Answer in USD millions.",
+      "generated_answer": "General Mills' FY2020 free cash flow was 3,215.4 USD millions, calculated as 3,676.2 USD millions in net cash provided by operating activities minus 460.8 USD millions in capital expenditures. [S3]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S3",
+          "document_id": "doc_626dd53f9b52e589",
+          "document_name": "GENERALMILLS_2020_10K.pdf",
+          "page_numbers": [
+            52
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "GENERALMILLS_2020_10K.pdf",
+      "expected_pages": [
+        52
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          52
+        ],
+        "reason": "FY2020 operating cash flow 3,676.2 less capex 460.8 equals 3,215.4 million.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_02049",
+      "question": "Looking at VaR, did the risk that JPM faced in the second fiscal quarter of 2023 decrease compared to the same period in the prior year?",
+      "generated_answer": "Yes, the risk that JPM faced in the second fiscal quarter of 2023 decreased compared to the same period in the prior year, driven by risk reductions impacting Credit Portfolio VaR as well as fixed income. [S5]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S5",
+          "document_id": "doc_eef2d9c1fdb5dc82",
+          "document_name": "JPMORGAN_2023Q2_10Q.pdf",
+          "page_numbers": [
+            85,
+            86
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "JPMORGAN_2023Q2_10Q.pdf",
+      "expected_pages": [
+        85
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          85
+        ],
+        "reason": "The full paragraph states average total VaR decreased by $7 million for the three months ended June 30, 2023 versus prior year and gives the stated drivers. The excerpt alone omitted the start of that sentence.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01487",
+      "question": "Did JnJ's net earnings as a percent of sales increase in Q2 of FY2023 compared to Q2 of FY2022?",
+      "generated_answer": "Yes, JnJ's net earnings as a percent of sales increased from 20.0% in Q2 of FY2022 to 20.1% in Q2 of FY2023. [S3]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S3",
+          "document_id": "doc_db1f3419d309440e",
+          "document_name": "JOHNSON_JOHNSON_2023Q2_EARNINGS.pdf",
+          "page_numbers": [
+            10,
+            11
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "JOHNSON_JOHNSON_2023Q2_EARNINGS.pdf",
+      "expected_pages": [
+        10
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          10
+        ],
+        "reason": "Table footer identifies SECOND QUARTER 2023/2022. Net earnings percentages are 20.1% and 20.0%, respectively.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_10499",
+      "question": "What is Kraft Heinz's FY2019 inventory turnover ratio? Inventory turnover ratio is defined as: (FY2019 COGS) / (average inventory between FY2018 and FY2019). Round your answer to two decimal places. Please base your judgments on the information provided primarily in the balance sheet and the P&L statement.",
+      "generated_answer": "INSUFFICIENT_CONTEXT",
+      "abstained": true,
+      "citations": [],
+      "citation_correct": false,
+      "expected_document": "KRAFTHEINZ_2019_10K.pdf",
+      "expected_pages": [
+        50,
+        52
+      ],
+      "review": {
+        "classification": "no_citation_abstention",
+        "verified_physical_pdf_pages": [],
+        "topic": "Kraft Heinz inventory turnover",
+        "reason": "The final response abstained and returned no citations. This is an answer-coverage failure under the existing benchmark, not an incorrect emitted citation. Diagnostic statuses are preserved; rejected intermediate outputs are not accepted answers.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_03031",
+      "question": "What is Lockheed Martin's FY2021 net working capital? Define net working capital as total current assets less total current liabilities. Answer in USD millions. Respond to the question by assuming the perspective of an investment analyst who can only use the details shown within the balance sheet.",
+      "generated_answer": "Lockheed Martin's FY2021 net working capital was $5,818 million, calculated as total current assets of $19,815 million less total current liabilities of $13,997 million. [S5]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S5",
+          "document_id": "doc_d2486265fedea887",
+          "document_name": "LOCKHEEDMARTIN_2021_10K.pdf",
+          "page_numbers": [
+            68
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "LOCKHEEDMARTIN_2021_10K.pdf",
+      "expected_pages": [
+        68
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          68
+        ],
+        "reason": "2021 current assets 19,815 less current liabilities 13,997 equals 5,818 million.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00382",
+      "question": "Which region had the Highest EBITDAR Contribution for MGM during FY2022?",
+      "generated_answer": "The Las Vegas Strip Resorts region had the highest Adjusted Property EBITDAR for MGM during FY2022, with a contribution of $3,142,308 thousand. [S8]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S8",
+          "document_id": "doc_130b96c1309c97aa",
+          "document_name": "MGMRESORTS_2022_10K.pdf",
+          "page_numbers": [
+            99,
+            100
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "MGMRESORTS_2022Q4_EARNINGS.pdf",
+      "expected_pages": [
+        13
+      ],
+      "review": {
+        "classification": "supported_alternative",
+        "verified_physical_pdf_pages": [
+          99,
+          100
+        ],
+        "topic": "MGM EBITDAR",
+        "reason": "Page 99 defines the segments and Adjusted Property EBITDAR. Page 100 reports FY2022 amounts (thousands): Las Vegas Strip 3,142,308; Regional Operations 1,294,630; MGM China -203,136. The 10-K supports the answer although the reference names the earnings release.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_04700",
+      "question": "What is the FY2016 COGS for Microsoft? Please state answer in USD millions. Provide a response to the question by primarily using the statement of income.",
+      "generated_answer": "Microsoft's total cost of revenue for the fiscal year ended June 30, 2016, was $32,780 million. [S4]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S4",
+          "document_id": "doc_f3555bd5ea180277",
+          "document_name": "MICROSOFT_2016_10K.pdf",
+          "page_numbers": [
+            51,
+            52
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "MICROSOFT_2016_10K.pdf",
+      "expected_pages": [
+        52
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          52
+        ],
+        "reason": "Duplicate subject of the Microsoft demo case; FY2016 cost of revenue 32,780 million.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_04458",
+      "question": "We want to calculate a financial metric. Please help us compute it by basing your answers off of the statement of income and the statement of cash flows. Here's the question: what is the FY2015 unadjusted EBITDA % margin for Netflix? Calculate unadjusted EBITDA using unadjusted operating income and D&A (from cash flow statement).",
+      "generated_answer": "The FY2015 unadjusted EBITDA is $368,109 thousand, calculated as $305,826 thousand operating income plus $62,283 thousand depreciation and amortization, resulting in an unadjusted EBITDA % margin of 5.43%. [S2] [S8]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_b22ca874ef08f383",
+          "document_name": "NETFLIX_2015_10K.pdf",
+          "page_numbers": [
+            17
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S8",
+          "document_id": "doc_b22ca874ef08f383",
+          "document_name": "NETFLIX_2015_10K.pdf",
+          "page_numbers": [
+            42
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "NETFLIX_2015_10K.pdf",
+      "expected_pages": [
+        40,
+        42
+      ],
+      "review": {
+        "classification": "definition_requires_review",
+        "verified_physical_pdf_pages": [
+          17,
+          42
+        ],
+        "reason": "305826 + 62283 = 368109 and division by 6779511 yields 5.43%. However cash-flow page 42 separately includes streaming-content amortization 3,405,382 and DVD amortization 79,380. The generic D&A wording needs an explicit policy on content amortization before approving the unqualified EBITDA answer.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01163",
+      "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?",
+      "generated_answer": "Operating activities brought in the most cash flow for Nike in fiscal 2023, with $5,841 million provided by operations compared to $564 million from investing activities and a $7,447 million outflow from financing activities. [S3] [S4]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S3",
+          "document_id": "doc_51f5a0fc6ede20de",
+          "document_name": "NIKE_2023_10K.pdf",
+          "page_numbers": [
+            61,
+            62
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S4",
+          "document_id": "doc_51f5a0fc6ede20de",
+          "document_name": "NIKE_2023_10K.pdf",
+          "page_numbers": [
+            62
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "NIKE_2023_10K.pdf",
+      "expected_pages": [
+        62
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          62
+        ],
+        "reason": "FY2023 cash flows are operating 5,841, investing 564 and financing -7,447 million; maximum and all values match.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00080",
+      "question": "Does Paypal have positive working capital based on FY2022 data? If working capital is not a useful or relevant metric for this company, then please state that and explain why.",
+      "generated_answer": "Yes, PayPal has positive working capital of $12,416 million as of December 31, 2022, calculated by subtracting total current liabilities of $45,101 million from total current assets of $57,517 million. [S2] [S3]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_0c1dd6cd170261c6",
+          "document_name": "PAYPAL_2022_10K.pdf",
+          "page_numbers": [
+            60,
+            61
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S3",
+          "document_id": "doc_0c1dd6cd170261c6",
+          "document_name": "PAYPAL_2022_10K.pdf",
+          "page_numbers": [
+            61,
+            62
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "PAYPAL_2022_10K.pdf",
+      "expected_pages": [
+        61
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          61
+        ],
+        "reason": "2022 total current assets 57,517 less current liabilities 45,101 equals positive working capital 12,416 million. This establishes the stated balance-sheet calculation, not usefulness for every liquidity assessment.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_01009",
+      "question": "What are the geographies that Pepsico primarily operates in as of FY2022?",
+      "generated_answer": "As of FY2022, PepsiCo operates through seven reportable segments: Frito-Lay North America, Quaker Foods North America, PepsiCo Beverages North America, Latin America, Europe, Africa, Middle East and South Asia, and Asia Pacific, Australia, New Zealand and China. [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_7d8a9f3374e429c5",
+          "document_name": "PEPSICO_2022_10K.pdf",
+          "page_numbers": [
+            4,
+            5
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "PEPSICO_2022_10K.pdf",
+      "expected_pages": [
+        4,
+        5
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          4
+        ],
+        "reason": "Pages 4-5 enumerate all seven segments and their geographical coverage, including China on page 5. Both pages are cited.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00302",
+      "question": "Did Pfizer grow its PPNE between FY20 and FY21?",
+      "generated_answer": "Yes, Pfizer grew its property, plant and equipment from $13,745 million in 2020 to $14,882 million in 2021. [S7]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S7",
+          "document_id": "doc_ff3307d5f633c5db",
+          "document_name": "PFIZER_2021_10K.pdf",
+          "page_numbers": [
+            88,
+            89
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "PFIZER_2021_10K.pdf",
+      "expected_pages": [
+        59
+      ],
+      "review": {
+        "classification": "supported_alternative",
+        "verified_physical_pdf_pages": [
+          88
+        ],
+        "topic": "Pfizer PP&E",
+        "reason": "The PP&E note reports net PP&E (millions) of 14,882 in 2021 versus 13,745 in 2020. The increase is supported. Cited page 89 concerns intangible assets and is unnecessary.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00746",
+      "question": "Which debt securities are registered to trade on a national securities exchange under Ulta Beauty's name as of FY2023?",
+      "generated_answer": "As of FY2023, the only security registered to trade on a national securities exchange under Ulta Beauty's name is its common stock, par value $0.01 per share, which trades on The NASDAQ Global Select Market. [S1]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S1",
+          "document_id": "doc_cdf2ebcfbc2eb9ec",
+          "document_name": "ULTABEAUTY_2023_10K.pdf",
+          "page_numbers": [
+            1
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "ULTABEAUTY_2023_10K.pdf",
+      "expected_pages": [
+        1
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          1
+        ],
+        "reason": "Complete Section 12(b) table lists common stock only, and Section 12(g) says none. This supports no listed debt at the filing date. Date caveat: cover says fiscal year ended January 28, 2023; future wording should use that exact date rather than infer a fiscal label from the filename.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00566",
+      "question": "Has Verizon increased its debt on balance sheet between 2022 and the 2021 fiscal period?",
+      "generated_answer": "No, Verizon's total debt, calculated as the sum of debt maturing within one year and long-term debt, decreased from $150,868 million in 2021 to $150,639 million in 2022. [S3]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S3",
+          "document_id": "doc_403d7346e8a05947",
+          "document_name": "VERIZON_2022_10K.pdf",
+          "page_numbers": [
+            55,
+            56
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "VERIZON_2022_10K.pdf",
+      "expected_pages": [
+        77
+      ],
+      "review": {
+        "classification": "supported_alternative",
+        "verified_physical_pdf_pages": [
+          56
+        ],
+        "topic": "Verizon debt",
+        "reason": "For 2022, current debt 9,963 plus long-term debt 140,676 equals 150,639 million. For 2021, 7,443 plus 143,425 equals 150,868 million. The decrease is supported under the answer's explicit definition. Cited page 55 is unnecessary.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_04784",
+      "question": "Based on the information provided primarily in the statement of income, what is the FY2018 - FY2019 change in unadjusted operating income % margin for Walmart? Answer in units of percents and round to one decimal place.",
+      "generated_answer": "The change in Walmart's unadjusted operating income percentage margin from FY2018 to FY2019 is an increase of 0.2 percentage points, calculated as 4.3% minus 4.1%. [S6]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S6",
+          "document_id": "doc_f1d1b052c2b68c5d",
+          "document_name": "WALMART_2019_10K.pdf",
+          "page_numbers": [
+            34
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "WALMART_2019_10K.pdf",
+      "expected_pages": [
+        48
+      ],
+      "review": {
+        "classification": "supported_alternative",
+        "verified_physical_pdf_pages": [
+          34
+        ],
+        "topic": "Walmart margin",
+        "reason": "The operating income percentage of net sales row reports 4.3% for 2019 and 4.1% for 2018, supporting the 0.2 percentage-point change. Caveat: these displayed margins use net sales, not total revenue. Using the same page's operating income and total revenue gives about 0.184 percentage points, also rounding to 0.2. This citation supports the stated calculation; denominator wording should be explicit.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00941",
+      "question": "Which debt securities are registered to trade on a national securities exchange under 3M's name as of Q2 of 2023?",
+      "generated_answer": "The debt securities registered to trade on the New York Stock Exchange under 3M's name as of Q2 2023 are the 1.500% Notes due 2026, 1.750% Notes due 2030, and 1.500% Notes due 2031. [S1]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S1",
+          "document_id": "doc_3e66115793459f42",
+          "document_name": "3M_2023Q2_10Q.pdf",
+          "page_numbers": [
+            1
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "3M_2023Q2_10Q.pdf",
+      "expected_pages": [
+        1
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          1
+        ],
+        "reason": "Q2 2023 cover lists exactly the three specified note issues on NYSE, in addition to common stock.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00540",
+      "question": "Roughly how many times has AES Corporation sold its inventory in FY2022? Calculate inventory turnover ratio for the FY2022; if conventional inventory management is not meaningful for the company then state that and explain why.",
+      "generated_answer": "Conventional inventory management is not meaningful for AES Corporation because its inventory primarily consists of fuel and operational spare parts used for power generation and maintenance rather than goods held for sale to customers. [S6]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S6",
+          "document_id": "doc_9c5de2227534c4d6",
+          "document_name": "AES_2022_10K.pdf",
+          "page_numbers": [
+            140
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": false,
+      "expected_document": "AES_2022_10K.pdf",
+      "expected_pages": [
+        130,
+        132
+      ],
+      "review": {
+        "classification": "partial_support",
+        "verified_physical_pdf_pages": [
+          140
+        ],
+        "topic": "AES inventory",
+        "reason": "The accounting policy describes fuel/raw materials and spare parts used for generation and maintenance. It does not establish that conventional inventory management or turnover is meaningless. The inventory description is supported; the categorical conclusion is not established by this citation.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_00222",
+      "question": "Does AMD have a reasonably healthy liquidity profile based on its quick ratio for FY22? If the quick ratio is not relevant to measure liquidity, please state that and explain why.",
+      "generated_answer": "AMD's quick ratio for FY22 is approximately 1.77, calculated by dividing total current assets of $15,019 million minus inventories of $3,771 million by total current liabilities of $6,369 million, indicating a reasonably healthy liquidity profile. [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S2",
+          "document_id": "doc_a3bd74088fae0ad4",
+          "document_name": "AMD_2022_10K.pdf",
+          "page_numbers": [
+            55,
+            56
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "AMD_2022_10K.pdf",
+      "expected_pages": [
+        56
+      ],
+      "review": {
+        "classification": "definition_requires_review",
+        "verified_physical_pdf_pages": [
+          56
+        ],
+        "reason": "The stated simplified calculation (15019-3771)/6369 = 1.77 is arithmetically correct but retains prepaid expenses and other current assets of 1,265. Using cash, short-term investments and receivables yields about 1.57. Define eligible quick assets and qualify the health judgment before approving the full response.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_07966",
+      "question": "What is the FY2017 - FY2019 3 year average of capex as a % of revenue for Activision Blizzard? Answer in units of percents and round to one decimal place. Calculate (or extract) the answer from the statement of income and the cash flow statement.",
+      "generated_answer": "INSUFFICIENT_CONTEXT",
+      "abstained": true,
+      "citations": [],
+      "citation_correct": false,
+      "expected_document": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+      "expected_pages": [
+        70,
+        73
+      ],
+      "review": {
+        "classification": "no_citation_abstention",
+        "verified_physical_pdf_pages": [],
+        "topic": "Activision capex/revenue",
+        "reason": "The final response abstained and returned no citations. This is an answer-coverage failure under the existing benchmark, not an incorrect emitted citation. Diagnostic statuses are preserved; rejected intermediate outputs are not accepted answers.",
+        "origin": "previous_failure_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_03856",
+      "question": "What is the FY2017 operating cash flow ratio for Adobe? Operating cash flow ratio is defined as: cash from operations / total current liabilities. Round your answer to two decimal places. Please utilize information provided primarily within the balance sheet and the cash flow statement.",
+      "generated_answer": "Adobe's FY2017 operating cash flow ratio is 0.83, calculated by dividing $2,912,853,000 in net cash provided by operating activities by $3,527,457,000 in total current liabilities. [S5] [S4]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S5",
+          "document_id": "doc_ace3258036913899",
+          "document_name": "ADOBE_2017_10K.pdf",
+          "page_numbers": [
+            61
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S4",
+          "document_id": "doc_ace3258036913899",
+          "document_name": "ADOBE_2017_10K.pdf",
+          "page_numbers": [
+            56,
+            57
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "ADOBE_2017_10K.pdf",
+      "expected_pages": [
+        57,
+        61
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          61
+        ],
+        "reason": "2017 operating cash flow 2,912,853 thousand divided by current liabilities 3,527,457 thousand on page 57 rounds to 0.83. Dollar scaling in the answer is correct.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_06655",
+      "question": "What is Amazon's FY2017 days payable outstanding (DPO)? DPO is defined as: 365 * (average accounts payable between FY2016 and FY2017) / (FY2017 COGS + change in inventory between FY2016 and FY2017). Round your answer to two decimal places. Address the question by using the line items and information shown within the balance sheet and the P&L statement.",
+      "generated_answer": "Amazon's FY2017 days payable outstanding is 98.55 days, calculated as 365 * (($25,309 million + $34,616 million) / 2) / ($111,934 million + ($16,047 million - $11,461 million)). [S1] [S2]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S1",
+          "document_id": "doc_f8af08ff6c414735",
+          "document_name": "AMAZON_2017_10K.pdf",
+          "page_numbers": [
+            26,
+            27
+          ],
+          "section_titles": []
+        },
+        {
+          "source_label": "S2",
+          "document_id": "doc_f8af08ff6c414735",
+          "document_name": "AMAZON_2017_10K.pdf",
+          "page_numbers": [
+            39,
+            40
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "AMAZON_2017_10K.pdf",
+      "expected_pages": [
+        38,
+        40
+      ],
+      "review": {
+        "classification": "arithmetic_error",
+        "verified_physical_pdf_pages": [
+          27,
+          40
+        ],
+        "reason": "Operands are supported, but 365*((25309+34616)/2)/(111934+(16047-11461)) = 93.8578141, rounding to 93.86 days, not 98.55.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    },
+    {
+      "case_id": "financebench_id_03882",
+      "question": "What is Amcor's year end FY2020 net AR (in USD millions)? Address the question by adopting the perspective of a financial analyst who can only use the details shown within the balance sheet.",
+      "generated_answer": "Amcor's net trade receivables as of June 30, 2020, were $1,615.9 million. [S1]",
+      "abstained": false,
+      "citations": [
+        {
+          "source_label": "S1",
+          "document_id": "doc_da158d5c68835374",
+          "document_name": "AMCOR_2020_10K.pdf",
+          "page_numbers": [
+            49,
+            50
+          ],
+          "section_titles": []
+        }
+      ],
+      "citation_correct": true,
+      "expected_document": "AMCOR_2020_10K.pdf",
+      "expected_pages": [
+        50
+      ],
+      "review": {
+        "classification": "supported",
+        "verified_physical_pdf_pages": [
+          50
+        ],
+        "reason": "June 30, 2020 net trade receivables are 1,615.9 million.",
+        "origin": "location_pass_review",
+        "reviewer": "Codex source-evidence review"
+      }
+    }
+  ],
+  "pdf_sha256": {
+    "MICROSOFT_2016_10K.pdf": "f3555bd5ea1802770cc8f2a7ca766392e16fe6504f18688db681d852029404dc",
+    "LOCKHEEDMARTIN_2021_10K.pdf": "d2486265fedea887bcc621f0b2dbb9670e66fe05203e1378b8e650c9564732fb",
+    "WALMART_2019_10K.pdf": "f1d1b052c2b68c5d68e3575de7069dc47914f03abb02771d2629b10bf7d9e377",
+    "JPMORGAN_2023Q2_10Q.pdf": "eef2d9c1fdb5dc82be48166487a9e451c8544aec932a01fb06309ea7cd7122f5",
+    "ULTABEAUTY_2023_10K.pdf": "cdf2ebcfbc2eb9ecf880126d38b186cac1f683dae5bcb50cad15176bfc449ff4",
+    "MGMRESORTS_2022_10K.pdf": "130b96c1309c97aaedcabee2fa5d5421e54491e618273bd33c3b1aeddad323ec",
+    "VERIZON_2021_10K.pdf": "f7fcb508f920e3df9a07bc858a6d9f0d3cd1e976a46efe72375c9ffb983822ac",
+    "PEPSICO_2021_10K.pdf": "f2c7cf1969c7f6dfc8c0596824e1d6b3cc70f662ee2dd06be84bb27af5635364",
+    "CVSHEALTH_2022_10K.pdf": "183c196a41793cd50002ff6b88f8c6d32e4fcb1117ab490a732414e1208cda8f",
+    "PAYPAL_2022_10K.pdf": "0c1dd6cd170261c6bd778de382a211a56a3bb1e009a429246370c97fa0defab3",
+    "VERIZON_2022_10K.pdf": "403d7346e8a059472863d1789527f16e5127a61c2f6c4429012e6227f27576d7",
+    "AMCOR_2020_10K.pdf": "da158d5c68835374bcc52205663aa7653af1c2a6b31b09ab775c6e02a40da026",
+    "AMAZON_2017_10K.pdf": "f8af08ff6c4147351ec3a6e5e2c74e104678ce68fb0d6d476b1e43f685c09a3f",
+    "AMAZON_2019_10K.pdf": "d7df8c6cf3e351a8d68c7473be4159723d545260a32dbc82a8dd11c254c5584a",
+    "FOOTLOCKER_2023_10K.pdf": "3d5d700c4cdbfe8a7ba5a035a255e57309776958d175977ed01656dca3e7a6b9",
+    "AMERICANEXPRESS_2022_10K.pdf": "d3bbc7ab23d6160e07eab50a359e4d68c40efff9fde3baa168e7c40e06f568e6",
+    "BESTBUY_2019_10K.pdf": "d3228e9acd2ce498b97a9d2cb99c2330b9a04687b7947908646d205b3eadf30d",
+    "ADOBE_2017_10K.pdf": "ace32580369138998de84a0d0e24943766aa8374a17b823fdfae980b9c1458bd",
+    "AMD_2022_10K.pdf": "a3bd74088fae0ad4aa03d04998a1f4c64fd0b3c693841601b0ac49b46cf5c1f4",
+    "PEPSICO_2022_10K.pdf": "7d8a9f3374e429c58f101319e2da8a0e601a89859e1e4f6854163dd5f8ce6b47",
+    "COSTCO_2021_10K.pdf": "29e05b3862cf6ffa6cfda34ac82a9fa0fe76b67338c5924da3325c2ee3b08748",
+    "JPMORGAN_2022Q2_10Q.pdf": "7d715f552d4eeb6b2a1ea8ae02237b5767306907e761270ac23d74ac5b7e44b5",
+    "PFIZER_2021_10K.pdf": "ff3307d5f633c5dbe59a976f5ff5e086af04ba5a5135f2b6411c89538a22a665",
+    "3M_2018_10K.pdf": "faf10c53fc6f1a8aa346ec3db79145e3ae6fbb3753c8064924e174d0a973934d",
+    "ACTIVISIONBLIZZARD_2019_10K.pdf": "017f1bbc1e37f2945a41fa2b5cf39d822e1e9d435a2c2b9c6b1cc76cd114a2df",
+    "JOHNSON_JOHNSON_2023Q2_EARNINGS.pdf": "db1f3419d309440e644dc3cdfbb74758e67734dd181e5dbabc7479d0ab92d026",
+    "BESTBUY_2023_10K.pdf": "7ca465d31a08be29e8c08d756644d33d818c7254a1215720f265227005cda696",
+    "BLOCK_2020_10K.pdf": "c19a9fb25db3270e3a908c202855f4a54f000a06bf19a8b284331810228646fe",
+    "AMERICANWATERWORKS_2021_10K.pdf": "701528ae6d14a77229468a829ee18f01ed439d5be012d0a915d2683335051029",
+    "NETFLIX_2015_10K.pdf": "b22ca874ef08f383bd0b1071677d44f4a242af668f855f00dc9c6d4ac94148e2",
+    "GENERALMILLS_2020_10K.pdf": "626dd53f9b52e5895b7a7073e1c491008769970609c10e2f6cf8247ed85d6fae",
+    "AES_2022_10K.pdf": "9c5de2227534c4d6bf3d805f635bad5d82eddf8e4183a85a3d1311b48b50291d",
+    "BESTBUY_2023Q4_EARNINGS.pdf": "a9a46c9fae1af1b37dfd0efc3996ac36bd4228d0b3f39159e0818ad8d7c68f72",
+    "BOEING_2018_10K.pdf": "6f1ace34b3b01778ad7d92d43ccd2f76513d5159ef48fbc07b510296cf2d07dc",
+    "3M_2023Q2_10Q.pdf": "3e66115793459f42185feeeab4e7f07dd27ab6dd465d0694ce415e861029cf93",
+    "COCACOLA_2022_10K.pdf": "9f91bb914d94d014cfca96e1021c932d5476d8b8ac2a933767bac4c438fd7a71",
+    "NIKE_2023_10K.pdf": "51f5a0fc6ede20de4f5cfdeae8791a57bdd65c95db2ceb263eb120696ff90172",
+    "CORNING_2022_10K.pdf": "a63f102f045826b38ad21a606c33710f62932646fd7c0f1852ce411a4397a3ee",
+    "BOEING_2022_10K.pdf": "09285ff7ee737d3302977104aa05cc53c9dfb0161f3461a89b583dc38b9f2ab6"
+  },
+  "scope": "Agent review of all 50 collected responses, not independent human approval or a new model run. Metric-definition and claim-completeness issues remain unresolved.",
+  "review_date": "2026-10-25",
+  "collection_file": "evaluation/results/generation_50_repair_excerpts_20261025.json",
+  "method": "Checked cited PDF text, headers, units and local claim context; full-page text for complex cases; visual table checks for selected financial statements. Recomputed stated arithmetic independently. Includes prior ten-answer failure review. No automatic semantic judge used.",
+  "limitations": [
+    "One agent review, not independent adjudication.",
+    "Supported status concerns the stated answer and described evidence; it is not an exhaustive financial analysis.",
+    "Two duplicate subjects remain in the 50-question set.",
+    "Exact year labels and metric definitions need the qualifications recorded per case.",
+    "Original expected labels and strict score remain unchanged."
+  ],
+  "counts": {
+    "supported": 26,
+    "no_citation_abstention": 6,
+    "supported_alternative": 8,
+    "arithmetic_error": 2,
+    "requested_statement_not_cited": 1,
+    "incomplete_negative_claim": 1,
+    "materiality_requires_review": 1,
+    "wrong_metric_operand": 1,
+    "partial_support": 2,
+    "definition_requires_review": 2
+  },
+  "strict_citation_location_accuracy": 0.68,
+  "final_answer_accuracy": null,
+  "final_semantic_citation_accuracy": null,
+  "additional_review_sources": [
+    {
+      "document": "COCACOLA_2022_10K.pdf",
+      "pages": [
+        63
+      ],
+      "purpose": "Verify requested shareholder-income denominator; not emitted citation"
+    },
+    {
+      "document": "AMERICANWATERWORKS_2021_10K.pdf",
+      "pages": [
+        88
+      ],
+      "purpose": "Verify required cash-flow D&A; not emitted citation"
+    }
+  ]
+}

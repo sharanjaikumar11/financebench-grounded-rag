@@ -1,0 +1,70 @@
+{
+  "collection_sha256": "4af43630c2c1812639aa97a52cdf2870efe8d2cc3240748494b905794a96f9ed",
+  "scope": "Partial adjudication: four cases only. Original labels unchanged. Not a complete 50-case accuracy score.",
+  "decisions": [
+    {
+      "case_id": "financebench_demo_jpmorgan_2022q2_highest_net_income",
+      "reference_status": "verified",
+      "answer_correct": true,
+      "reviewer": "Codex evidence review 2026-10-25",
+      "reference_reason": "Page 177, visually checked: three months ended June 30 2022 net income CCB 3100, CIB 3725, Commercial 994, AWM 1004, Corporate -174 USD millions. CIB is highest.",
+      "answer_reason": "Correct segment, period and value. The cited alternative page contains the complete comparison.",
+      "rubric": "Categorical maximum with all segment comparisons; v1",
+      "alternative_citation_supported": true,
+      "reviewed_source": {
+        "document": "JPMORGAN_2022Q2_10Q.pdf",
+        "pages": [
+          177
+        ]
+      }
+    },
+    {
+      "case_id": "financebench_id_01279",
+      "reference_status": "verified",
+      "answer_correct": true,
+      "reviewer": "Codex evidence review 2026-10-25",
+      "reference_reason": "Complete page text: December 31 2022 cash flows in millions: operations 3565, investing 1999, financing -3264.",
+      "answer_reason": "All stated values and ranking match the alternative cited source.",
+      "rubric": "Signed cash-flow maximum including all categories; v1",
+      "alternative_citation_supported": true,
+      "reviewed_source": {
+        "document": "AMD_2022_10K.pdf",
+        "pages": [
+          51
+        ]
+      }
+    },
+    {
+      "case_id": "financebench_id_01346",
+      "reference_status": "verified",
+      "answer_correct": true,
+      "reviewer": "Codex evidence review 2026-10-25",
+      "reference_reason": "Complete page text in tax note: 2022 effective rate 22.9%, 2021 20.2%. Summary reference rounds to 23% and 20%.",
+      "answer_reason": "Detailed figures support +2.7 percentage points; accepting documented precision rather than requiring rounded-summary wording.",
+      "rubric": "Accept detailed source precision and correctly signed percentage-point change; v1",
+      "alternative_citation_supported": true,
+      "reviewed_source": {
+        "document": "CORNING_2022_10K.pdf",
+        "pages": [
+          77
+        ]
+      }
+    },
+    {
+      "case_id": "financebench_id_00566",
+      "reference_status": "verified",
+      "answer_correct": true,
+      "reviewer": "Codex evidence review 2026-10-25",
+      "reference_reason": "Complete balance-sheet page: 2022 debt 9963+140676=150639; 2021 debt 7443+143425=150868, USD millions; decline 229.",
+      "answer_reason": "Correct debt components, periods, totals and negative direction.",
+      "rubric": "Sum current and long-term debt for each year, compare direction; v1",
+      "alternative_citation_supported": true,
+      "reviewed_source": {
+        "document": "VERIZON_2022_10K.pdf",
+        "pages": [
+          56
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1436 @@
+{
+  "draft_sha256": "640a66248b77a39fd4a04bb78f9b8b4e13d054ec75e7858ed8a6e701ca4fd79c",
+  "note": "Page-text overlap is not answer verification or a scoring rubric.",
+  "cases": [
+    {
+      "case_id": "financebench_id_01858",
+      "question": "Does 3M maintain a stable trend of dividend distribution?",
+      "reference_answer": "Yes, not only they distribute the dividends on a routine basis, 3M has also been increasing the per share dividend for consecutive 65 years",
+      "question_type": "not_labelled_upstream",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "3M_2023Q2_10Q.pdf",
+          "upstream_page": 61,
+          "candidates": [
+            {
+              "physical_page": 62,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "9b448c5cbbb1e724a6077d5800f725ceddcc37a11854424f3cc59e120e9af8e0"
+            },
+            {
+              "physical_page": 61,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "8a86092e1e2586a7516a7e557101ae37f33c2f67a5cfa161ed6dd38009068409"
+            },
+            {
+              "physical_page": 63,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e1f614ccfd3465673605323dc57052876a3fe6a921759b3ad6939b39c347dabc"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_10420",
+      "question": "Based on the information provided primarily in the statement of financial position and the statement of income, what is AES's FY2022 return on assets (ROA)? ROA is defined as: FY2022 net income / (average total assets between FY2021 and FY2022). Round your answer to two decimal places.",
+      "reference_answer": "-0.02",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "AES_2022_10K.pdf",
+          "upstream_page": 129,
+          "candidates": [
+            {
+              "physical_page": 130,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "1a8f0a127a9c41cedf6808947c945738862b53ed3e4ad2e9a60331e1c7a4019b"
+            },
+            {
+              "physical_page": 129,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "b3050c5b46d068656f49dbc42de36b6074abd34eb6dc592b2d13e29068ea878d"
+            },
+            {
+              "physical_page": 131,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "document": "AES_2022_10K.pdf",
+          "upstream_page": 131,
+          "candidates": [
+            {
+              "physical_page": 132,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "9178c45ee974c3682303eb0d97be808260ef00d2f5b11a2a09e504bccc78650e"
+            },
+            {
+              "physical_page": 131,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "physical_page": 133,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "c321f05a8e7d02aa8f297d526c0b4b067637b6c936d825eeff129ea68ae1be15"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01279",
+      "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for AMD in FY22?",
+      "reference_answer": "In 2022, AMD brought in the most cashflow from Operations",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "AMD_2022_10K.pdf",
+          "upstream_page": 57,
+          "candidates": [
+            {
+              "physical_page": 58,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "046ce9016703f1d2e8ed55ee5b29296d3bfa864a07657b6ef476aff59a35e8a0"
+            },
+            {
+              "physical_page": 59,
+              "evidence_overlap": 0.047619047619047616,
+              "page_text_sha256": "56856ffe2a10604a1ed07492bc21f3df07d47132930bfb149217d40a25e8f7a6"
+            },
+            {
+              "physical_page": 57,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "7eaddb6f18a407108cd365f2d442960c02fc109fe8255c1d7c37c1540814b364"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_02987",
+      "question": "What is the FY2019 fixed asset turnover ratio for Activision Blizzard? Fixed asset turnover ratio is defined as: FY2019 revenue / (average PP&E between FY2018 and FY2019). Round your answer to two decimal places. Base your judgments on the information provided primarily in the statement of income and the statement of financial position.",
+      "reference_answer": "24.26",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+          "upstream_page": 68,
+          "candidates": [
+            {
+              "physical_page": 69,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "d724eba9d00ecb1ee60695e26121d94df2c4f8ce85412a74bf0f612e66280b56"
+            },
+            {
+              "physical_page": 68,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "498bab7811b7b66648fb43e8fce5f83978cb0f00b369dafa4586ee1918840939"
+            },
+            {
+              "physical_page": 70,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "f43639f79a262f37231ae924108b2e4bf80a2825017eac027b89fdf13026ca91"
+            }
+          ]
+        },
+        {
+          "document": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+          "upstream_page": 69,
+          "candidates": [
+            {
+              "physical_page": 70,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "f43639f79a262f37231ae924108b2e4bf80a2825017eac027b89fdf13026ca91"
+            },
+            {
+              "physical_page": 69,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "d724eba9d00ecb1ee60695e26121d94df2c4f8ce85412a74bf0f612e66280b56"
+            },
+            {
+              "physical_page": 71,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "d5b59e380980884172654366384510cc6d493c30d41d1596a4ebf58478434491"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_07507",
+      "question": "What is Adobe's year-over-year change in unadjusted operating income from FY2015 to FY2016 (in units of percents and round to one decimal place)? Give a solution to the question by using the income statement.",
+      "reference_answer": "65.4%",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "ADOBE_2016_10K.pdf",
+          "upstream_page": 61,
+          "candidates": [
+            {
+              "physical_page": 62,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "f823ab62ee9bb7f5880e54baa3d3474e4017cd4ab13d122d534640f096105579"
+            },
+            {
+              "physical_page": 61,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e554f7c5de969dc1113ff1ed08feff271481b27d837e26ef7cae82afb31d43dc"
+            },
+            {
+              "physical_page": 63,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "db91a1166a484f8926fd87e2e3b64f55b669314745faa2acd7d7795b1b640f4e"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_08135",
+      "question": "What is Amazon's year-over-year change in revenue from FY2016 to FY2017 (in units of percents and round to one decimal place)? Calculate what was asked by utilizing the line items clearly shown in the statement of income.",
+      "reference_answer": "30.8%",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "AMAZON_2017_10K.pdf",
+          "upstream_page": 37,
+          "candidates": [
+            {
+              "physical_page": 38,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "9025c3556fba99c01403e2aeb8a148e260ab20cd2cdc1ce95db49185ce69902d"
+            },
+            {
+              "physical_page": 37,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "b2676133d127620e0e5fc0c416943a4c24c75b270beefa67ef1923420094c495"
+            },
+            {
+              "physical_page": 39,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "6d64e3235361fabfe43718d8bb124c410437e766788c4d2cd7d7721d360ae0e6"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01079",
+      "question": "What are major acquisitions that AMCOR has done in FY2023, FY2022 and FY2021?",
+      "reference_answer": "Amcor completed these acquisitions during FY2023:\n-100% equity interest of a flexibles manufacturing company in the Czech Republic\n- 100% equity interest in a medical device packaging manufacturing site in\nShanghai, China.\n-acquisition of a New Zealand-based leading manufacturer of state-of-the-art, automated protein\npackaging machines.",
+      "question_type": "Information extraction",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "AMCOR_2023_10K.pdf",
+          "upstream_page": 63,
+          "candidates": [
+            {
+              "physical_page": 64,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "162ac48919e6a46b8f4b69655bddd59fb2d85d7429c6180c96040a5120522708"
+            },
+            {
+              "physical_page": 63,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "2690e29d14435448b6a59767a580b5f4d704f9fe9d5ed0793b6bd794551c1e48"
+            },
+            {
+              "physical_page": 65,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "76621d8064edea84dcb86c509f0289e5fef5388da50b55a571be40ff9d6ccadf"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01351",
+      "question": "How much has the effective tax rate of American Express changed between FY2021 and FY2022?",
+      "reference_answer": "The effective tax rate for American Express has changed/dropped from 24.6% in FY 2021 to 21.6% in FY 2022.",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "AMERICANEXPRESS_2022_10K.pdf",
+          "upstream_page": 43,
+          "candidates": [
+            {
+              "physical_page": 44,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "4cb63b89eb4d2fe981c069ebe21f232e7537e137a98aad0f0102f3cf7a640a0e"
+            },
+            {
+              "physical_page": 43,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e46d6e7d91af06a9533fb58528d057d3e704e21c8430a99fbeb6a458040bc496"
+            },
+            {
+              "physical_page": 45,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "c9f998a3db840ee8d9b47262ee7437beab99bc799f083dc8d927d4cd28caa81f"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_04254",
+      "question": "Basing your judgments off of the cash flow statement and the income statement, what is American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA) in USD millions?",
+      "reference_answer": "$1832.00",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "AMERICANWATERWORKS_2021_10K.pdf",
+          "upstream_page": 85,
+          "candidates": [
+            {
+              "physical_page": 86,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "df8e5ae5a941010fff8453fe968c395e2189677bf5ff85495a6fa836244b54f0"
+            },
+            {
+              "physical_page": 87,
+              "evidence_overlap": 0.08333333333333333,
+              "page_text_sha256": "0a6da326a3e616e089fecc7b737542d53f086ead496cc44441bc741e0bc39ece"
+            },
+            {
+              "physical_page": 85,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "d4ddaba20e2ad10cb96f43494444e9af38b1b592c811151e021fad022258a0f8"
+            }
+          ]
+        },
+        {
+          "document": "AMERICANWATERWORKS_2021_10K.pdf",
+          "upstream_page": 87,
+          "candidates": [
+            {
+              "physical_page": 88,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "d4c8def1743c2d688223b08ba8dea874b800c51a0426efb688bc8974d34315eb"
+            },
+            {
+              "physical_page": 87,
+              "evidence_overlap": 0.037037037037037035,
+              "page_text_sha256": "0a6da326a3e616e089fecc7b737542d53f086ead496cc44441bc741e0bc39ece"
+            },
+            {
+              "physical_page": 89,
+              "evidence_overlap": 0.037037037037037035,
+              "page_text_sha256": "e110a54096ad1adc908241ba832e443a3ba9091d50147c44e4b9bbc7a805a769"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01077",
+      "question": "What are major acquisitions that Best Buy has done in FY2023, FY2022 and FY2021?",
+      "reference_answer": "Best Buy closed two acquisitions, both these companies were already partially owned by Best Buy, but Best Buy acquired all outstanding shares of these two companies during FY 2022: (1) Current Health Ltd and (2) Two Peaks, LLC d/b/a Yardbird Furniture",
+      "question_type": "Information extraction",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "BESTBUY_2023_10K.pdf",
+          "upstream_page": 50,
+          "candidates": [
+            {
+              "physical_page": 51,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "e422e0163ed9821913a7125087c29b5fbcdd08686ce42b02503c8d88c88ce378"
+            },
+            {
+              "physical_page": 50,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "2cb6fea739afb8eb318ed5b1f2e64894a23ccfc51bd512bbcf74a00b67b9eb1a"
+            },
+            {
+              "physical_page": 52,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "15b89c7aaf53fe93e3a115d5f74d0e2aafb48905d127792aed87ca7e2c261df4"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_07661",
+      "question": "Using the cash flow statement, answer the following question to the best of your abilities: how much did Block (formerly known as Square) generate in cash flow from operating activities in FY2020? Answer in USD millions.",
+      "reference_answer": "$382.00",
+      "question_type": "Information extraction",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "BLOCK_2020_10K.pdf",
+          "upstream_page": 89,
+          "candidates": [
+            {
+              "physical_page": 90,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "4b8f73a914fb4e49e661ff11325b70ae34056e9828241d87458733f2e45ed948"
+            },
+            {
+              "physical_page": 89,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "870caf51150cefa55eba5af997424bf06a6f643e30bb4eb2739d94a65a412a40"
+            },
+            {
+              "physical_page": 91,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "598aab0db9aaa59be2bc051d79a313fc0155407f3925b2d986b9125ca79ce0ef"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01091",
+      "question": "Has Boeing reported any materially important ongoing legal battles from FY2022?",
+      "reference_answer": "Yes. Multiple lawsuits have been filed against Boeing resulting from a 2018 Lion Air crash and a 2019 Ethiopian Airlines crash.",
+      "question_type": "Information extraction",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "BOEING_2022_10K.pdf",
+          "upstream_page": 112,
+          "candidates": [
+            {
+              "physical_page": 113,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "c7fe47ddccd04ee43db393c5e26f30176e11993e3539f48bd44880e5936c2e32"
+            },
+            {
+              "physical_page": 112,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "9f0dd12ddc8c0e74b8808c586e6f00288251aa34d8ed582ce349b09e227b753c"
+            },
+            {
+              "physical_page": 114,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "c9adafc5a6c869ea6996c9193d7226b8f2ac8c249005ea7a622c1ef679495058"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01244",
+      "question": "Has CVS Health paid dividends to common shareholders in Q2 of FY2022?",
+      "reference_answer": "Yes, CVS paid a $ 0.55 dividend per share every quarter in FY2022",
+      "question_type": "Information extraction",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "CVSHEALTH_2022_10K.pdf",
+          "upstream_page": 67,
+          "candidates": [
+            {
+              "physical_page": 68,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "4b5bc02072a313ac6682ab55e03aa1b85b31cad163a32206aff3f22b98720e2a"
+            },
+            {
+              "physical_page": 67,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "5207e138058dab212485167d1fcc65e4c64db0fe83c413c98f5a3c7718a81934"
+            },
+            {
+              "physical_page": 69,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "4c612cefdb3f17d38359a39dfe76e60c72bd67109a0b7cb0014d7980ab6e9fe2"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_06272",
+      "question": "What is Coca Cola's FY2022 dividend payout ratio (using total cash dividends paid and net income attributable to shareholders)? Round answer to two decimal places. Answer the question asked by assuming you only have access to information clearly displayed in the cash flow statement and the income statement.",
+      "reference_answer": "0.8",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "COCACOLA_2022_10K.pdf",
+          "upstream_page": 62,
+          "candidates": [
+            {
+              "physical_page": 63,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "edbdc56e27eb78345510516b646227e501c6e24ef23fc823b67c27283d59fa62"
+            },
+            {
+              "physical_page": 62,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "7683dd6cef97e4647f4f24d24fc59f11773fc7bdf57bb1a3203d5a4b5efdd578"
+            },
+            {
+              "physical_page": 64,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "d03f115451c706e6cab88e990cc4e58428f169f214efcfd6e4281dcb1ee40aa5"
+            }
+          ]
+        },
+        {
+          "document": "COCACOLA_2022_10K.pdf",
+          "upstream_page": 65,
+          "candidates": [
+            {
+              "physical_page": 66,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "268970c427143e7915a316655327483a14f7c30bd9cd10c9ba90b5d29a6df719"
+            },
+            {
+              "physical_page": 65,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "1351427355afb4c2cf7a1a9fd28050aa9f9fb8d9ab4df55a0191c1eff338e2aa"
+            },
+            {
+              "physical_page": 67,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "c7cc3b03f038b276346366aa90783d035209a22999385369f298228e06f3dba0"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01346",
+      "question": "How much has the effective tax rate of Corning changed between FY2021 and FY2022?",
+      "reference_answer": "The effective tax rate of Corning has changed from 20% in FY2021 to 23% in FY 2022.",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "CORNING_2022_10K.pdf",
+          "upstream_page": 23,
+          "candidates": [
+            {
+              "physical_page": 24,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "aceec968bfc6a5a9ceea7caeda21ab396f2309f17444e444b29a26edfa57e689"
+            },
+            {
+              "physical_page": 23,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "72cc6a678e3eece6663594dad94316c6264a27bbba86710774ef9e8bc8785730"
+            },
+            {
+              "physical_page": 25,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "c9232b09c8114b7ffaa45d55252f030b0e7c9256be5d4efea14fb1ab52ee401c"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_04209",
+      "question": "Using only the information within the balance sheet, how much total assets did Costco have at the end of FY2021? Answer in USD millions.",
+      "reference_answer": "$59268.00",
+      "question_type": "Information extraction",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "COSTCO_2021_10K.pdf",
+          "upstream_page": 37,
+          "candidates": [
+            {
+              "physical_page": 38,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "b115fc8d01e073b3eac7e736cb84543cf3f2c4d33264c1b66f80fe3262caa8bb"
+            },
+            {
+              "physical_page": 37,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "4c7eb1fe04abe41a520ec809b37bac1fa8dfbb8b07f50dcf88dd81f4256b2e5c"
+            },
+            {
+              "physical_page": 39,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "9ac1008b7c1e35d94c2b863ace182d63eb74576309c49d99d80431dc865ee9d6"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00839",
+      "question": "Does Foot Locker's new CEO have previous CEO experience in a similar company to Footlocker?",
+      "reference_answer": "Yes. She was previous CEO of Ulta Beauty which means she had to manage a large retail company that has brick and mortar + online business. So yes she was a CEO in a similar company to Foot Locker before this.",
+      "question_type": "not_labelled_upstream",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "FOOTLOCKER_2022_8K_dated_2022-08-19.pdf",
+          "upstream_page": 1,
+          "candidates": [
+            {
+              "physical_page": 2,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "c047ffe30581d4df0ec4bbf1bd2c1ed548f1c2132c16eb87420ba848dedd6c93"
+            },
+            {
+              "physical_page": 1,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "8f3f02210b37220a6bcce74645a86e4c2b59cd7b6a4082e0e987fb85df4d4926"
+            },
+            {
+              "physical_page": 3,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "3783fb232b7a03916d20ee01f18cf44b21ae2c2a0987247cf7770f4cebd7c3bc"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_04854",
+      "question": "According to the information provided in the statement of cash flows, what is the FY2020 free cash flow (FCF) for General Mills? FCF here is defined as: (cash from operations - capex). Answer in USD millions.",
+      "reference_answer": "$3215.00",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "GENERALMILLS_2020_10K.pdf",
+          "upstream_page": 51,
+          "candidates": [
+            {
+              "physical_page": 52,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "4620b3bfe78b169510bb6ad22c81966d8c829d390830d444e0e10ebc7443cff9"
+            },
+            {
+              "physical_page": 51,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "4369c6ee17f270fbbc61989fc04331d9371039b982d370d23a617a93e17f2583"
+            },
+            {
+              "physical_page": 53,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "9b48663b9f7fc485996267d128c8a05427d1e7fd17f3cbaafa2af564523661a9"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_02049",
+      "question": "Looking at VaR, did the risk that JPM faced in the second fiscal quarter of 2023 decrease compared to the same period in the prior year?",
+      "reference_answer": "Yes. It decreased.",
+      "question_type": "not_labelled_upstream",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "JPMORGAN_2023Q2_10Q.pdf",
+          "upstream_page": 84,
+          "candidates": [
+            {
+              "physical_page": 85,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "fb7d89e51a5558aa3df6c97a8b6efac63907f57f67c18fad52ee976e2b99f6ec"
+            },
+            {
+              "physical_page": 84,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "1b7f955f2c2ff01ecaf09d9c98377956c28363f991e071045b644c9aa6b820d1"
+            },
+            {
+              "physical_page": 86,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "6cd7b9d2f66cacb4a32bb3c68d7f9a0e5b744f9246aafe9b7da55a439d31e7a0"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01487",
+      "question": "Did JnJ's net earnings as a percent of sales increase in Q2 of FY2023 compared to Q2 of FY2022?",
+      "reference_answer": "Yes, net earnings as a percent of sales increased from 20% in Q2 of FY2022 to 20.1% in Q2 of FY2023.",
+      "question_type": "not_labelled_upstream",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "JOHNSON_JOHNSON_2023Q2_EARNINGS.pdf",
+          "upstream_page": 9,
+          "candidates": [
+            {
+              "physical_page": 10,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "c2ad93ea259655d9ab37a00d88331d3a3d9afcab9b3258ed39d8f9829bdac2d1"
+            },
+            {
+              "physical_page": 11,
+              "evidence_overlap": 0.2857142857142857,
+              "page_text_sha256": "49063be22446ddded04761060b3ba452c716ba3ea8db0760edd9f5b723d0ca67"
+            },
+            {
+              "physical_page": 9,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "ee9c6602068f19ed6853ec3bb22d3a3b00995a44552ed8c056f1e70c233ba290"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_10499",
+      "question": "What is Kraft Heinz's FY2019 inventory turnover ratio? Inventory turnover ratio is defined as: (FY2019 COGS) / (average inventory between FY2018 and FY2019). Round your answer to two decimal places. Please base your judgments on the information provided primarily in the balance sheet and the P&L statement.",
+      "reference_answer": "6.25",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "KRAFTHEINZ_2019_10K.pdf",
+          "upstream_page": 49,
+          "candidates": [
+            {
+              "physical_page": 50,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "ff3166154413e8c3f5066e595bcba63a6f1abb590a8fcd3ae9f378fd297df416"
+            },
+            {
+              "physical_page": 49,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "8439d6f69547e5324097dcd4b45d5dbf08efd51223102d9f614879f1d6483242"
+            },
+            {
+              "physical_page": 51,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e7dde29611f4a2a6a929ca55bccf034d5d08039b25868066a073bb4ba448c158"
+            }
+          ]
+        },
+        {
+          "document": "KRAFTHEINZ_2019_10K.pdf",
+          "upstream_page": 51,
+          "candidates": [
+            {
+              "physical_page": 52,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "b6952fcc1822b223289b27e32daa26fa67e7e388d19fe6f0be4cda02b6ff1014"
+            },
+            {
+              "physical_page": 51,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e7dde29611f4a2a6a929ca55bccf034d5d08039b25868066a073bb4ba448c158"
+            },
+            {
+              "physical_page": 53,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "43c9b986b930be059754bdb17b2117b09d2977509f55ddd07a13dc1611eccd2f"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_03031",
+      "question": "What is Lockheed Martin's FY2021 net working capital? Define net working capital as total current assets less total current liabilities. Answer in USD millions. Respond to the question by assuming the perspective of an investment analyst who can only use the details shown within the balance sheet.",
+      "reference_answer": "$5818.00",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "LOCKHEEDMARTIN_2021_10K.pdf",
+          "upstream_page": 67,
+          "candidates": [
+            {
+              "physical_page": 68,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "a3199a394de1d77b099c2468f73cd637eb40604a3f287b9350ca776494f3d57b"
+            },
+            {
+              "physical_page": 67,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "01ad8c2b6b0ff7aad5df4d006ce10f85fb1026d4a813737048ede1af36acf2e4"
+            },
+            {
+              "physical_page": 69,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "575e427ffda79e8650989bb1d7f680514bf9527f9fdfc8e71e80020c9bd07cea"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00382",
+      "question": "Which region had the Highest EBITDAR Contribution for MGM during FY2022?",
+      "reference_answer": "Las Vegas resorts contributed ~90% of company level EBITDAR during FY2022.",
+      "question_type": "not_labelled_upstream",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "MGMRESORTS_2022Q4_EARNINGS.pdf",
+          "upstream_page": 12,
+          "candidates": [
+            {
+              "physical_page": 13,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "4573c967c95ca6d0baedfe5d86c8e75775576d11e03ee659e7f245b80adc2137"
+            },
+            {
+              "physical_page": 14,
+              "evidence_overlap": 0.25,
+              "page_text_sha256": "d2a339be7f98c8f29727d51a31b3fdccf2a27de47abb4497e247db98511d389f"
+            },
+            {
+              "physical_page": 12,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "935e00156bebf182c085df8032575411c88de40f5665951cc1a5b08a44f5d54d"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_04700",
+      "question": "What is the FY2016 COGS for Microsoft? Please state answer in USD millions. Provide a response to the question by primarily using the statement of income.",
+      "reference_answer": "$32780.00",
+      "question_type": "Information extraction",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "MICROSOFT_2016_10K.pdf",
+          "upstream_page": 51,
+          "candidates": [
+            {
+              "physical_page": 52,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "0a7a59406d9b135a54719d928d5bc8aa855c9f7b347ae9c666ed15a9df766d23"
+            },
+            {
+              "physical_page": 51,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "982ad5d584a36ae87d3c19bd2103a6123dd012decd2f4490262b650b825ed72f"
+            },
+            {
+              "physical_page": 53,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "c3f30c05ffdd6764cfc13a6e8e853998419060d3abfc0d86d7b2c525569ba0de"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_04458",
+      "question": "We want to calculate a financial metric. Please help us compute it by basing your answers off of the statement of income and the statement of cash flows. Here's the question: what is the FY2015 unadjusted EBITDA % margin for Netflix? Calculate unadjusted EBITDA using unadjusted operating income and D&A (from cash flow statement).",
+      "reference_answer": "5.4%",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "NETFLIX_2015_10K.pdf",
+          "upstream_page": 39,
+          "candidates": [
+            {
+              "physical_page": 40,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "b6ec2d92eb14bb979d26fc728b63c7c25c0b66649d35281e69e3fe35aa39e043"
+            },
+            {
+              "physical_page": 39,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "dc78a6ed91fda1216b79e441e5f6c96decd1ae9dd047d99d1c745f7348d11d9e"
+            },
+            {
+              "physical_page": 41,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "8ed05bdfece47d282226ee71d302e704f95fde024582e602ff7b0323b85f485d"
+            }
+          ]
+        },
+        {
+          "document": "NETFLIX_2015_10K.pdf",
+          "upstream_page": 41,
+          "candidates": [
+            {
+              "physical_page": 42,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "6384847764421501e2984fb5ace9509186bf83a20b0ce1a0585349b129f30446"
+            },
+            {
+              "physical_page": 41,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "8ed05bdfece47d282226ee71d302e704f95fde024582e602ff7b0323b85f485d"
+            },
+            {
+              "physical_page": 43,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "37e89b253241734f99966b8db246426726a645bb3887d97c7734fe8a6158d2f7"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01163",
+      "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?",
+      "reference_answer": "Among the three, cash flow from operations was the highest for Nike in FY2023.",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "NIKE_2023_10K.pdf",
+          "upstream_page": 61,
+          "candidates": [
+            {
+              "physical_page": 62,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "fe2d2c514af33c52be1999fa2fb0f2ed861f33926c9d79de28a43481f662c66e"
+            },
+            {
+              "physical_page": 61,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "941120c98b1cf5d8e531ee7ed105be7b49330f90b36f745cf453703063423a15"
+            },
+            {
+              "physical_page": 63,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "131ea88488ada1c7056de3e2089d79a1d7cf0bef68dbedbebd6a7c8d5b0d913f"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00080",
+      "question": "Does Paypal have positive working capital based on FY2022 data? If working capital is not a useful or relevant metric for this company, then please state that and explain why.",
+      "reference_answer": "Yes. Paypal has a positive working capital of $ 1.6Bn as of FY2022 end.",
+      "question_type": "Numerical reasoning OR Logical reasoning",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "PAYPAL_2022_10K.pdf",
+          "upstream_page": 60,
+          "candidates": [
+            {
+              "physical_page": 61,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "73b7e7f965919a8f387a9f59ae949cc242ce5f4687adf7390c2f4a7c9dc07082"
+            },
+            {
+              "physical_page": 60,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "a5a0b10e6be0790a2e856d57dd1d7d7017b71541fa52bfc4c4d6ba03130f4647"
+            },
+            {
+              "physical_page": 62,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "d1fd7008286efdcbb18339738049210a450fffe3a943f2bb285d646320120277"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_01009",
+      "question": "What are the geographies that Pepsico primarily operates in as of FY2022?",
+      "reference_answer": "As of FY2022, Pepsico primarily operates in the following geographies: North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand and China.",
+      "question_type": "Information extraction",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "PEPSICO_2022_10K.pdf",
+          "upstream_page": 3,
+          "candidates": [
+            {
+              "physical_page": 4,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "5e748c0b8e96732f22fa6ad715cd3a04684dbed405186504ce01c2d0e6733438"
+            },
+            {
+              "physical_page": 3,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "6bf5d3710d0c0bacbc53f3291a98009b6d31e2693f862f718918a322f567c335"
+            },
+            {
+              "physical_page": 5,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "dabf9bd94365d5187fa052c808ba9a14a7fbd6a7cc11ba5c5f0eedeb1169867d"
+            }
+          ]
+        },
+        {
+          "document": "PEPSICO_2022_10K.pdf",
+          "upstream_page": 4,
+          "candidates": [
+            {
+              "physical_page": 5,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "dabf9bd94365d5187fa052c808ba9a14a7fbd6a7cc11ba5c5f0eedeb1169867d"
+            },
+            {
+              "physical_page": 4,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "5e748c0b8e96732f22fa6ad715cd3a04684dbed405186504ce01c2d0e6733438"
+            },
+            {
+              "physical_page": 6,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "6909aea734fb1eb109d79781fad6032cd3874ce0e9d5ee2f856654565e16a5fa"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00302",
+      "question": "Did Pfizer grow its PPNE between FY20 and FY21?",
+      "reference_answer": "Yes, change in PPNE was positive year over year",
+      "question_type": "not_labelled_upstream",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "PFIZER_2021_10K.pdf",
+          "upstream_page": 58,
+          "candidates": [
+            {
+              "physical_page": 59,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "758227e915d672eecfea4ad6e44b0c25ad50492bd2c58310218cd8fd810b9b72"
+            },
+            {
+              "physical_page": 58,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "fd8d48b4703a5d6118d4323973589b168f2686101ca92375c388b965c28ac958"
+            },
+            {
+              "physical_page": 60,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "fa31bef09414862d996a813cdb919ef66c3f97588713531d8c2a32614bbdfcbb"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00746",
+      "question": "Which debt securities are registered to trade on a national securities exchange under Ulta Beauty's name as of FY2023?",
+      "reference_answer": "There are none",
+      "question_type": "Information extraction",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "ULTABEAUTY_2023_10K.pdf",
+          "upstream_page": 0,
+          "candidates": [
+            {
+              "physical_page": 1,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "3b6472592eaf0fc5159e020db231f46d9a21023ec2eff4e89ba3f6abb11d9f7c"
+            },
+            {
+              "physical_page": 2,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "324d8950b4acbe759841916292b0748fad379f44592e52a7ebe430f31a541310"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00566",
+      "question": "Has Verizon increased its debt on balance sheet between 2022 and the 2021 fiscal period?",
+      "reference_answer": "No. Verizon's debt decreased by $229 million.",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "VERIZON_2022_10K.pdf",
+          "upstream_page": 76,
+          "candidates": [
+            {
+              "physical_page": 77,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "f0abcb1620a0865ead55d0deef0dd00c4e9eee871b0fdcb79dd1474d0030e62b"
+            },
+            {
+              "physical_page": 76,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "5f144076eba2ce1fd8fa98f7b5f5739a5ef377e7e0ba45a44597aee714907cf1"
+            },
+            {
+              "physical_page": 78,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "539565ee5d8fce5d78c47a328cf30e04f5d2b5d161109cb56d7618906e71ff6e"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_04784",
+      "question": "Based on the information provided primarily in the statement of income, what is the FY2018 - FY2019 change in unadjusted operating income % margin for Walmart? Answer in units of percents and round to one decimal place.",
+      "reference_answer": "0.2%",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "WALMART_2019_10K.pdf",
+          "upstream_page": 47,
+          "candidates": [
+            {
+              "physical_page": 48,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "9c09f5d4dfdf0bbae5b6600a314522444c5704efed98cbfcb12495d51c05331a"
+            },
+            {
+              "physical_page": 49,
+              "evidence_overlap": 0.08333333333333333,
+              "page_text_sha256": "49d82e40bed031c72dda04156a384f6a952f9ed82da7817cbdedefe0f3938621"
+            },
+            {
+              "physical_page": 47,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "4b3d4c22e5b044f51650e620cd50fc22440bd8d5a9aed80f80781ccceef26778"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00941",
+      "question": "Which debt securities are registered to trade on a national securities exchange under 3M's name as of Q2 of 2023?",
+      "reference_answer": "Following debt securities registered under 3M's name are listed to trade on the New York Stock Exchange:\n-1.500% Notes due 2026 (Trading Symbol: MMM26)\n-1.750% Notes due 2030 (Trading Symbol: MMM30)\n-1.500% Notes due 2031 (Trading Symbol: MMM31)",
+      "question_type": "Information extraction",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "3M_2023Q2_10Q.pdf",
+          "upstream_page": 0,
+          "candidates": [
+            {
+              "physical_page": 1,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "65b1e90479934af35abf7175aedff68c4b7009d141c5745252e9d3023d543b95"
+            },
+            {
+              "physical_page": 2,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "ee899d88a396b0440db8719f28bb50f5931fd31691e584eae49c801ca230dd88"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00540",
+      "question": "Roughly how many times has AES Corporation sold its inventory in FY2022? Calculate inventory turnover ratio for the FY2022; if conventional inventory management is not meaningful for the company then state that and explain why.",
+      "reference_answer": "AES has converted inventory 9.5 times in FY 2022.",
+      "question_type": "Numerical reasoning OR Logical reasoning",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "AES_2022_10K.pdf",
+          "upstream_page": 129,
+          "candidates": [
+            {
+              "physical_page": 130,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "1a8f0a127a9c41cedf6808947c945738862b53ed3e4ad2e9a60331e1c7a4019b"
+            },
+            {
+              "physical_page": 129,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "b3050c5b46d068656f49dbc42de36b6074abd34eb6dc592b2d13e29068ea878d"
+            },
+            {
+              "physical_page": 131,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "document": "AES_2022_10K.pdf",
+          "upstream_page": 131,
+          "candidates": [
+            {
+              "physical_page": 132,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "9178c45ee974c3682303eb0d97be808260ef00d2f5b11a2a09e504bccc78650e"
+            },
+            {
+              "physical_page": 131,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "physical_page": 133,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "c321f05a8e7d02aa8f297d526c0b4b067637b6c936d825eeff129ea68ae1be15"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_00222",
+      "question": "Does AMD have a reasonably healthy liquidity profile based on its quick ratio for FY22? If the quick ratio is not relevant to measure liquidity, please state that and explain why.",
+      "reference_answer": "Yes. The quick ratio is 1.57, calculated as (cash and cash equivalents+Short term investments+Accounts receivable, net+receivables from related parties)/ (current liabilities).",
+      "question_type": "Logical reasoning (based on numerical reasoning) OR Logical reasoning",
+      "required_scoring": "reviewed_semantic_rubric",
+      "page_checks": [
+        {
+          "document": "AMD_2022_10K.pdf",
+          "upstream_page": 55,
+          "candidates": [
+            {
+              "physical_page": 56,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "76105140d4c516c8560ae06ccbb0ecf247c0c566cbeb961b23e4cc2b8705afdf"
+            },
+            {
+              "physical_page": 55,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "b16a12133bb5bf206dc79497f4ccd53a9c2f877927bcdfd0a058d46c581404ce"
+            },
+            {
+              "physical_page": 57,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "7eaddb6f18a407108cd365f2d442960c02fc109fe8255c1d7c37c1540814b364"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_07966",
+      "question": "What is the FY2017 - FY2019 3 year average of capex as a % of revenue for Activision Blizzard? Answer in units of percents and round to one decimal place. Calculate (or extract) the answer from the statement of income and the cash flow statement.",
+      "reference_answer": "1.9%",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+          "upstream_page": 69,
+          "candidates": [
+            {
+              "physical_page": 70,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "f43639f79a262f37231ae924108b2e4bf80a2825017eac027b89fdf13026ca91"
+            },
+            {
+              "physical_page": 69,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "d724eba9d00ecb1ee60695e26121d94df2c4f8ce85412a74bf0f612e66280b56"
+            },
+            {
+              "physical_page": 71,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "d5b59e380980884172654366384510cc6d493c30d41d1596a4ebf58478434491"
+            }
+          ]
+        },
+        {
+          "document": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+          "upstream_page": 72,
+          "candidates": [
+            {
+              "physical_page": 73,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "07c24b1e86766e890a3fcadcab6f5d9707cdd926ed963335bd8427880b06522d"
+            },
+            {
+              "physical_page": 72,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "0d4a8f241a2c53a45777693b3aaeb4603f9b76db226343f2c6e5be768f62c04e"
+            },
+            {
+              "physical_page": 74,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "08f2e21e5ceeea4393b915a92072881a3cf6ef1bf79abed9263147600b00208f"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_03856",
+      "question": "What is the FY2017 operating cash flow ratio for Adobe? Operating cash flow ratio is defined as: cash from operations / total current liabilities. Round your answer to two decimal places. Please utilize information provided primarily within the balance sheet and the cash flow statement.",
+      "reference_answer": "0.83",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "ADOBE_2017_10K.pdf",
+          "upstream_page": 56,
+          "candidates": [
+            {
+              "physical_page": 57,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "b7462e637c67ef268d6c0f0530a2682c7220138463dd37db6eb5faf020078499"
+            },
+            {
+              "physical_page": 56,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "ceaa8d4e589d46a8a84c3b6dfa0b47f18cdca6ed8ca7705382d52b04a6bbefc7"
+            },
+            {
+              "physical_page": 58,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "6774a7a17e9f86d6b7adaec2e2332540a3cf55ecbf1b935e3c1d294650db19d7"
+            }
+          ]
+        },
+        {
+          "document": "ADOBE_2017_10K.pdf",
+          "upstream_page": 60,
+          "candidates": [
+            {
+              "physical_page": 61,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "14c3534765f0a3a02740d464bcbc08f7dcc763071c0ebde141f4e490884707fa"
+            },
+            {
+              "physical_page": 60,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "3dc9f8c50ac3e35a6ebd1ccdec04f044a32b2d511328a159e4cf81298a74f7b4"
+            },
+            {
+              "physical_page": 62,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "2b7e613080b3b5a46dbd2d89c2219d22ef47ef57a16603ec4b0327496cc925b8"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_06655",
+      "question": "What is Amazon's FY2017 days payable outstanding (DPO)? DPO is defined as: 365 * (average accounts payable between FY2016 and FY2017) / (FY2017 COGS + change in inventory between FY2016 and FY2017). Round your answer to two decimal places. Address the question by using the line items and information shown within the balance sheet and the P&L statement.",
+      "reference_answer": "93.86",
+      "question_type": "Numerical reasoning",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "AMAZON_2017_10K.pdf",
+          "upstream_page": 37,
+          "candidates": [
+            {
+              "physical_page": 38,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "9025c3556fba99c01403e2aeb8a148e260ab20cd2cdc1ce95db49185ce69902d"
+            },
+            {
+              "physical_page": 37,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "b2676133d127620e0e5fc0c416943a4c24c75b270beefa67ef1923420094c495"
+            },
+            {
+              "physical_page": 39,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "6d64e3235361fabfe43718d8bb124c410437e766788c4d2cd7d7721d360ae0e6"
+            }
+          ]
+        },
+        {
+          "document": "AMAZON_2017_10K.pdf",
+          "upstream_page": 39,
+          "candidates": [
+            {
+              "physical_page": 40,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "3f59902ad6f9dbcea78100b26b1c8f6bf3990ba5230a8b9e780a48f1ddf35d45"
+            },
+            {
+              "physical_page": 39,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "6d64e3235361fabfe43718d8bb124c410437e766788c4d2cd7d7721d360ae0e6"
+            },
+            {
+              "physical_page": 41,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "17bd1138824d53e28d9c8230ab45bec5c00625c5c558a4331907f7f3f1a49b8d"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    },
+    {
+      "case_id": "financebench_id_03882",
+      "question": "What is Amcor's year end FY2020 net AR (in USD millions)? Address the question by adopting the perspective of a financial analyst who can only use the details shown within the balance sheet.",
+      "reference_answer": "$1616.00",
+      "question_type": "Information extraction",
+      "required_scoring": "numeric_unit_aware",
+      "page_checks": [
+        {
+          "document": "AMCOR_2020_10K.pdf",
+          "upstream_page": 49,
+          "candidates": [
+            {
+              "physical_page": 50,
+              "evidence_overlap": 1.0,
+              "page_text_sha256": "45b796bc5b83382491871a05c12f048df5a7a98d6eff3fa1a82e64848fb1465d"
+            },
+            {
+              "physical_page": 49,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "0ab589f0aa5b1331afb34e5d197ad16b1a2d6b4336dabe2dfcfa4c479e11b13f"
+            },
+            {
+              "physical_page": 51,
+              "evidence_overlap": 0.0,
+              "page_text_sha256": "b1e3df7bc830988f0b81f8795c55c3c379e18e7c350f7f09e32a1a11c64f762d"
+            }
+          ]
+        }
+      ],
+      "answer_verification": "pending_manual_evidence_review"
+    }
+  ]
+}

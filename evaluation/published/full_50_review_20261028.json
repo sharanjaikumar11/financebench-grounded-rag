@@ -1,0 +1,329 @@
+{
+  "scope": "Latest 50-case development evaluation; agent-reviewed, not independently adjudicated",
+  "collection_sha256": "84c79caeaf6f19bc08aabdcc1d258bf8473edeb1fb5279f2549963d48288c158",
+  "completed": 50,
+  "provider_errors": 0,
+  "returned_answers": 45,
+  "abstentions": 5,
+  "filing_recall": {
+    "hits": 50,
+    "total": 50
+  },
+  "labelled_page_recall": {
+    "hits": 47,
+    "total": 49
+  },
+  "citation_location_accuracy": 0.72,
+  "source_supported_fraction": 0.84,
+  "supported_count": 42,
+  "incorrect_or_abstained_count": 6,
+  "unresolved_count": 2,
+  "final_answer_accuracy": null,
+  "possible_accuracy_range": [
+    0.84,
+    0.88
+  ],
+  "review_scope": "Agent review of saved source evidence. No reference labels changed; not independent held-out evaluation. Source-supported precision accepted where question gives no rounding. Extra unsupported numeric claims fail even when verdict matches. Abstentions fail. Ambiguous definitions remain unresolved.",
+  "cases": [
+    {
+      "case_id": "financebench_id_03029",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_04672",
+      "review_status": "supported",
+      "review_reason": "Source reports 8,738 million = 8.738 billion. Question gives no rounding requirement; reference 8.70 is less precise. Accept source amount, flag reference precision.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_00499",
+      "review_status": "incorrect",
+      "review_reason": "Answerable benchmark question was not answered; abstention counts as unsuccessful, not correct.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_demo_amazon_2019_net_income",
+      "review_status": "incorrect",
+      "review_reason": "Answerable benchmark question was not answered; abstention counts as unsuccessful, not correct.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_demo_bestbuy_2019_inventory",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_demo_boeing_2018_net_ppe",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_demo_costco_2021_total_assets",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_demo_jpmorgan_2022q2_highest_net_income",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_demo_microsoft_2016_cost_of_revenue",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_demo_pepsico_2021_capex",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_demo_verizon_2021_derivatives",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01858",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_10420",
+      "review_status": "unresolved_definition",
+      "review_reason": "Consolidated loss -505 / average assets 35663 rounds to -0.01; attributable loss -546 gives -0.02. Question says net income without attribution; unresolved definition.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01279",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_02987",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_07507",
+      "review_status": "incorrect",
+      "review_reason": "Answerable benchmark question was not answered; abstention counts as unsuccessful, not correct.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_08135",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01079",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01351",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_04254",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01077",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_07661",
+      "review_status": "supported",
+      "review_reason": "381,603 thousand = 381.603 million; 381.6 is supported, reference 382 is rounded. No exact rounding requested.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01091",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01244",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_06272",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01346",
+      "review_status": "supported",
+      "review_reason": "Source rates 22.9 and 20.2 differ by 2.7 percentage points; reference rounds underlying rates to 23 and 20.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_04209",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_00839",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_04854",
+      "review_status": "supported",
+      "review_reason": "3676.2 minus 460.8 = 3215.4 million; reference rounds to 3215.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_02049",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01487",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_10499",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_03031",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_00382",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_04700",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_04458",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01163",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_00080",
+      "review_status": "supported",
+      "review_reason": "FY2022 current assets 57517 minus current liabilities 45101 = 12416 million. Positive verdict and amount supported; reference 1.6 billion not supported by these balance-sheet totals.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_01009",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_00302",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_00746",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_00566",
+      "review_status": "incorrect",
+      "review_reason": "Answerable benchmark question was not answered; abstention counts as unsuccessful, not correct.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_04784",
+      "review_status": "supported",
+      "review_reason": "4.3% minus 4.1% = 0.2 percentage points; distinguish this from relative percentage growth.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_00941",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_00540",
+      "review_status": "unresolved_definition",
+      "review_reason": "10069 / average(1055,604) = 12.14; reference uses closing inventory, 10069/1055 = 9.5 rounded. Question does not specify denominator; unresolved convention.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_00222",
+      "review_status": "incorrect",
+      "review_reason": "Quick assets should exclude 1265 of prepaid expenses/other current assets as well as inventory: (4835+1020+4126+2)/6369 = 1.57. Generated 1.77 includes those non-quick assets; verdict alone is insufficient.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_07966",
+      "review_status": "incorrect",
+      "review_reason": "Answerable benchmark question was not answered; abstention counts as unsuccessful, not correct.",
+      "citation_location_match": false
+    },
+    {
+      "case_id": "financebench_id_03856",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_06655",
+      "review_status": "supported",
+      "review_reason": "Reviewed supplied evidence quotes and question: answer gives the requested value or claim, consistent with the reference substance. Citation-location matching is scored separately.",
+      "citation_location_match": true
+    },
+    {
+      "case_id": "financebench_id_03882",
+      "review_status": "supported",
+      "review_reason": "Source trade receivables are 1615.9 million; reference 1616 is rounded, question specifies no rounding.",
+      "citation_location_match": true
+    }
+  ]
+}

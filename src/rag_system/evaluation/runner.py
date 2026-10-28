@@ -229,5 +229,8 @@ def _inferred_filing_filter(retriever: object, question: str) -> dict[str, objec
     """Prefer indexed filing metadata; use static parsing only as a fallback."""
     vector_store = getattr(retriever, "vector_store", None)
     infer_from_index = getattr(vector_store, "infer_filing_metadata_filter", None)
-    inferred = dict(infer_from_index(question)) if callable(infer_from_index) else {}
-    return inferred or dict(filing_metadata_filter(question))
+    return (
+        dict(infer_from_index(question))
+        if callable(infer_from_index)
+        else dict(filing_metadata_filter(question))
+    )

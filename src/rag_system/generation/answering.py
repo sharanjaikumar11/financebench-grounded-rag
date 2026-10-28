@@ -18,8 +18,47 @@ from rag_system.generation.prompts import (
     grounded_answer_prompt,
     grounded_answer_retry_prompt,
 )
+from rag_system.retrieval.financial_intent import (
+    has_transaction_event,
+    intent_relevance,
+    numeric_row_phrases,
+    operand_coverage_order,
+    operand_patterns,
+)
 from rag_system.retrieval.retriever import retrieval_query
 from rag_system.schemas import GroundedAnswer, RetrievedChunk
+
+
+def safe_error_details(error: Exception) -> dict:
+    """Classify bounded exception metadata without serializing messages or SDK bodies."""
+    causes = []
+    status = None
+    current = error
+    for _ in range(4):
+        name = type(current).__name__
+        causes.append(name if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,63}", name) else "Exception")
+        code = getattr(current, "code", None)
+        if not isinstance(code, int):
+            code = getattr(current, "status_code", None)
+        if isinstance(code, int) and not isinstance(code, bool) and 400 <= code <= 599:
+            status = code
+        current = current.__cause__
+        if current is None:
+            break
+    category = {
+        401: "authentication",
+        403: "permission",
+        404: "model_or_endpoint_not_found",
+        429: "rate_limit",
+        503: "unavailable",
+    }.get(status)
+    if category is None:
+        category = (
+            "http_error"
+            if status
+            else ("timeout" if any("timeout" in name.lower() for name in causes) else "unknown")
+        )
+    return {"error_category": category, "http_status": status, "cause_types": causes}
 
 
 class AnswerProvider(Protocol):
@@ -45,39 +84,61 @@ class GeminiAnswerProvider:
         self.fallback_model = fallback_model if fallback_model != model else None
         self.thinking_level = thinking_level
         self._client: object | None = None
+        self.last_diagnostics: dict = {}
 
     def generate(self, prompt: str) -> str:
         from google import genai
         from google.genai import types
 
-        if self._client is None:
-            self._client = genai.Client(api_key=self.api_key)
+        self.last_diagnostics = {"requested_model": self.model, "fallback_used": False}
         try:
+            if self._client is None:
+                self._client = genai.Client(api_key=self.api_key)
             response = self._generate(prompt, self.model, types)
         except Exception as error:
             if self.fallback_model and self._is_capacity_error(error):
+                self.last_diagnostics["fallback_used"] = True
                 try:
                     response = self._generate(prompt, self.fallback_model, types)
                 except Exception as fallback_error:
                     raise self._unavailable_error(fallback_error) from fallback_error
             else:
                 raise self._unavailable_error(error) from error
-        if not response.text:
+        if not (response.text or "").strip():
+            self.last_diagnostics["error_category"] = "empty_response"
             raise RuntimeError("Gemini returned an empty answer")
         return response.text.strip()
 
     def _generate(self, prompt: str, model: str, types: object) -> object:
         config = {
             "temperature": 0,
-            "max_output_tokens": 1024 if "OUTPUT FORMAT OVERRIDE" in prompt else 256,
+            "max_output_tokens": 4096 if "OUTPUT FORMAT OVERRIDE" in prompt else 256,
         }
         if model.startswith("gemini-3"):
             config["thinking_config"] = types.ThinkingConfig(thinking_level=self.thinking_level)
-        return self._client.models.generate_content(
-            model=model,
-            contents=prompt,
-            config=types.GenerateContentConfig(**config),
-        )
+        self.last_diagnostics.update(model=model, max_output_tokens=config["max_output_tokens"])
+        try:
+            response = self._client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(**config),
+            )
+        except Exception as error:
+            self.last_diagnostics.update(safe_error_details(error))
+            raise
+        # Only retain bounded identifiers, never SDK messages or response bodies.
+        self.last_diagnostics.pop("error_category", None)
+        self.last_diagnostics.pop("http_status", None)
+        self.last_diagnostics.pop("cause_types", None)
+        candidates = getattr(response, "candidates", None) or []
+        reason = getattr(candidates[0], "finish_reason", None) if candidates else None
+        reason = getattr(reason, "value", reason)
+        if isinstance(reason, str) and re.fullmatch(r"[A-Z_]{1,64}", reason):
+            self.last_diagnostics["finish_reason"] = reason
+        version = getattr(response, "model_version", None)
+        if isinstance(version, str) and re.fullmatch(r"[A-Za-z0-9._-]{1,100}", version):
+            self.last_diagnostics["model_version"] = version
+        return response
 
     @staticmethod
     def _is_capacity_error(error: Exception) -> bool:
@@ -182,9 +243,13 @@ class GroundedAnswerGenerator:
                 validated, status = (
                     (None, "model_abstention")
                     if raw == INSUFFICIENT_CONTEXT
-                    else inspect_evidence_answer(raw, source_map)
+                    else inspect_evidence_answer(raw, source_map, question)
                 )
                 record = {"attempt": attempt + 1, "status": status, "sources": source_details}
+                if isinstance(self.provider, GeminiAnswerProvider):
+                    record["provider_diagnostics"] = dict(self.provider.last_diagnostics)
+                if os.getenv("CALCULATION_VALIDATION") == "1":
+                    record["calculation_protocol"] = "decimal-render-v2"
                 if self.include_provider_output:
                     record["provider_output"] = raw
                 diagnostics.append(record)
@@ -223,15 +288,85 @@ def _generation_evidence_sources(
     if maximum_sources < 1:
         raise ValueError("maximum_sources must be at least one")
     expanded_question = retrieval_query(question)
+    diverse = os.getenv("CONTEXT_DIVERSITY_RANKING") == "1"
     ranked = sorted(
         enumerate(sources),
         key=lambda item: (
-            _generation_evidence_score(item[1].chunk.text, expanded_question),
+            _generation_evidence_score(item[1].chunk.text, expanded_question)
+            + (intent_relevance(item[1].chunk.text, question) if diverse else 0.0),
             -item[0],
         ),
         reverse=True,
     )
     selected = {}
+    if os.getenv("OPERAND_COVERAGE") == "1" and re.search(r"acquisitions?", question, re.I):
+        anchors = []
+        for _, item in ranked:
+            if has_transaction_event(item.chunk.text) and all(
+                item.chunk.document_id != anchor.chunk.document_id for anchor in anchors
+            ):
+                anchors.append(item)
+                selected[(item.chunk.document_id, item.chunk.chunk_id)] = item
+                if len(anchors) >= min(3, maximum_sources):
+                    break
+        for offset in (1, 2, -1):
+            for anchor in anchors:
+                for item in sources:
+                    if (
+                        len(selected) < maximum_sources
+                        and item.chunk.document_id == anchor.chunk.document_id
+                        and item.chunk.chunking_strategy == anchor.chunk.chunking_strategy
+                        and item.chunk.chunk_index == anchor.chunk.chunk_index + offset
+                    ):
+                        selected[(item.chunk.document_id, item.chunk.chunk_id)] = item
+    if os.getenv("OPERAND_COVERAGE") == "1" and operand_patterns(question):
+        candidates = [item for _, item in ranked]
+        ordered = operand_coverage_order(candidates, question, min(3, maximum_sources))
+        anchors = ordered[: min(3, maximum_sources, len(operand_patterns(question)))]
+        for item in anchors:
+            selected[(item.chunk.document_id, item.chunk.chunk_id)] = item
+        # Keep the year heading and continuation of a reserved row before
+        # spending the remaining budget on unrelated neighborhoods.
+        for offset in (-1, 1, -2):
+            for anchor in anchors:
+                for item in sources:
+                    if (
+                        len(selected) < maximum_sources
+                        and item.chunk.document_id == anchor.chunk.document_id
+                        and item.chunk.chunking_strategy == anchor.chunk.chunking_strategy
+                        and item.chunk.chunk_index == anchor.chunk.chunk_index + offset
+                    ):
+                        selected[(item.chunk.document_id, item.chunk.chunk_id)] = item
+    if os.getenv("NUMERIC_ROW_COVERAGE") == "1":
+        # Reserve a small part of the existing budget for distinct requested
+        # numeric concepts. Never fetch unseen chunks or use reference pages.
+        covered = set()
+        for _, item in ranked:
+            if len(selected) >= min(3, maximum_sources):
+                break
+            matches = set(numeric_row_phrases(item.chunk.text, question))
+            if matches - covered:
+                selected[(item.chunk.document_id, item.chunk.chunk_id)] = item
+                covered.update(matches)
+                if len(selected) >= min(3, maximum_sources):
+                    break
+    if diverse:
+        # Reserve evidence from distinct neighborhoods before spending the
+        # entire budget on the first few anchors and their neighbors.
+        representatives = []
+        for _, item in ranked:
+            if len(selected) >= maximum_sources:
+                break
+            if all(
+                item.chunk.document_id != other.chunk.document_id
+                or item.chunk.chunking_strategy != other.chunk.chunking_strategy
+                or abs(item.chunk.chunk_index - other.chunk.chunk_index) > 2
+                for other in representatives
+            ):
+                representatives.append(item)
+                selected[(item.chunk.document_id, item.chunk.chunk_id)] = item
+                if len(selected) >= maximum_sources:
+                    break
     # Select relevant anchors with available immediate neighbors, then present
     # them in source order so headers precede their rows. Never cross documents.
     for _, anchor in ranked:

@@ -180,6 +180,53 @@ def test_context_restores_order_and_deduplicates_neighbors():
     assert _generation_evidence_sources("Net income?", (row, header, row)) == (header, row)
 
 
+def test_repair_copy_assistance_is_opt_in_and_uses_only_source_text(monkeypatch):
+    import json
+
+    from rag_system.generation.evidence import evidence_repair_prompt, inspect_evidence_answer
+
+    sources = {"S1": evidence_source("table", "Net income 100 90 200 180", 0)}
+    raw = json.dumps(
+        {
+            "answer": "200",
+            "period": "2024",
+            "unit": "USD",
+            "evidence": [{"source_id": "S1", "quote": "Net income 200"}],
+        }
+    )
+    monkeypatch.delenv("EVIDENCE_REPAIR_EXCERPTS", raising=False)
+    assert "Copy-check sources" not in evidence_repair_prompt(
+        "Income?", sources, "quote_not_in_source", raw
+    )
+    monkeypatch.setenv("EVIDENCE_REPAIR_EXCERPTS", "1")
+    prompt = evidence_repair_prompt("Income?", sources, "quote_not_in_source", raw)
+    assert "Copy-check sources" in prompt
+    assert '"verbatim_source": "Net income 100 90 200 180"' in prompt
+    assert inspect_evidence_answer(raw, sources)[1] == "quote_not_in_source"
+
+
+def test_diverse_context_reserves_distinct_neighborhoods(monkeypatch):
+    monkeypatch.setenv("CONTEXT_DIVERSITY_RANKING", "1")
+    sources = tuple(
+        evidence_source(str(index), "Net income 123 456", index)
+        for index in (0, 1, 2, 10, 11, 12, 20, 21, 22, 30, 31, 32, 40, 41, 42)
+    )
+    selected = _generation_evidence_sources("Net income?", sources)
+    assert len(selected) == 9
+    assert {s.chunk.chunk_index // 10 for s in selected} == {0, 1, 2, 3, 4}
+    assert len({s.chunk.chunk_id for s in selected}) == 9
+    assert [s.chunk.chunk_index for s in selected] == sorted(s.chunk.chunk_index for s in selected)
+
+
+def test_diverse_context_handles_duplicates_small_budget_and_empty(monkeypatch):
+    monkeypatch.setenv("CONTEXT_DIVERSITY_RANKING", "1")
+    header = evidence_source("header", "Year ended 2024 in millions", 0)
+    row = evidence_source("row", "Net income 123", 1)
+    assert _generation_evidence_sources("Net income?", (row, header, row)) == (header, row)
+    assert len(_generation_evidence_sources("Net income?", (row, header), 1)) == 1
+    assert _generation_evidence_sources("Net income?", ()) == ()
+
+
 def test_structured_evidence_returns_only_verified_source_quotes():
     import json
 
@@ -252,6 +299,26 @@ def test_literal_source_ellipsis_is_not_rejected():
         }
     )
     assert inspect_evidence_answer(raw, {"S1": item})[1] == "accepted"
+
+
+def test_numeric_row_reservation_preserves_budget_and_actual_retrieved_rows(monkeypatch):
+    monkeypatch.setenv("NUMERIC_ROW_COVERAGE", "1")
+    monkeypatch.setenv("CONTEXT_DIVERSITY_RANKING", "1")
+    narrative = tuple(
+        evidence_source(
+            f"n{i}",
+            "Consolidated statements of income operating income revenue growth 2030 2029 2028",
+            i * 4,
+        )
+        for i in range(12)
+    )
+    row = evidence_source("row", "Operating income 600 450", 1)
+    pool = narrative + (row,)
+    result = _generation_evidence_sources("Operating income growth?", pool, 4)
+    assert row in result
+    assert len(result) == 4
+    assert all(item in pool for item in result)
+    assert _generation_evidence_sources("Operating income?", (row,), 1) == (row,)
 
 
 def test_repeated_abbreviated_quote_still_abstains():
@@ -430,6 +497,9 @@ def test_gemini_answer_provider_uses_fallback_after_a_capacity_error(
 
     assert provider.generate("question") == "Grounded answer [S1]"
     assert models.models == ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite"]
+    assert provider.last_diagnostics["fallback_used"] is True
+    assert provider.last_diagnostics["model"] == "gemini-3.5-flash-lite"
+    assert "error_category" not in provider.last_diagnostics
 
 
 def test_gemini_answer_provider_uses_configured_thinking_level(

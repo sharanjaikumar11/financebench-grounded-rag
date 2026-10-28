@@ -1,0 +1,105 @@
+{
+  "collection_sha256": "4af43630c2c1812639aa97a52cdf2870efe8d2cc3240748494b905794a96f9ed",
+  "review_date": "2026-10-25",
+  "reviewer": "Codex source-evidence review",
+  "scope": "Evaluation-only alternatives for this frozen collection. Not a runtime retrieval map, benchmark rewrite, independent human approval or full semantic score.",
+  "alternatives": [
+    {
+      "case_id": "financebench_demo_jpmorgan_2022q2_highest_net_income",
+      "original_expected_document": "JPMORGAN_2022Q2_10Q.pdf",
+      "original_expected_pages": [
+        21
+      ],
+      "reviewed_document": "JPMORGAN_2022Q2_10Q.pdf",
+      "reviewed_pages": [
+        177
+      ],
+      "reason": "Q2 2022 segment table reports net income (millions): CCB 3,100; CIB 3,725; Commercial 994; AWM 1,004; Corporate -174. The cited page supports the maximum and amount."
+    },
+    {
+      "case_id": "financebench_id_01858",
+      "original_expected_document": "3M_2023Q2_10Q.pdf",
+      "original_expected_pages": [
+        62
+      ],
+      "reviewed_document": "3M_2023Q2_10Q.pdf",
+      "reviewed_pages": [
+        73
+      ],
+      "reason": "The page states 65 consecutive years of dividend increases and describes the February and May 2023 dividends. This supports the answer's explicit as-of-2023 qualification."
+    },
+    {
+      "case_id": "financebench_id_01279",
+      "original_expected_document": "AMD_2022_10K.pdf",
+      "original_expected_pages": [
+        58
+      ],
+      "reviewed_document": "AMD_2022_10K.pdf",
+      "reviewed_pages": [
+        51
+      ],
+      "reason": "FY2022 net cash flows (millions) are operating 3,565, investing 1,999 and financing -3,264. All three amounts and the comparison are supported."
+    },
+    {
+      "case_id": "financebench_id_01346",
+      "original_expected_document": "CORNING_2022_10K.pdf",
+      "original_expected_pages": [
+        24
+      ],
+      "reviewed_document": "CORNING_2022_10K.pdf",
+      "reviewed_pages": [
+        77
+      ],
+      "reason": "The tax reconciliation reports 22.9% for 2022 and 20.2% for 2021, a 2.7 percentage-point increase. The reference uses rounded rates; this is a precision difference, not fabricated evidence. Cited page 76 is unnecessary."
+    },
+    {
+      "case_id": "financebench_id_00382",
+      "original_expected_document": "MGMRESORTS_2022Q4_EARNINGS.pdf",
+      "original_expected_pages": [
+        13
+      ],
+      "reviewed_document": "MGMRESORTS_2022_10K.pdf",
+      "reviewed_pages": [
+        99,
+        100
+      ],
+      "reason": "Page 99 defines the segments and Adjusted Property EBITDAR. Page 100 reports FY2022 amounts (thousands): Las Vegas Strip 3,142,308; Regional Operations 1,294,630; MGM China -203,136. The 10-K supports the answer although the reference names the earnings release."
+    },
+    {
+      "case_id": "financebench_id_00302",
+      "original_expected_document": "PFIZER_2021_10K.pdf",
+      "original_expected_pages": [
+        59
+      ],
+      "reviewed_document": "PFIZER_2021_10K.pdf",
+      "reviewed_pages": [
+        88
+      ],
+      "reason": "The PP&E note reports net PP&E (millions) of 14,882 in 2021 versus 13,745 in 2020. The increase is supported. Cited page 89 concerns intangible assets and is unnecessary."
+    },
+    {
+      "case_id": "financebench_id_00566",
+      "original_expected_document": "VERIZON_2022_10K.pdf",
+      "original_expected_pages": [
+        77
+      ],
+      "reviewed_document": "VERIZON_2022_10K.pdf",
+      "reviewed_pages": [
+        56
+      ],
+      "reason": "For 2022, current debt 9,963 plus long-term debt 140,676 equals 150,639 million. For 2021, 7,443 plus 143,425 equals 150,868 million. The decrease is supported under the answer's explicit definition. Cited page 55 is unnecessary."
+    },
+    {
+      "case_id": "financebench_id_04784",
+      "original_expected_document": "WALMART_2019_10K.pdf",
+      "original_expected_pages": [
+        48
+      ],
+      "reviewed_document": "WALMART_2019_10K.pdf",
+      "reviewed_pages": [
+        34
+      ],
+      "reason": "The operating income percentage of net sales row reports 4.3% for 2019 and 4.1% for 2018, supporting the 0.2 percentage-point change. Caveat: these displayed margins use net sales, not total revenue. Using the same page's operating income and total revenue gives about 0.184 percentage points, also rounding to 0.2. This citation supports the stated calculation; denominator wording should be explicit."
+    }
+  ]
+}

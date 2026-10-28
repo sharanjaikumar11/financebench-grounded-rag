@@ -9,7 +9,6 @@ from typing import Protocol
 
 from rag_system.generation.answering import GroundedAnswerGenerator
 from rag_system.ingestion.pipeline import DocumentIngestor
-from rag_system.retrieval.query_metadata import filing_metadata_filter
 from rag_system.retrieval.retriever import DenseRetriever
 from rag_system.schemas import DocumentChunk, GroundedAnswer, RetrievedChunk
 
@@ -79,9 +78,12 @@ class RAGQueryService:
         if not question:
             raise ValueError("A non-empty question is required")
         inferred_filter = self.retriever.vector_store.infer_filing_metadata_filter(question)
-        if not inferred_filter:
-            inferred_filter = filing_metadata_filter(question)
         combined_filter = dict(inferred_filter)
+        if metadata_filter and any(
+            key in metadata_filter for key in ("document_name", "document_names", "document_id")
+        ):
+            combined_filter.pop("document_name", None)
+            combined_filter.pop("document_names", None)
         combined_filter.update(metadata_filter or {})
         retrieved = self.retriever.retrieve(question, self.top_k, combined_filter)
         return QueryResponse(

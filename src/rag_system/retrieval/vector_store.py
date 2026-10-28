@@ -10,6 +10,13 @@ import sqlite3
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
+from rag_system.retrieval.financial_intent import (
+    concept_phrases,
+    intent_relevance,
+    operand_coverage_order,
+    operand_patterns,
+    transaction_coverage_order,
+)
 from rag_system.schemas import DocumentChunk, RetrievedChunk
 
 
@@ -92,95 +99,32 @@ class SQLiteVectorStore:
         This is intentionally conservative: it returns a filter only when the
         normalized company name and one year identify exactly one indexed filing.
         """
-        normalized_question = self._normalize_name(question)
-        quarter_match = re.search(
-            r"\b(?:Q([1-4])\s*(?:FY)?(20\d{2})|(?:FY)?(20\d{2})\s*Q([1-4]))\b",
-            question,
-            flags=re.IGNORECASE,
+        from rag_system.retrieval.query_metadata import (
+            indexed_filing_filter,
+            normalize_fiscal_periods,
         )
-        if quarter_match:
-            quarter = quarter_match.group(1) or quarter_match.group(4)
-            year = quarter_match.group(2) or quarter_match.group(3)
-            quarterly_names = self._connection.execute(
-                "SELECT DISTINCT document_name FROM chunks WHERE document_name LIKE ?",
-                (f"%_{year}Q{quarter}_%",),
-            ).fetchall()
-            quarterly_matches = [
-                row["document_name"]
-                for row in quarterly_names
-                if self._normalized_company_name(row["document_name"], year) in normalized_question
-            ]
-            if len(quarterly_matches) == 1:
-                return {"document_name": quarterly_matches[0]}
-        dated_match = re.search(
+
+        question = normalize_fiscal_periods(question)
+        names = [
+            row[0] for row in self._connection.execute("SELECT DISTINCT document_name FROM chunks")
+        ]
+        scoped = indexed_filing_filter(question, names)
+        # Preserve exact dated-event routing for both filename separators.
+        dated = re.search(
             r"\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(20\d{2})\b",
             question,
-            flags=re.IGNORECASE,
+            re.I,
         )
-        if dated_match:
-            month_numbers = {
-                "january": "01",
-                "february": "02",
-                "march": "03",
-                "april": "04",
-                "may": "05",
-                "june": "06",
-                "july": "07",
-                "august": "08",
-                "september": "09",
-                "october": "10",
-                "november": "11",
-                "december": "12",
-            }
-            date_suffix = (
-                f"dated-{dated_match.group(3)}-"
-                f"{month_numbers[dated_match.group(1).casefold()]}-"
-                f"{int(dated_match.group(2)):02d}.pdf"
-            )
-            dated_names = self._connection.execute(
-                "SELECT DISTINCT document_name FROM chunks WHERE document_name LIKE ?",
-                (f"%{date_suffix}",),
-            ).fetchall()
-            dated_matches = [
-                row["document_name"]
-                for row in dated_names
-                if self._normalized_company_name(row["document_name"]) in normalized_question
-            ]
-            if len(dated_matches) == 1:
-                return {"document_name": dated_matches[0]}
+        if dated and scoped:
+            import calendar
 
-        years = sorted(
-            set(re.findall(r"\b(?:FY)?(20\d{2})\b", question, flags=re.IGNORECASE)),
-            reverse=True,
-        )
-        if not years:
-            return {}
-
-        # A comparison such as "FY2018-to-FY2019" is normally answered from
-        # the later annual filing, which contains both comparative periods.
-        # Select that filing only when the index makes the company/year choice
-        # unambiguous; this avoids guessing a document outside the corpus.
-        year = years[0]
-        names = self._connection.execute(
-            "SELECT DISTINCT document_name FROM chunks WHERE document_name LIKE ?",
-            (f"%_{year}%",),
-        ).fetchall()
-        matches = [
-            row["document_name"]
-            for row in names
-            if (normalized_company := self._normalized_company_name(row["document_name"], year))
-            and normalized_company in normalized_question
-        ]
-        if len(matches) == 1:
-            return {"document_name": matches[0]}
-
-        # FinanceBench annual questions can have a same-year 10-Q as well as
-        # a 10-K in the index.  Unless the question explicitly names a quarter,
-        # prefer the annual filing rather than failing the retrieval entirely.
-        annual_matches = [name for name in matches if "_10K" in name.upper()]
-        if len(annual_matches) == 1:
-            return {"document_name": annual_matches[0]}
-        return {}
+            month = list(calendar.month_name).index(dated.group(1).capitalize())
+            suffix = f"{dated.group(3)}-{month:02d}-{int(dated.group(2)):02d}"
+            candidates = scoped.get("document_names", [scoped.get("document_name")])
+            exact = [name for name in candidates if name and suffix in name]
+            if len(exact) == 1:
+                return {"document_name": exact[0]}
+        return scoped
 
     @staticmethod
     def _normalized_company_name(document_name: str, year: str | None = None) -> str:
@@ -312,6 +256,7 @@ class SQLiteVectorStore:
         query: str,
         top_k: int,
         metadata_filter: Mapping[str, object] | None = None,
+        original_query: str | None = None,
     ) -> tuple[RetrievedChunk, ...]:
         """Fuse dense and exact-term ranking with reciprocal-rank fusion."""
         # Financial statement rows can be ranked below narrative mentions by
@@ -323,7 +268,9 @@ class SQLiteVectorStore:
         # that filing is a practical candidate.  This prevents a table row
         # from being discarded behind repeated narrative references to the
         # same term while keeping unfiltered corpus-wide retrieval bounded.
-        if metadata_filter and "document_name" in metadata_filter:
+        if metadata_filter and (
+            "document_name" in metadata_filter or "document_names" in metadata_filter
+        ):
             count_statement = "SELECT COUNT(*) AS chunk_count FROM chunks"
             if clauses:
                 count_statement += " WHERE " + " AND ".join(clauses)
@@ -364,14 +311,58 @@ class SQLiteVectorStore:
         # table or paragraph.  Adjacent text is added later for context, so
         # diversified anchors give the generator broader evidence coverage.
         selected: list[RetrievedChunk] = []
-        for chunk, score in sorted(
+        ranked_candidates = sorted(
             fused.values(),
             key=lambda value: value[1] + _financial_keyword_relevance(value[0].text, query),
             reverse=True,
+        )
+        if os.getenv("OPERAND_COVERAGE") == "1":
+            ordered = operand_coverage_order(
+                [RetrievedChunk(chunk, score) for chunk, score in ranked_candidates],
+                original_query or query,
+                min(3, top_k),
+            )
+            if metadata_filter and "document_names" in metadata_filter:
+                # Document diversity reserves one leading anchor per filing.
+                # Ensure each filing's first anchor is useful transaction
+                # evidence, not just a useful row in a different filing.
+                groups = {}
+                for item in ordered:
+                    groups.setdefault(item.chunk.document_id, []).append(item)
+                first = [
+                    transaction_coverage_order(group, original_query or query, 1)[0]
+                    for group in groups.values()
+                ]
+                ordered = first + [item for item in ordered if item not in first]
+            else:
+                ordered = transaction_coverage_order(ordered, original_query or query, top_k)
+            ranked_candidates = [(item.chunk, item.score) for item in ordered]
+        if (
+            os.getenv("FINANCIAL_INTENT_RANKING") == "1"
+            and metadata_filter
+            and "document_names" in metadata_filter
         ):
+            # Multiple eligible filings: reserve evidence from distinct documents
+            # before filling remaining slots, rather than crowding out a release.
+            first, remainder, seen_documents = [], [], set()
+            for candidate in ranked_candidates:
+                if candidate[0].document_id not in seen_documents:
+                    first.append(candidate)
+                    seen_documents.add(candidate[0].document_id)
+                else:
+                    remainder.append(candidate)
+            ranked_candidates = first + remainder
+        for chunk, score in ranked_candidates:
             is_near_selected = any(
                 candidate.chunk.document_id == chunk.document_id
-                and abs(candidate.chunk.chunk_index - chunk.chunk_index) <= 2
+                and abs(candidate.chunk.chunk_index - chunk.chunk_index)
+                <= (
+                    1
+                    if os.getenv("OPERAND_COVERAGE") == "1"
+                    and original_query
+                    and operand_patterns(original_query)
+                    else 2
+                )
                 for candidate in selected
             )
             if is_near_selected:
@@ -433,11 +424,23 @@ class SQLiteVectorStore:
 
     @staticmethod
     def _filter_query(metadata_filter: Mapping[str, object]) -> tuple[list[str], list[object]]:
-        supported = {"document_id", "document_name", "chunking_strategy"}
+        supported = {"document_id", "document_name", "document_names", "chunking_strategy"}
         unknown = set(metadata_filter) - supported
         if unknown:
             raise ValueError(f"Unsupported metadata filter(s): {sorted(unknown)}")
-        return [f"{key} = ?" for key in metadata_filter], list(metadata_filter.values())
+        clauses, parameters = [], []
+        for key, value in metadata_filter.items():
+            if key == "document_names":
+                if not isinstance(value, (list, tuple)) or not all(
+                    isinstance(name, str) for name in value
+                ):
+                    raise ValueError("document_names must be a sequence of names")
+                clauses.append("document_name IN (" + ",".join("?" for _ in value) + ")")
+                parameters.extend(value)
+            else:
+                clauses.append(f"{key} = ?")
+                parameters.append(value)
+        return clauses, parameters
 
 
 def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
@@ -537,10 +540,12 @@ def _financial_keyword_relevance(text: str, query: str) -> float:
             normalized_text,
         )
     )
+    experimental = os.getenv("FINANCIAL_INTENT_RANKING") == "1" and bool(concept_phrases(query))
     return (
         matched / len(set(query_terms))
-        + numeric_density
-        + (0.5 if statement_heading else 0.0)
+        + (numeric_density if not experimental else numeric_density * 0.25)
+        + (0.5 if statement_heading and not experimental else 0.0)
+        + (intent_relevance(text, query) if experimental else 0.0)
         + (
             _statement_relevance(text, query)
             if os.getenv("STATEMENT_AWARE_RANKING") == "1"

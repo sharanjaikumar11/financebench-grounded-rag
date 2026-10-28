@@ -75,7 +75,8 @@ def test_hybrid_reranks_wide_pool_before_neighbor_expansion():
             return [(1.0,)]
 
     class Store:
-        def hybrid_search(self, vector, query, top_k, metadata):
+        def hybrid_search(self, vector, query, top_k, metadata, original_query=None):
+            assert original_query == "Question"
             assert top_k == 30
             assert metadata == {"document_name": "test.pdf"}
             return (candidate(0), candidate(1))

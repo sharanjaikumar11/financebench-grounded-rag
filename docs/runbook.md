@@ -20,7 +20,8 @@ It validates shape, source membership and exact quotes after whitespace
 normalization, constructs citations from stored metadata, and allows one repair
 attempt. A valid quote is not proof that the answer follows from it: period/unit
 interpretation, arithmetic and semantic entailment remain evaluation limitations.
-This experimental protocol is opt-in pending live measurement. Provider output
+This protocol remains opt-in; the current 11-case live comparison is recorded in
+[the experiment report](experiment-report.md). Provider output
 budgets are larger for JSON to avoid cutting off quotes.
 
 For an evidence-mode diagnostic run:
@@ -80,6 +81,11 @@ Do not compare the stricter citation score directly with historical document-onl
 scores. Verify expected PDF pages manually before using them as ground truth.
 
 ## Table and reranking experiment
+
+Historical/optional instructions only: table indexing is stopped and incomplete.
+Do not run this section as part of the submission checklist or restart it without
+an explicit new request. The current required chunking experiments are complete
+without table extraction; see [the submission guide](../deliverables/SUBMISSION_GUIDE.md).
 
 Build a separate index to preserve the fixed-token baseline:
 
@@ -158,7 +164,7 @@ echoing untrusted provider text. It requests complete rows and separate headers;
 strict substring validation and the one-retry limit remain unchanged.
 
 Set `STATEMENT_AWARE_RANKING=1` to test experimental soft statement-intent preferences
-(disabled by default pending like-for-like generation evaluation): requested statements
+(disabled by default; measured profile documented in the experiment report): requested statements
 take precedence, asset balances favor balance sheets, and capital expenditure
 favors cash-flow statements. Multiple numbered note listings without substantive
 financial values are downranked; a running contents footer alone is not penalized.

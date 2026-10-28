@@ -7,6 +7,7 @@ import re
 from collections.abc import Mapping, Sequence
 
 from rag_system.retrieval.embeddings import EmbeddingProvider
+from rag_system.retrieval.financial_intent import concept_phrases
 from rag_system.retrieval.reranking import CrossEncoderReranker, Reranker
 from rag_system.retrieval.vector_store import SQLiteVectorStore
 from rag_system.schemas import DocumentChunk, RetrievedChunk
@@ -28,6 +29,8 @@ def retrieval_query(question: str) -> str:
         "operating income margin": "operating income net sales operating margin",
     }
     additions = [terms for term, terms in aliases.items() if term in normalized]
+    if os.getenv("FINANCIAL_INTENT_RANKING") == "1":
+        additions.extend(concept_phrases(question))
     return " ".join((question, *additions))
 
 
@@ -109,7 +112,10 @@ class HybridRetriever(DenseRetriever):
             retrieval_query(query),
             max(top_k, self.candidate_k) if self.reranker else top_k,
             metadata_filter,
+            original_query=query,
         )
         if self.reranker:
             ranked = self.reranker.rerank(query, ranked, top_k)
+        if os.getenv("OPERAND_COVERAGE") == "1" and re.search(r"acquisitions?", query, re.I):
+            return self.vector_store.expand_with_neighbors(ranked, radius=2)
         return self.vector_store.expand_with_neighbors(ranked)

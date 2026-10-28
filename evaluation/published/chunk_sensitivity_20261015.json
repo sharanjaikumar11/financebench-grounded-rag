@@ -1,0 +1,122 @@
+{
+  "scope": "Retrieval only, all original cases, complete expected filings; reduced corpus",
+  "dataset_sha256": "8dd6027b61f82dc2f10c24c1bfc400bcee87cb054842cd3eed583ba912bd0769",
+  "source_sha256": {
+    "3M_2018_10K.pdf": "faf10c53fc6f1a8aa346ec3db79145e3ae6fbb3753c8064924e174d0a973934d",
+    "3M_2022_10K.pdf": "d5cf549543a24b04228fd2af979ff2ca94cf64fb008a789340cb9117fbcfde5d",
+    "AMAZON_2019_10K.pdf": "d7df8c6cf3e351a8d68c7473be4159723d545260a32dbc82a8dd11c254c5584a",
+    "BESTBUY_2019_10K.pdf": "d3228e9acd2ce498b97a9d2cb99c2330b9a04687b7947908646d205b3eadf30d",
+    "BOEING_2018_10K.pdf": "6f1ace34b3b01778ad7d92d43ccd2f76513d5159ef48fbc07b510296cf2d07dc",
+    "COSTCO_2021_10K.pdf": "29e05b3862cf6ffa6cfda34ac82a9fa0fe76b67338c5924da3325c2ee3b08748",
+    "JPMORGAN_2022Q2_10Q.pdf": "7d715f552d4eeb6b2a1ea8ae02237b5767306907e761270ac23d74ac5b7e44b5",
+    "MICROSOFT_2016_10K.pdf": "f3555bd5ea1802770cc8f2a7ca766392e16fe6504f18688db681d852029404dc",
+    "PEPSICO_2021_10K.pdf": "f2c7cf1969c7f6dfc8c0596824e1d6b3cc70f662ee2dd06be84bb27af5635364",
+    "VERIZON_2021_10K.pdf": "f7fcb508f920e3df9a07bc858a6d9f0d3cd1e976a46efe72375c9ffb983822ac"
+  },
+  "configurations": [
+    [
+      100,
+      40
+    ],
+    [
+      200,
+      40
+    ],
+    [
+      300,
+      40
+    ],
+    [
+      200,
+      0
+    ],
+    [
+      200,
+      80
+    ]
+  ],
+  "top_k": 3,
+  "selection_note": "Expected documents select corpus only; queries use inferred routing, not gold filters",
+  "results": [
+    {
+      "file": "size100_overlap40.json",
+      "sha256": "a4f081637712ca530fb927fcb265acfd7a55239add45da010b3bba5dc2c6aa46",
+      "chunk_size": 100,
+      "overlap": 40,
+      "chunk_count": 13740,
+      "indexing_seconds": 867.3,
+      "total_seconds": 936.36,
+      "case_count": 11,
+      "page_labelled_case_count": 10,
+      "filing_recall": 1.0,
+      "page_recall": 0.8,
+      "selected_page_recall": 0.8,
+      "mean_selected_tokens": 900.0,
+      "index_bytes": 133255168
+    },
+    {
+      "file": "size200_overlap40.json",
+      "sha256": "e9884957e636f918b59094baf1ee1181115aeaf21180539a516520233762cfe4",
+      "chunk_size": 200,
+      "overlap": 40,
+      "chunk_count": 5154,
+      "indexing_seconds": 787.16,
+      "total_seconds": 841.0,
+      "case_count": 11,
+      "page_labelled_case_count": 10,
+      "filing_recall": 1.0,
+      "page_recall": 1.0,
+      "selected_page_recall": 1.0,
+      "mean_selected_tokens": 1800.0,
+      "index_bytes": 56094720
+    },
+    {
+      "file": "size300_overlap40.json",
+      "sha256": "585b8574d3815f01f6b3ca0336ce50f097f2c1cde69b55975fe16a2fb4feeef2",
+      "chunk_size": 300,
+      "overlap": 40,
+      "chunk_count": 3176,
+      "indexing_seconds": 309.17,
+      "total_seconds": 351.02,
+      "case_count": 11,
+      "page_labelled_case_count": 10,
+      "filing_recall": 1.0,
+      "page_recall": 1.0,
+      "selected_page_recall": 1.0,
+      "mean_selected_tokens": 2700.0,
+      "index_bytes": 41717760
+    },
+    {
+      "file": "size200_overlap0.json",
+      "sha256": "2c4fcd24880c31157fd6bbe98ea1a430f6b39f8112df5d7104f380aabda01bce",
+      "chunk_size": 200,
+      "overlap": 0,
+      "chunk_count": 4126,
+      "indexing_seconds": 427.31,
+      "total_seconds": 462.47,
+      "case_count": 11,
+      "page_labelled_case_count": 10,
+      "filing_recall": 1.0,
+      "page_recall": 0.8,
+      "selected_page_recall": 0.8,
+      "mean_selected_tokens": 1800.0,
+      "index_bytes": 45137920
+    },
+    {
+      "file": "size200_overlap80.json",
+      "sha256": "41e80562dccbb3aa6516e880671c995a6290f9ad92e2f6a387440f72a6e3892d",
+      "chunk_size": 200,
+      "overlap": 80,
+      "chunk_count": 6868,
+      "indexing_seconds": 699.42,
+      "total_seconds": 758.38,
+      "case_count": 11,
+      "page_labelled_case_count": 10,
+      "filing_recall": 1.0,
+      "page_recall": 1.0,
+      "selected_page_recall": 1.0,
+      "mean_selected_tokens": 1800.0,
+      "index_bytes": 74526720
+    }
+  ]
+}

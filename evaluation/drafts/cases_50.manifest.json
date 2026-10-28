@@ -1,0 +1,11 @@
+{
+  "status": "draft_not_for_scored_evaluation",
+  "selection": "Round-robin company diversity, SHA256 ID order within company; no model outputs used",
+  "source_dataset_sha256": "a5a2aa673e573e55675fc3c0f9aa38c1cf59d2abc91edb077534f71f10a71877",
+  "original_cases_sha256": "8dd6027b61f82dc2f10c24c1bfc400bcee87cb054842cd3eed583ba912bd0769",
+  "original_count": 11,
+  "added_count": 39,
+  "added_companies": 32,
+  "source": "Local FinanceBench open-source dataset; preserve upstream attribution/license before distribution",
+  "pending": "Validate PDF evidence, page numbering, index coverage, multi-document support, and scoring rubrics"
+}

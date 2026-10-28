@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 
 from rag_system.evaluation.datasets import load_evaluation_cases
+from rag_system.evaluation.provenance import run_metadata
 from rag_system.evaluation.runner import EvaluationRunner, GroundedEvaluationSystem
 from rag_system.generation.answering import (
     GeminiAnswerProvider,
@@ -38,6 +39,11 @@ def parse_arguments() -> argparse.Namespace:
 
 def main() -> None:
     arguments = parse_arguments()
+    # Reject unreviewed cases before loading models or contacting a provider.
+    cases = load_evaluation_cases(arguments.cases)
+    metadata = run_metadata(
+        arguments.cases, arguments.vector_store, arguments.retrieval_mode, arguments.top_k
+    )
     provider_name = os.environ.get("ANSWER_PROVIDER", "gemini").strip().casefold()
     if provider_name == "groq":
         api_key = os.environ.get("GROQ_API_KEY", "")
@@ -68,12 +74,14 @@ def main() -> None:
             ),
             arguments.top_k,
         )
-        report = EvaluationRunner().run(system, load_evaluation_cases(arguments.cases))
+        report = EvaluationRunner().run(system, cases)
     finally:
         store.close()
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
-    arguments.output.write_text(json.dumps(report.as_dict(), indent=2), encoding="utf-8")
-    print(json.dumps(report.as_dict(), indent=2))
+    payload = report.as_dict()
+    payload["run_metadata"] = metadata
+    arguments.output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print(json.dumps(payload, indent=2))
 
 
 if __name__ == "__main__":

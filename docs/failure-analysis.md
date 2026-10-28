@@ -1,5 +1,41 @@
 # Failure analysis
 
+## Current full-run findings — 28 October 2026
+
+Latest collection: `generation_50_20261028_142603.json`. All 50 requests completed
+without provider errors; 45 answered and five abstained. Citation-location matches
+are 36/50. Agent evidence review classifies 42 supported, six unsuccessful and two
+unresolved; final answer accuracy is pending. The older measurements below are history.
+
+| Failure | Current handling / limitation |
+| --- | --- |
+| 3M capital intensity; Amazon shareholder income | Model abstains; selected evidence and requested inference/attribution still need work. |
+| Adobe operating-income growth | Both attempts fail exact quote membership. |
+| Activision capex percentage | Quote failure then operand/evidence-link failure; success in targeted v5 did not repeat in full run. |
+| Verizon debt direction | Correct totals accompany an incorrect increase claim; new narrow guard rejects both attempts, yielding abstention. |
+| AMD quick ratio | Numerator includes prepaid/other current assets; source supports 1.57 rather than 1.77. Verdict alone does not make the answer correct. |
+| AES ROA | Consolidated versus attributable net income gives different rounded ratios; definition unresolved. |
+| AES inventory turnover | Average versus closing inventory gives 12.14 versus about 9.5; question does not specify convention. |
+| PayPal reference discrepancy | Source supports positive working capital of 12,416 million; reference explanation says 1.6 billion. Preserve both and document source-based decision. |
+
+PepsiCo capex and American Express tax rate recovered in the latest run. Full-run
+variation shows why repeated generation should not be used to select only favorable
+scores. One repair attempt does not guarantee recovery. No company-specific answers,
+benchmark relabelling or weakened quote validation were introduced.
+
+Other addressed failures include wrong-period filing routing, narrative passages
+outranking statement rows, lost neighboring headers, signed numeric parsing,
+mixed-case arithmetic identifiers, insufficient structured-output budget, and
+unhelpful provider errors. Source links now serve actual PDFs over loopback HTTP.
+Arithmetic and provenance validation still do not prove every claim's meaning.
+
+Read [case-level answer review](answer-review-20261028.md) for the scoring rubric.
+The [demo smoke checks](demo-verification-20261028.md) passed startup, error handling,
+saved-answer display and PDF delivery. Fresh live demo generation remains unchecked
+because this process has no provider key; do not confuse it with saved-run review.
+
+## Historical development findings
+
 ## Retrieval baseline
 
 The unfiltered dense fixed-token baseline returned the expected filing for 1 of 3 cases at K=10 (33.3%). Similar company filings from wrong fiscal years competed with the requested filing.
@@ -16,7 +52,11 @@ Financial-statement questions also exposed a ranking problem: a narrative mentio
 
 Some answers depend on a table header and its value row being in adjacent chunks. The generation prompt now instructs the model to combine directly supplied row, column, date, and unit evidence. This reduces unnecessary `INSUFFICIENT_CONTEXT` responses while retaining the requirement that every answer be supported by cited retrieved sources.
 
-Generation evaluation identified a separate abstention pattern: answer-bearing rows were retrieved, but the model sometimes treated standard reporting terminology, signed cash-flow amounts, or a table comparison as insufficient evidence. The prompt now explicitly permits source-supported financial equivalents (such as PP&E purchases for capital expenditure), the magnitude of a parenthesized expenditure, consolidated net income when no separate attribution is reported, and direct maximum/minimum comparisons. These are generic financial-statement interpretation rules, not stored answers or company-specific exceptions.
+Generation evaluation identified unnecessary abstentions on financial aliases,
+signed cash-flow amounts and comparisons. Prompts permit source-supported financial
+equivalents and expenditure magnitudes, but preserve the requested income basis:
+consolidated income is not a substitute when shareholder attribution is requested.
+These are generic interpretation rules, not company-specific exceptions.
 
 Gemini capacity errors (for example, HTTP 503) previously ended the request immediately. The application now retries an optional fallback model only for temporary capacity errors and otherwise displays a clear failure message. This is an availability improvement, not evidence that a generated answer is grounded.
 
@@ -27,7 +67,7 @@ The demo previously displayed source labels without a direct path to inspect the
 Grounded answer evaluation depends on a Gemini API key being available in the same terminal that runs the evaluation. The generator is configured with temperature zero and returns `INSUFFICIENT_CONTEXT` rather than fabricate an answer or citation when retrieved evidence is insufficient.
 
 The 3-of-3 result above is historical, not a measurement of subsequent changes.
-The current saved row-matching generation run measures 9/11 answer and citation
+The historical saved row-matching generation run measured 9/11 answer and citation
 accuracy, 11/11 document recall and 10/10 labelled-page recall. See the experiment
 report and published summaries for remaining failed case IDs. Two abstentions
 remain; improved page coverage does not guarantee generation success.

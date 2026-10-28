@@ -128,6 +128,23 @@ def test_answer_metric_ignores_fiscal_year_when_selecting_a_financial_value() ->
     )
 
 
+@pytest.mark.parametrize(
+    "text",
+    [
+        "FY2024 value was 2.5 USD billions. [S1]",
+        "FY2024 value was USD 2.5 billion. [S1]",
+        "FY2024 value was 2,500 USD millions. [S1]",
+        "FY2024 value was 2.5 billions. [S1]",
+    ],
+)
+def test_numeric_metric_handles_currency_position_and_plural_units(text: str) -> None:
+    case = EvaluationCase("units", "Value in USD billions?", "$2.5", "source.pdf")
+    assert answer_correct(case, GroundedAnswer(text, (), False))
+    assert not answer_correct(
+        case, GroundedAnswer("FY2024 value was 3.5 USD billions. [S1]", (), False)
+    )
+
+
 def test_citation_metric_accepts_the_expected_source_among_direct_citations() -> None:
     case = EvaluationCase("case-1", "Question", "answer", "expected.pdf")
     cited = GroundedAnswer(

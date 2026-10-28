@@ -1,0 +1,974 @@
+{
+  "status": "triage_only_not_scoring_ready",
+  "draft_sha256": "640a66248b77a39fd4a04bb78f9b8b4e13d054ec75e7858ed8a6e701ca4fd79c",
+  "source_audit_sha256": "ab338178b8855d0069b827684763753e65bb25a4e967ddde1c274041856bfe2f",
+  "original_sha256": "8dd6027b61f82dc2f10c24c1bfc400bcee87cb054842cd3eed583ba912bd0769",
+  "cases": [
+    {
+      "case_id": "financebench_id_03029",
+      "cohort": "original_11",
+      "question": "What is the FY2018 capital expenditure amount (in USD millions) for 3M? Give a response to the question by relying on the details shown in the cash flow statement.",
+      "reference_answer": "$1577.00",
+      "document": "3M_2018_10K.pdf",
+      "physical_pages": [
+        46,
+        60
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_04672",
+      "cohort": "original_11",
+      "question": "Assume that you are a public equities analyst. Answer the following question by primarily using information that is shown in the balance sheet: what is the year end FY2018 net PPNE for 3M? Answer in USD billions.",
+      "reference_answer": "$8.70",
+      "document": "3M_2018_10K.pdf",
+      "physical_pages": [
+        58,
+        81
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00499",
+      "cohort": "original_11",
+      "question": "Is 3M a capital-intensive business based on FY2022 data?",
+      "reference_answer": "No",
+      "document": "3M_2022_10K.pdf",
+      "physical_pages": [],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_demo_amazon_2019_net_income",
+      "cohort": "original_11",
+      "question": "What was Amazon's FY2019 net income attributable to shareholders in USD millions?",
+      "reference_answer": "$11,588 million",
+      "document": "AMAZON_2019_10K.pdf",
+      "physical_pages": [
+        38,
+        39
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_demo_bestbuy_2019_inventory",
+      "cohort": "original_11",
+      "question": "What was Best Buy's year-end FY2019 inventory balance in USD millions?",
+      "reference_answer": "$5,409 million",
+      "document": "BESTBUY_2019_10K.pdf",
+      "physical_pages": [
+        52
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_demo_boeing_2018_net_ppe",
+      "cohort": "original_11",
+      "question": "What was Boeing's year-end FY2018 net property, plant, and equipment in USD millions?",
+      "reference_answer": "$12,645 million",
+      "document": "BOEING_2018_10K.pdf",
+      "physical_pages": [
+        52,
+        85
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_demo_costco_2021_total_assets",
+      "cohort": "original_11",
+      "question": "What were Costco's total assets at the end of FY2021 in USD millions?",
+      "reference_answer": "$59,268 million",
+      "document": "COSTCO_2021_10K.pdf",
+      "physical_pages": [
+        38,
+        64
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_demo_jpmorgan_2022q2_highest_net_income",
+      "cohort": "original_11",
+      "question": "In Q2 2022, which JPMorgan business segment had the highest net income?",
+      "reference_answer": "Corporate & Investment Bank",
+      "document": "JPMORGAN_2022Q2_10Q.pdf",
+      "physical_pages": [
+        21
+      ],
+      "suggested_rubric": "categorical_answer_with_comparison_evidence",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_demo_microsoft_2016_cost_of_revenue",
+      "cohort": "original_11",
+      "question": "What was Microsoft's FY2016 cost of goods sold in USD millions?",
+      "reference_answer": "$32,780 million",
+      "document": "MICROSOFT_2016_10K.pdf",
+      "physical_pages": [
+        52
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_demo_pepsico_2021_capex",
+      "cohort": "original_11",
+      "question": "What was PepsiCo's FY2021 capital expenditure amount in USD billions?",
+      "reference_answer": "$4.625 billion",
+      "document": "PEPSICO_2021_10K.pdf",
+      "physical_pages": [
+        53,
+        63,
+        71
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_demo_verizon_2021_derivatives",
+      "cohort": "original_11",
+      "question": "Among Verizon's derivative instruments in FY2021, which had the highest notional value?",
+      "reference_answer": "Cross currency swaps",
+      "document": "VERIZON_2021_10K.pdf",
+      "physical_pages": [
+        85
+      ],
+      "suggested_rubric": "categorical_answer_with_comparison_evidence",
+      "review_status": "legacy_baseline_preserved",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01858",
+      "cohort": "added_39",
+      "question": "Does 3M maintain a stable trend of dividend distribution?",
+      "reference_answer": "Yes, not only they distribute the dividends on a routine basis, 3M has also been increasing the per share dividend for consecutive 65 years",
+      "document": "3M_2023Q2_10Q.pdf",
+      "physical_pages": [
+        62
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_10420",
+      "cohort": "added_39",
+      "question": "Based on the information provided primarily in the statement of financial position and the statement of income, what is AES's FY2022 return on assets (ROA)? ROA is defined as: FY2022 net income / (average total assets between FY2021 and FY2022). Round your answer to two decimal places.",
+      "reference_answer": "-0.02",
+      "document": "AES_2022_10K.pdf",
+      "physical_pages": [
+        130,
+        132
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01279",
+      "cohort": "added_39",
+      "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for AMD in FY22?",
+      "reference_answer": "In 2022, AMD brought in the most cashflow from Operations",
+      "document": "AMD_2022_10K.pdf",
+      "physical_pages": [
+        58
+      ],
+      "suggested_rubric": "categorical_answer_with_comparison_evidence",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_02987",
+      "cohort": "added_39",
+      "question": "What is the FY2019 fixed asset turnover ratio for Activision Blizzard? Fixed asset turnover ratio is defined as: FY2019 revenue / (average PP&E between FY2018 and FY2019). Round your answer to two decimal places. Base your judgments on the information provided primarily in the statement of income and the statement of financial position.",
+      "reference_answer": "24.26",
+      "document": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+      "physical_pages": [
+        69,
+        70
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_07507",
+      "cohort": "added_39",
+      "question": "What is Adobe's year-over-year change in unadjusted operating income from FY2015 to FY2016 (in units of percents and round to one decimal place)? Give a solution to the question by using the income statement.",
+      "reference_answer": "65.4%",
+      "document": "ADOBE_2016_10K.pdf",
+      "physical_pages": [
+        62
+      ],
+      "suggested_rubric": "percentage_or_percentage_point_change",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_08135",
+      "cohort": "added_39",
+      "question": "What is Amazon's year-over-year change in revenue from FY2016 to FY2017 (in units of percents and round to one decimal place)? Calculate what was asked by utilizing the line items clearly shown in the statement of income.",
+      "reference_answer": "30.8%",
+      "document": "AMAZON_2017_10K.pdf",
+      "physical_pages": [
+        38
+      ],
+      "suggested_rubric": "percentage_or_percentage_point_change",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01079",
+      "cohort": "added_39",
+      "question": "What are major acquisitions that AMCOR has done in FY2023, FY2022 and FY2021?",
+      "reference_answer": "Amcor completed these acquisitions during FY2023:\n-100% equity interest of a flexibles manufacturing company in the Czech Republic\n- 100% equity interest in a medical device packaging manufacturing site in\nShanghai, China.\n-acquisition of a New Zealand-based leading manufacturer of state-of-the-art, automated protein\npackaging machines.",
+      "document": "AMCOR_2023_10K.pdf",
+      "physical_pages": [
+        64
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01351",
+      "cohort": "added_39",
+      "question": "How much has the effective tax rate of American Express changed between FY2021 and FY2022?",
+      "reference_answer": "The effective tax rate for American Express has changed/dropped from 24.6% in FY 2021 to 21.6% in FY 2022.",
+      "document": "AMERICANEXPRESS_2022_10K.pdf",
+      "physical_pages": [
+        44
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_04254",
+      "cohort": "added_39",
+      "question": "Basing your judgments off of the cash flow statement and the income statement, what is American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA) in USD millions?",
+      "reference_answer": "$1832.00",
+      "document": "AMERICANWATERWORKS_2021_10K.pdf",
+      "physical_pages": [
+        86,
+        88
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01077",
+      "cohort": "added_39",
+      "question": "What are major acquisitions that Best Buy has done in FY2023, FY2022 and FY2021?",
+      "reference_answer": "Best Buy closed two acquisitions, both these companies were already partially owned by Best Buy, but Best Buy acquired all outstanding shares of these two companies during FY 2022: (1) Current Health Ltd and (2) Two Peaks, LLC d/b/a Yardbird Furniture",
+      "document": "BESTBUY_2023_10K.pdf",
+      "physical_pages": [
+        51
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_07661",
+      "cohort": "added_39",
+      "question": "Using the cash flow statement, answer the following question to the best of your abilities: how much did Block (formerly known as Square) generate in cash flow from operating activities in FY2020? Answer in USD millions.",
+      "reference_answer": "$382.00",
+      "document": "BLOCK_2020_10K.pdf",
+      "physical_pages": [
+        90
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01091",
+      "cohort": "added_39",
+      "question": "Has Boeing reported any materially important ongoing legal battles from FY2022?",
+      "reference_answer": "Yes. Multiple lawsuits have been filed against Boeing resulting from a 2018 Lion Air crash and a 2019 Ethiopian Airlines crash.",
+      "document": "BOEING_2022_10K.pdf",
+      "physical_pages": [
+        113
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01244",
+      "cohort": "added_39",
+      "question": "Has CVS Health paid dividends to common shareholders in Q2 of FY2022?",
+      "reference_answer": "Yes, CVS paid a $ 0.55 dividend per share every quarter in FY2022",
+      "document": "CVSHEALTH_2022_10K.pdf",
+      "physical_pages": [
+        68
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_06272",
+      "cohort": "added_39",
+      "question": "What is Coca Cola's FY2022 dividend payout ratio (using total cash dividends paid and net income attributable to shareholders)? Round answer to two decimal places. Answer the question asked by assuming you only have access to information clearly displayed in the cash flow statement and the income statement.",
+      "reference_answer": "0.8",
+      "document": "COCACOLA_2022_10K.pdf",
+      "physical_pages": [
+        63,
+        66
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01346",
+      "cohort": "added_39",
+      "question": "How much has the effective tax rate of Corning changed between FY2021 and FY2022?",
+      "reference_answer": "The effective tax rate of Corning has changed from 20% in FY2021 to 23% in FY 2022.",
+      "document": "CORNING_2022_10K.pdf",
+      "physical_pages": [
+        24
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_04209",
+      "cohort": "added_39",
+      "question": "Using only the information within the balance sheet, how much total assets did Costco have at the end of FY2021? Answer in USD millions.",
+      "reference_answer": "$59268.00",
+      "document": "COSTCO_2021_10K.pdf",
+      "physical_pages": [
+        38
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00839",
+      "cohort": "added_39",
+      "question": "Does Foot Locker's new CEO have previous CEO experience in a similar company to Footlocker?",
+      "reference_answer": "Yes. She was previous CEO of Ulta Beauty which means she had to manage a large retail company that has brick and mortar + online business. So yes she was a CEO in a similar company to Foot Locker before this.",
+      "document": "FOOTLOCKER_2022_8K_dated_2022-08-19.pdf",
+      "physical_pages": [
+        2
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_04854",
+      "cohort": "added_39",
+      "question": "According to the information provided in the statement of cash flows, what is the FY2020 free cash flow (FCF) for General Mills? FCF here is defined as: (cash from operations - capex). Answer in USD millions.",
+      "reference_answer": "$3215.00",
+      "document": "GENERALMILLS_2020_10K.pdf",
+      "physical_pages": [
+        52
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_02049",
+      "cohort": "added_39",
+      "question": "Looking at VaR, did the risk that JPM faced in the second fiscal quarter of 2023 decrease compared to the same period in the prior year?",
+      "reference_answer": "Yes. It decreased.",
+      "document": "JPMORGAN_2023Q2_10Q.pdf",
+      "physical_pages": [
+        85
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01487",
+      "cohort": "added_39",
+      "question": "Did JnJ's net earnings as a percent of sales increase in Q2 of FY2023 compared to Q2 of FY2022?",
+      "reference_answer": "Yes, net earnings as a percent of sales increased from 20% in Q2 of FY2022 to 20.1% in Q2 of FY2023.",
+      "document": "JOHNSON_JOHNSON_2023Q2_EARNINGS.pdf",
+      "physical_pages": [
+        10
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_10499",
+      "cohort": "added_39",
+      "question": "What is Kraft Heinz's FY2019 inventory turnover ratio? Inventory turnover ratio is defined as: (FY2019 COGS) / (average inventory between FY2018 and FY2019). Round your answer to two decimal places. Please base your judgments on the information provided primarily in the balance sheet and the P&L statement.",
+      "reference_answer": "6.25",
+      "document": "KRAFTHEINZ_2019_10K.pdf",
+      "physical_pages": [
+        50,
+        52
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_03031",
+      "cohort": "added_39",
+      "question": "What is Lockheed Martin's FY2021 net working capital? Define net working capital as total current assets less total current liabilities. Answer in USD millions. Respond to the question by assuming the perspective of an investment analyst who can only use the details shown within the balance sheet.",
+      "reference_answer": "$5818.00",
+      "document": "LOCKHEEDMARTIN_2021_10K.pdf",
+      "physical_pages": [
+        68
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00382",
+      "cohort": "added_39",
+      "question": "Which region had the Highest EBITDAR Contribution for MGM during FY2022?",
+      "reference_answer": "Las Vegas resorts contributed ~90% of company level EBITDAR during FY2022.",
+      "document": "MGMRESORTS_2022Q4_EARNINGS.pdf",
+      "physical_pages": [
+        13
+      ],
+      "suggested_rubric": "categorical_answer_with_comparison_evidence",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_04700",
+      "cohort": "added_39",
+      "question": "What is the FY2016 COGS for Microsoft? Please state answer in USD millions. Provide a response to the question by primarily using the statement of income.",
+      "reference_answer": "$32780.00",
+      "document": "MICROSOFT_2016_10K.pdf",
+      "physical_pages": [
+        52
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_04458",
+      "cohort": "added_39",
+      "question": "We want to calculate a financial metric. Please help us compute it by basing your answers off of the statement of income and the statement of cash flows. Here's the question: what is the FY2015 unadjusted EBITDA % margin for Netflix? Calculate unadjusted EBITDA using unadjusted operating income and D&A (from cash flow statement).",
+      "reference_answer": "5.4%",
+      "document": "NETFLIX_2015_10K.pdf",
+      "physical_pages": [
+        40,
+        42
+      ],
+      "suggested_rubric": "percentage_or_percentage_point_change",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01163",
+      "cohort": "added_39",
+      "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?",
+      "reference_answer": "Among the three, cash flow from operations was the highest for Nike in FY2023.",
+      "document": "NIKE_2023_10K.pdf",
+      "physical_pages": [
+        62
+      ],
+      "suggested_rubric": "categorical_answer_with_comparison_evidence",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00080",
+      "cohort": "added_39",
+      "question": "Does Paypal have positive working capital based on FY2022 data? If working capital is not a useful or relevant metric for this company, then please state that and explain why.",
+      "reference_answer": "Yes. Paypal has a positive working capital of $ 1.6Bn as of FY2022 end.",
+      "document": "PAYPAL_2022_10K.pdf",
+      "physical_pages": [
+        61
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_01009",
+      "cohort": "added_39",
+      "question": "What are the geographies that Pepsico primarily operates in as of FY2022?",
+      "reference_answer": "As of FY2022, Pepsico primarily operates in the following geographies: North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand and China.",
+      "document": "PEPSICO_2022_10K.pdf",
+      "physical_pages": [
+        4,
+        5
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00302",
+      "cohort": "added_39",
+      "question": "Did Pfizer grow its PPNE between FY20 and FY21?",
+      "reference_answer": "Yes, change in PPNE was positive year over year",
+      "document": "PFIZER_2021_10K.pdf",
+      "physical_pages": [
+        59
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00746",
+      "cohort": "added_39",
+      "question": "Which debt securities are registered to trade on a national securities exchange under Ulta Beauty's name as of FY2023?",
+      "reference_answer": "There are none",
+      "document": "ULTABEAUTY_2023_10K.pdf",
+      "physical_pages": [
+        1
+      ],
+      "suggested_rubric": "categorical_answer_with_comparison_evidence",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00566",
+      "cohort": "added_39",
+      "question": "Has Verizon increased its debt on balance sheet between 2022 and the 2021 fiscal period?",
+      "reference_answer": "No. Verizon's debt decreased by $229 million.",
+      "document": "VERIZON_2022_10K.pdf",
+      "physical_pages": [
+        77
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_04784",
+      "cohort": "added_39",
+      "question": "Based on the information provided primarily in the statement of income, what is the FY2018 - FY2019 change in unadjusted operating income % margin for Walmart? Answer in units of percents and round to one decimal place.",
+      "reference_answer": "0.2%",
+      "document": "WALMART_2019_10K.pdf",
+      "physical_pages": [
+        48
+      ],
+      "suggested_rubric": "percentage_or_percentage_point_change",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00941",
+      "cohort": "added_39",
+      "question": "Which debt securities are registered to trade on a national securities exchange under 3M's name as of Q2 of 2023?",
+      "reference_answer": "Following debt securities registered under 3M's name are listed to trade on the New York Stock Exchange:\n-1.500% Notes due 2026 (Trading Symbol: MMM26)\n-1.750% Notes due 2030 (Trading Symbol: MMM30)\n-1.500% Notes due 2031 (Trading Symbol: MMM31)",
+      "document": "3M_2023Q2_10Q.pdf",
+      "physical_pages": [
+        1
+      ],
+      "suggested_rubric": "categorical_answer_with_comparison_evidence",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00540",
+      "cohort": "added_39",
+      "question": "Roughly how many times has AES Corporation sold its inventory in FY2022? Calculate inventory turnover ratio for the FY2022; if conventional inventory management is not meaningful for the company then state that and explain why.",
+      "reference_answer": "AES has converted inventory 9.5 times in FY 2022.",
+      "document": "AES_2022_10K.pdf",
+      "physical_pages": [
+        130,
+        132
+      ],
+      "suggested_rubric": "required_claim_set_with_synonyms_and_contradiction_check",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_00222",
+      "cohort": "added_39",
+      "question": "Does AMD have a reasonably healthy liquidity profile based on its quick ratio for FY22? If the quick ratio is not relevant to measure liquidity, please state that and explain why.",
+      "reference_answer": "Yes. The quick ratio is 1.57, calculated as (cash and cash equivalents+Short term investments+Accounts receivable, net+receivables from related parties)/ (current liabilities).",
+      "document": "AMD_2022_10K.pdf",
+      "physical_pages": [
+        56
+      ],
+      "suggested_rubric": "verdict_plus_required_supporting_claims",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_07966",
+      "cohort": "added_39",
+      "question": "What is the FY2017 - FY2019 3 year average of capex as a % of revenue for Activision Blizzard? Answer in units of percents and round to one decimal place. Calculate (or extract) the answer from the statement of income and the cash flow statement.",
+      "reference_answer": "1.9%",
+      "document": "ACTIVISIONBLIZZARD_2019_10K.pdf",
+      "physical_pages": [
+        70,
+        73
+      ],
+      "suggested_rubric": "percentage_or_percentage_point_change",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_03856",
+      "cohort": "added_39",
+      "question": "What is the FY2017 operating cash flow ratio for Adobe? Operating cash flow ratio is defined as: cash from operations / total current liabilities. Round your answer to two decimal places. Please utilize information provided primarily within the balance sheet and the cash flow statement.",
+      "reference_answer": "0.83",
+      "document": "ADOBE_2017_10K.pdf",
+      "physical_pages": [
+        57,
+        61
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_06655",
+      "cohort": "added_39",
+      "question": "What is Amazon's FY2017 days payable outstanding (DPO)? DPO is defined as: 365 * (average accounts payable between FY2016 and FY2017) / (FY2017 COGS + change in inventory between FY2016 and FY2017). Round your answer to two decimal places. Address the question by using the line items and information shown within the balance sheet and the P&L statement.",
+      "reference_answer": "93.86",
+      "document": "AMAZON_2017_10K.pdf",
+      "physical_pages": [
+        38,
+        40
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    },
+    {
+      "case_id": "financebench_id_03882",
+      "cohort": "added_39",
+      "question": "What is Amcor's year end FY2020 net AR (in USD millions)? Address the question by adopting the perspective of a financial analyst who can only use the details shown within the balance sheet.",
+      "reference_answer": "$1616.00",
+      "document": "AMCOR_2020_10K.pdf",
+      "physical_pages": [
+        50
+      ],
+      "suggested_rubric": "signed_numeric_with_explicit_unit_and_rounding",
+      "review_status": "pending_answer_and_rubric_review",
+      "required_review": [
+        "reference support and completeness",
+        "unit/sign/rounding",
+        "mandatory versus alternative pages",
+        "semantic duplicates"
+      ],
+      "approved_for_new_scoring": false
+    }
+  ]
+}

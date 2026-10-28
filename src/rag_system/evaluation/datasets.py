@@ -23,6 +23,8 @@ def load_evaluation_cases(path: Path) -> tuple[EvaluationCase, ...]:
     raw_cases = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(raw_cases, list) or not raw_cases:
         raise ValueError("Evaluation cases must be a non-empty JSON list")
+    if any(item.get("validation_status") not in {None, "reviewed"} for item in raw_cases):
+        raise ValueError("Draft cases require source review before scored evaluation")
     cases = tuple(
         EvaluationCase(
             case_id=item["case_id"],
